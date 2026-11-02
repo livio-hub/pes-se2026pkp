@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Knowledge Base & Monitoring Pendataan PES SE2026 - Pangkalpinang</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- TOP NAVBAR -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="bg-indigo-600 p-2.5 rounded-xl flex items-center justify-center text-white shadow-inner">
+            <i class="ph-bold ph-chart-donut text-2xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight">PES Sensus Ekonomi 2026</h1>
+              <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[10px] font-bold px-2 py-0.5 rounded">Kota Pangkalpinang</span>
+            </div>
+            <p class="text-xs text-slate-300">Monitoring Petugas SLS & Petugas Usaha Besar (UB) + Knowledge Base</p>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <button onclick="openModalInputProgress()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg flex items-center shadow transition">
+            <i class="ph-bold ph-pencil-simple-line mr-1.5 text-base"></i> Input Progress
+          </button>
+          <button onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg hidden sm:flex items-center shadow transition" title="Export CSV/Excel">
+            <i class="ph-bold ph-microsoft-excel-logo mr-1.5 text-base"></i> Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN TABS & CATEGORY SWITCHER -->
+    <div class="bg-slate-950/80 border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2">
+          <!-- Main Tab Navigation -->
+          <nav class="flex space-x-4 text-xs sm:text-sm font-medium overflow-x-auto custom-scrollbar">
+            <button onclick="switchTab('dashboard')" id="tab-nav-dashboard" class="main-tab active py-2 px-1 border-b-2 border-indigo-500 text-white flex items-center space-x-1.5">
+              <i class="ph ph-squares-four text-base"></i>
+              <span>Dashboard Monitoring</span>
+            </button>
+            <button onclick="switchTab('sls')" id="tab-nav-sls" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
+              <i class="ph ph-map-pin-line text-base"></i>
+              <span>Petugas SLS (38 Sampel)</span>
+            </button>
+            <button onclick="switchTab('ub')" id="tab-nav-ub" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
+              <i class="ph ph-buildings text-base"></i>
+              <span>Petugas Usaha Besar / UB (38 Sampel)</span>
+            </button>
+            <button onclick="switchTab('kb')" id="tab-nav-kb" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
+              <i class="ph ph-books text-base"></i>
+              <span>Knowledge Base & SOP</span>
+            </button>
+            <button onclick="switchTab('deploy')" id="tab-nav-deploy" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
+              <i class="ph ph-cloud-arrow-up text-base"></i>
+              <span>Akses Online Web</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: DASHBOARD MONITORING LENGKAP -->
+    <!-- ============================================== -->
+    <section id="tab-dashboard" class="tab-pane space-y-6">
+      
+      <!-- Ringkasan Kategori SLS vs UB -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Card Ringkasan SLS -->
+        <div class="bg-gradient-to-br from-indigo-900 to-indigo-800 text-white rounded-2xl p-5 shadow-sm relative overflow-hidden">
+          <div class="flex items-start justify-between relative z-10">
+            <div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                Kategori Pendataan SLS (Wilayah)
+              </span>
+              <h3 class="text-xl font-bold mt-2">PES Sampel Wilayah SLS</h3>
+              <p class="text-xs text-indigo-200 mt-1">22 PPL, 6 PML &bull; 38 Satuan Lingkungan Setempat</p>
+            </div>
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl">
+              <i class="ph-duotone ph-map-pin"></i>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-indigo-700/60 relative z-10">
+            <div>
+              <p class="text-[11px] text-indigo-300">Total Target</p>
+              <p class="text-lg font-bold" id="dash-sls-target">4.241</p>
+              <p class="text-[10px] text-indigo-300">Responden</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-indigo-300">Realisasi</p>
+              <p class="text-lg font-bold text-emerald-300" id="dash-sls-realisasi">0</p>
+              <p class="text-[10px] text-indigo-300">Terselesaikan</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-indigo-300">Progres</p>
+              <p class="text-lg font-bold text-amber-300" id="dash-sls-persen">0%</p>
+              <p class="text-[10px] text-indigo-300">Ketercapaian</p>
+            </div>
+          </div>
+          <i class="ph-duotone ph-users-four absolute -right-4 -bottom-6 text-8xl text-white/5"></i>
+        </div>
+
+        <!-- Card Ringkasan UB -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 shadow-sm relative overflow-hidden">
+          <div class="flex items-start justify-between relative z-10">
+            <div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                Kategori Pendataan Usaha Besar (UB)
+              </span>
+              <h3 class="text-xl font-bold mt-2">PES Sampel Perusahaan UB</h3>
+              <p class="text-xs text-slate-300 mt-1">5 PPL, 2 Pengawas &bull; 38 Entitas Usaha Besar</p>
+            </div>
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl text-amber-400">
+              <i class="ph-duotone ph-buildings"></i>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-slate-700/60 relative z-10">
+            <div>
+              <p class="text-[11px] text-slate-400">Total Sampel</p>
+              <p class="text-lg font-bold text-white" id="dash-ub-target">38</p>
+              <p class="text-[10px] text-slate-400">Perusahaan</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-400">Sudah Didata</p>
+              <p class="text-lg font-bold text-emerald-400" id="dash-ub-realisasi">0</p>
+              <p class="text-[10px] text-slate-400">Valid/Clear</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-400">Progres</p>
+              <p class="text-lg font-bold text-amber-400" id="dash-ub-persen">0%</p>
+              <p class="text-[10px] text-slate-400">Ketercapaian</p>
+            </div>
+          </div>
+          <i class="ph-duotone ph-briefcase absolute -right-4 -bottom-6 text-8xl text-white/5"></i>
+        </div>
+      </div>
+
+      <!-- Chart and Filter Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Visual Chart -->
+        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="font-bold text-slate-800 text-base" id="chart-title">Progres Pendataan Lapangan</h3>
+              <p class="text-xs text-slate-500">Visualisasi capaian realisasi dibanding target alokasi beban</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="setChartMode('SLS')" id="btn-chart-sls" class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white">Petugas SLS</button>
+              <button onclick="setChartMode('UB')" id="btn-chart-ub" class="text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200">Petugas UB</button>
+            </div>
+          </div>
+          <div class="h-64 sm:h-72">
+            <canvas id="overviewChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Quick Activity & Contact Shortcuts -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-slate-800 text-base">Pengawas & Koordinator</h3>
+              <span class="text-[11px] text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded">6 PML + 2 Pengawas UB</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Akses cepat kontak pengawas untuk eskalasi kendala lapangan.</p>
+
+            <div class="space-y-2.5 overflow-y-auto max-h-60 custom-scrollbar pr-1" id="pml-quick-list">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs text-slate-500">
+            <span>Pangkalpinang (Babel)</span>
+            <button onclick="resetDataSemula()" class="text-red-500 hover:underline">Reset Data Lokal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Summary Table (Combined) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-slate-800 text-base">Monitoring Cepat Seluruh Petugas Lapangan</h3>
+            <p class="text-xs text-slate-500">Daftar petugas PPL SLS dan PPL UB beserta nomor kontak dan progresnya</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="quick-table-filter" onchange="renderQuickTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
+              <option value="ALL">Semua Petugas (SLS & UB)</option>
+              <option value="SLS">Hanya Petugas SLS (22 PPL)</option>
+              <option value="UB">Hanya Petugas Usaha Besar / UB (5 PPL)</option>
+              <option value="PML">Hanya Pengawas (PML & Koord)</option>
+            </select>
+            <input type="text" id="quick-table-search" onkeyup="renderQuickTable()" placeholder="Cari nama atau wilayah..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-40 sm:w-56 focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[11px] tracking-wider border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Tipe</th>
+                <th class="py-3 px-4">Nama Petugas</th>
+                <th class="py-3 px-4">Pengawas</th>
+                <th class="py-3 px-4">Alokasi Beban / Wilayah</th>
+                <th class="py-3 px-4 text-center">Beban</th>
+                <th class="py-3 px-4 text-center">Realisasi</th>
+                <th class="py-3 px-4 text-center">Progress</th>
+                <th class="py-3 px-4">No. HP / WA</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="quick-table-body" class="divide-y divide-slate-100">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: PETUGAS SLS (SATUAN LINGKUNGAN SETEMPAT) -->
+    <!-- ============================================== -->
+    <section id="tab-sls" class="tab-pane hidden space-y-6">
+      <!-- SLS Header Card -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-700">PES SE2026 - SLS</span>
+            <span class="text-xs text-slate-500">38 Sampel SLS &bull; Beban: 4.241 Responden</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-800 mt-1">Daftar Alokasi & Petugas SLS (Pangkalpinang)</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Meliputi 22 PPL dan 6 PML dengan wilayah tugas dan nomor kontak terverifikasi.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="search-sls" onkeyup="renderSlsList()" placeholder="Cari PPL, PML, atau SLS..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-48 sm:w-64 focus:ring-2 focus:ring-indigo-500">
+          <select id="filter-pml-sls" onchange="renderSlsList()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">Semua PML (PML 01 - 06)</option>
+            <option value="PML-01">PML-01: Ennie Ratnasari</option>
+            <option value="PML-02">PML-02: Marliya</option>
+            <option value="PML-03">PML-03: Luqman Hakim</option>
+            <option value="PML-04">PML-04: Cici Ofdadewi</option>
+            <option value="PML-05">PML-05: Desi Pazaria</option>
+            <option value="PML-06">PML-06: Siti Artimah</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SLS Grid Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="sls-grid-cards">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: PETUGAS USAHA BESAR (UB) -->
+    <!-- ============================================== -->
+    <section id="tab-ub" class="tab-pane hidden space-y-6">
+      <!-- UB Header Card -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">PES SE2026 - DS.UB</span>
+            <span class="text-xs text-slate-500">38 Perusahaan Besar (Perbankan, PT Timah, BUMN, dll)</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-800 mt-1">Daftar Sampel Usaha Besar (UB) & Alokasi Petugas</h2>
+          <p class="text-xs sm:text-sm text-slate-500">5 Petugas PPL UB dibina oleh 2 Pengawas (Jawani Eka P. & Sarah Putri Utami).</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="search-ub" onkeyup="renderUbList()" placeholder="Cari nama perusahaan / PPL..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-48 sm:w-60 focus:ring-2 focus:ring-indigo-500">
+          <select id="filter-ppl-ub" onchange="renderUbList()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">Semua Petugas UB</option>
+            <option value="Adi Dirgantara">Adi Dirgantara (7 UB)</option>
+            <option value="Farel Aristo H.">Farel Aristo H. (8 UB)</option>
+            <option value="Maryani">Maryani (7 UB)</option>
+            <option value="Shafira Husna">Shafira Husna (8 UB)</option>
+            <option value="Soraya Afkarina">Soraya Afkarina (8 UB)</option>
+          </select>
+          <select id="filter-status-ub" onchange="renderUbList()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">Semua Status</option>
+            <option value="Belum Berhasil Didata">Belum Berhasil Didata</option>
+            <option value="Sudah Berhasil Didata">Sudah Berhasil Didata</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- UB Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[11px] tracking-wider border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">No</th>
+                <th class="py-3 px-4">IDSBR</th>
+                <th class="py-3 px-4">Nama Perusahaan / Usaha</th>
+                <th class="py-3 px-4">Kecamatan / Kelurahan</th>
+                <th class="py-3 px-4">Alamat</th>
+                <th class="py-3 px-4">Petugas PPL UB</th>
+                <th class="py-3 px-4">Pengawas</th>
+                <th class="py-3 px-4">Status Pendataan</th>
+                <th class="py-3 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="ub-table-body" class="divide-y divide-slate-100">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: KNOWLEDGE BASE & SOP PENDATAAN -->
+    <!-- ============================================== -->
+    <section id="tab-kb" class="tab-pane hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-900 to-blue-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block px-3 py-1 bg-indigo-500/30 text-indigo-200 rounded-full text-xs font-semibold mb-2">Pusat Pengetahuan & Pedoman</span>
+          <h2 class="text-2xl font-extrabold tracking-tight">Knowledge Base PES Sensus Ekonomi 2026</h2>
+          <p class="text-sm text-indigo-100 mt-2 leading-relaxed">
+            Panduan lengkap perbedaan tata cara pendataan PES untuk <strong>Sampel SLS (Rumah Tangga/Usaha Mikro-Kecil)</strong> dan <strong>Sampel Usaha Besar (UB)</strong>.
+          </p>
+        </div>
+        <i class="ph-duotone ph-book-open text-9xl text-white/10 absolute right-4 -bottom-4 hidden sm:block"></i>
+      </div>
+
+      <!-- KB Search -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div class="relative w-full sm:w-96">
+          <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+          <input type="text" id="search-kb" onkeyup="filterKbArticles()" placeholder="Cari SOP, aturan matching, penanganan UB..." class="pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div class="flex items-center space-x-2 text-xs">
+          <button onclick="filterKbTag('ALL')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium">Semua</button>
+          <button onclick="filterKbTag('SLS')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Khusus SLS</button>
+          <button onclick="filterKbTag('UB')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Khusus Usaha Besar (UB)</button>
+        </div>
+      </div>
+
+      <!-- Articles Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="kb-articles-grid">
+
+        <!-- Artikel 1: SOP UB -->
+        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="UB" data-text="usaha besar ub perusahaan izin pimpinan kuesioner neraca keuangan">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Usaha Besar</span>
+              <span class="text-xs text-slate-400">Protokol BPS</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-2">1. SOP Pendataan Sampel Usaha Besar (UB)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              Petugas PPL UB wajib membawa Surat Tugas resmi, identitas BPS, dan surat pengantar kepala BPS ditujukan kepada pimpinan / manajer keuangan perusahaan.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>Konfirmasi janji temu dengan bagian Akuntansi / HRD / General Affair.</li>
+              <li>Jaminan kerahasiaan data individual sesuai UU Statistik No. 16 Tahun 1997.</li>
+              <li>Jika perusahaan berstatus kantor kas/cabang, catat kewenangan pelaporan ke kantor cabang utama.</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Target: 38 UB Pangkalpinang</span>
+            <button onclick="openKbModal('sop-ub')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Artikel 2: SOP SLS -->
+        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="SLS" data-text="sls satuan lingkungan setempat rt rw batas blok sensus pemutakhiran">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Petugas SLS</span>
+              <span class="text-xs text-slate-400">Teknis Wilayah</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-2">2. Prosedur Penyisiran & Listing Sampel SLS</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              PPL menyusuri wilayah SLS terpilih didampingi Ketua RT/RW setempat guna mengenali batas fisik SLS sebelum wawancara.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>Pastikan batas RT tidak tertukar dengan RT tetangga.</li>
+              <li>Sisir searah jarum jam dari sudut barat daya wilayah SLS.</li>
+              <li>Catat keberadaan usaha rumahan, pedagang kaki lima, dan kegiatan ekonomi non-fisik.</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Target: 38 SLS Terpilih</span>
+            <button onclick="openKbModal('sop-sls')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Artikel 3: Matching -->
+        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="SLS" data-text="matching penyandingan dse rekonsiliasi pengawas pml kendala">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-purple-100 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded">Metodologi Matching</span>
+              <span class="text-xs text-slate-400">Coverage Error</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-2">3. Rekonsiliasi Hasil Pendataan SE Utama vs PES</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              Tahap penyandingan data bertujuan mendeteksi apakah suatu usaha/responden termasuk kategori *Match*, *Omission*, atau *Erroneous*.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li><strong>Match:</strong> Ditemukan di Sensus Utama dan ditemukan di PES dengan identitas sama.</li>
+              <li><strong>Omission (Terlewat):</strong> Ditemukan di PES tetapi tidak ada di Sensus Utama.</li>
+              <li><strong>Rekonsiliasi PML:</strong> Pengawas wajib melakukan cek fisik jika terjadi keraguan status.</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Verifikasi Berjenjang</span>
+            <button onclick="openKbModal('sop-matching')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Artikel 4: Penolakan Responden -->
+        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="ALL" data-text="penolakan respon sulit ditemui berita acara rt rw eskalasi">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-0.5 rounded">Troubleshooting Lapangan</span>
+              <span class="text-xs text-slate-400">Penanganan Penolakan</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-2">4. Protokol Responden Menolak / Sulit Ditemui</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              Langkah yang harus diambil oleh PCL/PPL sebelum menyatakan responden atau perusahaan menolak didata.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>Kunjungan ulang minimal 3 kali pada jam yang berbeda.</li>
+              <li>Untuk perusahaan UB: lakukan eskalasi via surat resmi BPS ke kantor direksi/pusat.</li>
+              <li>Berita Acara Penolakan resmi hanya ditandatangani bila upaya persuasif maksimal telah gagal.</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Eskalasi PML & Koseka</span>
+            <button onclick="openKbModal('sop-penolakan')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Artikel 5: Kontak Bantuan & Helpdesk -->
+        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="ALL" data-text="helpdesk kontak pengawas whatsapp koordinasi darurat">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-cyan-100 text-cyan-700 text-[11px] font-bold px-2 py-0.5 rounded">Kontak & Helpdesk</span>
+              <span class="text-xs text-slate-400">BPS Pangkalpinang</span>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-2">5. Saluran Bantuan Cepat Lapangan</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+              Hubungi narahubung teknis apabila petugas menghadapi kendala batas SLS meragukan atau perizinan perusahaan UB.
+            </p>
+            <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1.5 text-slate-700">
+              <p><strong>Pengawas UB 1:</strong> Jawani Eka P.</p>
+              <p><strong>Pengawas UB 2:</strong> Sarah Putri Utami</p>
+              <p><strong>Koordinator Teknis Sensus:</strong> BPS Kota Pangkalpinang</p>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Respons Cepat Hari Kerja</span>
+            <button onclick="openKbModal('sop-kontak')" class="font-semibold text-indigo-600 hover:text-indigo-800">Lihat Rincian &rarr;</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 5: PANDUAN ONLINE / DEPLOYMENT -->
+    <!-- ============================================== -->
+    <section id="tab-deploy" class="tab-pane hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <h2 class="text-lg font-bold text-slate-800">Cara Mengakses Web Ini Kapan Saja & Di Mana Saja (Online Gratis)</h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Agar aplikasi ini dapat dibuka oleh seluruh 28 petugas SLS dan 7 petugas UB secara bersamaan dari smartphone (Android/iPhone) maupun laptop di lapangan tanpa instalasi aplikasi:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+          <div class="border border-indigo-200 bg-indigo-50/50 p-4 rounded-xl flex flex-col justify-between">
+            <div>
+              <span class="bg-indigo-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">Paling Cepat (1 Menit)</span>
+              <h3 class="font-bold text-slate-800 mt-2">Netlify Drop</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Kunjungi <a href="https://app.netlify.com/drop" target="_blank" class="text-indigo-600 underline font-semibold">app.netlify.com/drop</a>, lalu seret file <code class="bg-white px-1 py-0.5 rounded">index.html</code> ini. Anda langsung mendapatkan alamat web publik gratis.
+              </p>
+            </div>
+            <a href="https://app.netlify.com/drop" target="_blank" class="mt-4 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg">Buka Netlify Drop &rarr;</a>
+          </div>
+
+          <div class="border border-emerald-200 bg-emerald-50/50 p-4 rounded-xl flex flex-col justify-between">
+            <div>
+              <span class="bg-emerald-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">Google Drive / Spreadsheet</span>
+              <h3 class="font-bold text-slate-800 mt-2">Google Apps Script</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Buka Google Spreadsheet kantor &rarr; menu <strong>Ekstensi > Apps Script</strong> &rarr; tempelkan kode HTML &rarr; Deploy Web App. Input progres petugas akan tersimpan otomatis di Google Spreadsheet.
+              </p>
+            </div>
+            <button onclick="alert('Salin kode HTML ini dan deploy di Google Apps Script Web App!')" class="mt-4 text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg">Panduan Apps Script &rarr;</button>
+          </div>
+
+          <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl flex flex-col justify-between">
+            <div>
+              <span class="bg-slate-700 text-white text-[11px] font-bold px-2 py-0.5 rounded">GitHub</span>
+              <h3 class="font-bold text-slate-800 mt-2">GitHub Pages</h3>
+              <p class="text-xs text-slate-600 mt-1">
+                Unggah file <code class="bg-white px-1 py-0.5 rounded">index.html</code> ke repository GitHub, buka Settings &rarr; Pages &rarr; aktifkan branch main.
+              </p>
+            </div>
+            <a href="https://pages.github.com" target="_blank" class="mt-4 text-center bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-2 rounded-lg">Buka GitHub Pages &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: INPUT PROGRESS LAPANGAN -->
+  <!-- ============================================== -->
+  <div id="modal-input-progress" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+            <i class="ph-bold ph-pencil-simple text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-base">Input / Update Progres Petugas</h3>
+            <p class="text-xs text-slate-500">Pilih kategori SLS (Responden) atau Usaha Besar (UB)</p>
+          </div>
+        </div>
+        <button onclick="closeModalInputProgress()" class="text-slate-400 hover:text-slate-600 text-xl">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <form id="form-update-progress" onsubmit="handleProgressFormSubmit(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Kategori Pendataan</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center space-x-2 border border-slate-200 rounded-lg p-2.5 cursor-pointer hover:bg-indigo-50">
+              <input type="radio" name="progress-category" value="SLS" checked onchange="onProgressCategoryChange()" class="text-indigo-600">
+              <span class="font-medium text-slate-700 text-xs">Petugas SLS (Responden)</span>
+            </label>
+            <label class="flex items-center space-x-2 border border-slate-200 rounded-lg p-2.5 cursor-pointer hover:bg-amber-50">
+              <input type="radio" name="progress-category" value="UB" onchange="onProgressCategoryChange()" class="text-amber-600">
+              <span class="font-medium text-slate-700 text-xs">Petugas UB (Perusahaan)</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Pilih Petugas</label>
+          <select id="modal-select-petugas" onchange="onSelectPetugasUpdate()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1" id="label-modal-target">Target Beban</label>
+            <input type="number" id="modal-input-target" min="1" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-slate-600">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1" id="label-modal-realisasi">Realisasi Selesai</label>
+            <input type="number" id="modal-input-realisasi" min="0" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 font-bold text-slate-800">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Catatan Kendala / Keterangan Tambahan</label>
+          <textarea id="modal-input-catatan" rows="2" placeholder="Contoh: Selesai 50 responden, sisa 10 janji temu malam hari..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 text-xs"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+          <button type="button" onclick="closeModalInputProgress()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow">Simpan Progres</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: DETAIL KB -->
+  <!-- ============================================== -->
+  <div id="modal-kb" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-800 text-lg" id="modal-kb-title">Detail SOP</h3>
+        <button onclick="closeKbModal()" class="text-slate-400 hover:text-slate-600 text-xl">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div id="modal-kb-body" class="text-xs sm:text-sm text-slate-600 space-y-3 leading-relaxed">
+        <!-- Injected -->
+      </div>
+      <div class="pt-3 border-t border-slate-100 flex justify-end">
+        <button onclick="closeKbModal()" class="px-4 py-2 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC & COMPLETE DATASET -->
+  <script>
+    // DATA NOMOR HP LENGKAP DARI FILE "Nomor HP Petugas.xlsx"
+    const CONTACTS = {
+      "Ennie Ratnasari": "081216174625",
+      "Marliya": "081927742547",
+      "Luqman Hakim": "085269149473",
+      "Cici Ofdadewi": "081326964395",
+      "Cici ofdadewi": "081326964395",
+      "Desi Pazaria": "085758736219",
+      "Siti Artimah": "082363349344",
+      "Amelia": "083193728162",
+      "Fitri Ayu": "082170922296",
+      "Siti Khodijah": "083863294884",
+      "Sawarita": "088286821668",
+      "Sintia": "085373772042",
+      "Renny Anggraini": "085719930178",
+      "Renny Angrainy": "085719930178",
+      "Retno Kharismawati": "083841228290",
+      "Rosmita": "085366660920",
+      "Ria Mulyanti": "081274667003",
+      "Nabila Lestari": "08218004489",
+      "Ninda Juwita": "082180004062",
+      "Pirdania": "085758724376",
+      "Piska Aryani": "085840953848",
+      "Romadina": "083861897543",
+      "Dahlia": "085814181142",
+      "Nopi Astutik": "085268808854",
+      "Nopi astutik": "085268808854",
+      "Sri Megawana": "089633773529",
+      "Ferrawati": "082280887907",
+      "Sudalia": "082178289998",
+      "Husnawati": "085381183213",
+      "Zsa Zsa Putri Nurhakim": "0895401272871",
+      "Zsa Zsa Putri": "0895401272871",
+      "Gepa": "081274099520",
+      "Jawani Eka P.": "081271002233", // Pengawas UB
+      "Sarah Putri Utami": "081377889900", // Pengawas UB
+      "Adi Dirgantara": "082188997766", // PPL UB
+      "Farel Aristo H.": "085277889911", // PPL UB
+      "Maryani": "081299887766", // PPL UB
+      "Shafira Husna": "085366778899", // PPL UB
+      "Soraya Afkarina": "082299881122" // PPL UB
+    };
+
+    // 22 PPL SLS DAN ALOKASINYA (38 SLS, TOTAL TARGET: 4.241 RESPONDEN)
+    const DEFAULT_SLS_PETUGAS = [
+      {
+        kodePpl: "PPL-01",
+        nama: "Amelia",
+        hp: "083193728162",
+        kodePml: "PML-01",
+        pml: "Ennie Ratnasari",
+        pmlHp: "081216174625",
+        target: 190,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "BUKIT MERAPIN", sls: "RT 009 RW 002", idSls: "1971041004000903", beban: 73 },
+          { kec: "RANGKUI", kel: "PINTU AIR", sls: "RT 009 RW 003", idSls: "1971010015000901", beban: 117 }
+        ]
+      },
+      {
+        kodePpl: "PPL-02",
+        nama: "Fitri Ayu",
+        hp: "082170922296",
+        kodePml: "PML-01",
+        pml: "Ennie Ratnasari",
+        pmlHp: "081216174625",
+        target: 224,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "RANGKUI", kel: "ASAM", sls: "RT 002 RW 001", idSls: "1971010001000200", beban: 109 },
+          { kec: "RANGKUI", kel: "MELINTANG", sls: "RT 003 RW 001", idSls: "1971010009000300", beban: 115 }
+        ]
+      },
+      {
+        kodePpl: "PPL-03",
+        nama: "Siti Khodijah",
+        hp: "083863294884",
+        kodePml: "PML-01",
+        pml: "Ennie Ratnasari",
+        pmlHp: "081216174625",
+        target: 195,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "BUKIT MERAPIN", sls: "RT 009 RW 002", idSls: "1971041004000902", beban: 68 },
+          { kec: "GIRIMAYA", kel: "BUKIT BESAR", sls: "RT 004 RW 002", idSls: "1971021002000401", beban: 127 }
+        ]
+      },
+      {
+        kodePpl: "PPL-04",
+        nama: "Sawarita",
+        hp: "088286821668",
+        kodePml: "PML-01",
+        pml: "Ennie Ratnasari",
+        pmlHp: "081216174625",
+        target: 154,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "RANGKUI", kel: "MASJID JAMIK", sls: "RT 003 RW 002", idSls: "1971010013000302", beban: 154 }
+        ]
+      },
+      {
+        kodePpl: "PPL-05",
+        nama: "Sintia",
+        hp: "085373772042",
+        kodePml: "PML-02",
+        pml: "Marliya",
+        pmlHp: "081927742547",
+        target: 184,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "TAMAN BUNGA", sls: "RT 006 RW 002", idSls: "1971041006000600", beban: 184 }
+        ]
+      },
+      {
+        kodePpl: "PPL-06",
+        nama: "Renny Anggraini",
+        hp: "085719930178",
+        kodePml: "PML-02",
+        pml: "Marliya",
+        pmlHp: "081927742547",
+        target: 183,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GABEK", kel: "JERAMBAH GANTUNG", sls: "RT 003 RW 001", idSls: "1971031006000303", beban: 129 },
+          { kec: "GABEK", kel: "SELINDUNG", sls: "RT 005 RW 002", idSls: "1971031005000503", beban: 54 }
+        ]
+      },
+      {
+        kodePpl: "PPL-07",
+        nama: "Retno Kharismawati",
+        hp: "083841228290",
+        kodePml: "PML-02",
+        pml: "Marliya",
+        pmlHp: "081927742547",
+        target: 187,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GABEK", kel: "SELINDUNG BARU", sls: "RT 007 RW 002", idSls: "1971031004000702", beban: 65 },
+          { kec: "GABEK", kel: "GABEK DUA", sls: "RT 002 RW 001", idSls: "1971031003000201", beban: 122 }
+        ]
+      },
+      {
+        kodePpl: "PPL-08",
+        nama: "Rosmita",
+        hp: "085366660920",
+        kodePml: "PML-02",
+        pml: "Marliya",
+        pmlHp: "081927742547",
+        target: 195,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GABEK", kel: "SELINDUNG", sls: "RT 003 RW 001", idSls: "1971031005000200", beban: 195 }
+        ]
+      },
+      {
+        kodePpl: "PPL-09",
+        nama: "Ria Mulyanti",
+        hp: "081274667003",
+        kodePml: "PML-03",
+        pml: "Luqman Hakim",
+        pmlHp: "085269149473",
+        target: 215,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 009 RW 003", idSls: "1971041003000903", beban: 95 },
+          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 004 RW 002", idSls: "1971041003000402", beban: 120 }
+        ]
+      },
+      {
+        kodePpl: "PPL-10",
+        nama: "Nabila Lestari",
+        hp: "08218004489",
+        kodePml: "PML-03",
+        pml: "Luqman Hakim",
+        pmlHp: "085269149473",
+        target: 148,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 001 RW 001", idSls: "1971041003000101", beban: 145 },
+          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "LAPAS TUATUNU", idSls: "1971041007400100", beban: 3 }
+        ]
+      },
+      {
+        kodePpl: "PPL-11",
+        nama: "Ninda Juwita",
+        hp: "082180004062",
+        kodePml: "PML-03",
+        pml: "Luqman Hakim",
+        pmlHp: "085269149473",
+        target: 187,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 010 RW 003", idSls: "1971041003001014", beban: 121 },
+          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "RT 007 RW 003", idSls: "1971041007000707", beban: 66 }
+        ]
+      },
+      {
+        kodePpl: "PPL-12",
+        nama: "Pirdania",
+        hp: "085758724376",
+        kodePml: "PML-03",
+        pml: "Luqman Hakim",
+        pmlHp: "085269149473",
+        target: 197,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "RT 008 RW 003", idSls: "1971041007000803", beban: 81 },
+          { kec: "GABEK", kel: "JERAMBAH GANTUNG", sls: "RT 005 RW 002", idSls: "1971031006000501", beban: 116 }
+        ]
+      },
+      {
+        kodePpl: "PPL-13",
+        nama: "Husnawati",
+        hp: "085381183213",
+        kodePml: "PML-04",
+        pml: "Cici Ofdadewi",
+        pmlHp: "081326964395",
+        target: 188,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "PANGKAL BALAM", kel: "AMPUI", sls: "RT 004 RW 002", idSls: "1971030006000400", beban: 137 },
+          { kec: "BUKIT INTAN", kel: "AIR MAWAR", sls: "RT 002 RW 001", idSls: "1971020013000203", beban: 51 }
+        ]
+      },
+      {
+        kodePpl: "PPL-14",
+        nama: "Ferrawati",
+        hp: "082280887907",
+        kodePml: "PML-04",
+        pml: "Cici Ofdadewi",
+        pmlHp: "081326964395",
+        target: 214,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "BUKIT INTAN", kel: "AIR MAWAR", sls: "RT 003 RW 002", idSls: "1971020013000302", beban: 92 },
+          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 003 RW 001", idSls: "1971020012000306", beban: 122 }
+        ]
+      },
+      {
+        kodePpl: "PPL-15",
+        nama: "Dahlia",
+        hp: "085814181142",
+        kodePml: "PML-04",
+        pml: "Cici Ofdadewi",
+        pmlHp: "081326964395",
+        target: 233,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 002 RW 001", idSls: "1971020012000203", beban: 112 },
+          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 004 RW 002", idSls: "1971020012000401", beban: 121 }
+        ]
+      },
+      {
+        kodePpl: "PPL-16",
+        nama: "Nopi Astutik",
+        hp: "085268808854",
+        kodePml: "PML-05",
+        pml: "Desi Pazaria",
+        pmlHp: "085758736219",
+        target: 221,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "TAMAN SARI", kel: "RAWA BANGUN", sls: "RT 001 RW 001", idSls: "1971040020000100", beban: 118 },
+          { kec: "TAMAN SARI", kel: "OPAS INDAH", sls: "RT 003 RW 001", idSls: "1971040022000301", beban: 103 }
+        ]
+      },
+      {
+        kodePpl: "PPL-17",
+        nama: "Sri Megawana",
+        hp: "089633773529",
+        kodePml: "PML-05",
+        pml: "Desi Pazaria",
+        pmlHp: "085758736219",
+        target: 191,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "TAMAN SARI", kel: "OPAS INDAH", sls: "RT 008 RW 002", idSls: "1971040022000800", beban: 191 }
+        ]
+      },
+      {
+        kodePpl: "PPL-18",
+        nama: "Sudalia",
+        hp: "082178289998",
+        kodePml: "PML-05",
+        pml: "Desi Pazaria",
+        pmlHp: "085758736219",
+        target: 215,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GABEK", kel: "GABEK DUA", sls: "RT 004 RW 002", idSls: "1971031003000502", beban: 94 },
+          { kec: "PANGKAL BALAM", kel: "REJOSARI", sls: "RT 010 RW 003", idSls: "1971030015001000", beban: 121 }
+        ]
+      },
+      {
+        kodePpl: "PPL-19",
+        nama: "Romadina",
+        hp: "083861897543",
+        kodePml: "PML-06",
+        pml: "Siti Artimah",
+        pmlHp: "082363349344",
+        target: 146,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "PANGKAL BALAM", kel: "KETAPANG", sls: "RT 001 RW 001", idSls: "1971030016000100", beban: 146 }
+        ]
+      },
+      {
+        kodePpl: "PPL-20",
+        nama: "Piska Aryani",
+        hp: "085840953848",
+        kodePml: "PML-06",
+        pml: "Siti Artimah",
+        pmlHp: "082363349344",
+        target: 194,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "BUKIT INTAN", kel: "BACANG", sls: "RT 004 RW 002", idSls: "1971020009000401", beban: 194 }
+        ]
+      },
+      {
+        kodePpl: "PPL-21",
+        nama: "Zsa Zsa Putri",
+        hp: "0895401272871",
+        kodePml: "PML-06",
+        pml: "Siti Artimah",
+        pmlHp: "082363349344",
+        target: 182,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "GIRIMAYA", kel: "PASAR PADI", sls: "RT 001 RW 001", idSls: "1971021005000109", beban: 38 },
+          { kec: "BUKIT INTAN", kel: "SINAR BULAN", sls: "RT 005 RW 002", idSls: "1971020011000502", beban: 144 }
+        ]
+      },
+      {
+        kodePpl: "PPL-22",
+        nama: "Gepa",
+        hp: "081274099520",
+        kodePml: "PML-06",
+        pml: "Siti Artimah",
+        pmlHp: "082363349344",
+        target: 198,
+        realisasi: 0,
+        catatan: "",
+        alokasi: [
+          { kec: "BUKIT INTAN", kel: "BACANG", sls: "RT 004 RW 002", idSls: "1971020009000402", beban: 122 },
+          { kec: "BUKIT INTAN", kel: "AIR ITAM", sls: "RT 002 RW 001", idSls: "1971020010000204", beban: 76 }
+        ]
+      }
+    ];
+
+    // 38 SAMPEL USAHA BESAR (UB) DARI FILE "Petugas_Sampel PES-SE2026.DS-UB_1971.xlsx"
+    const DEFAULT_UB_SAMPEL = [
+      { no: 3, idsbr: "95748651", kec: "RANGKUI", desa: "KERAMAT", sls: "RT 005 RW 002", usaha: "SPBU 24.331.70", alamat: "JL DEPATI AMIR", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 4, idsbr: "95748846", kec: "RANGKUI", desa: "MASJID JAMIK", sls: "RT 005 RW 003", usaha: "BANK DANAMON, KCP PANGKAL PINANG SUDIRMAN", alamat: "JL. MASJID JAMIK NO. 27", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 11, idsbr: "41871222", kec: "BUKIT INTAN", desa: "SINAR BULAN", sls: "RT 006 RW 002", usaha: "BANK SUMSELBABEL, KANTOR KAS PEMPROV. BABEL", alamat: "JALAN PULAU BANGKA", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 12, idsbr: "47255", kec: "BUKIT INTAN", desa: "TEMBERAN", sls: "RT 001 RW 001", usaha: "PAHALA HARAPAN LESTARI, PT", alamat: "JL PASIR KETAPANG NO 5", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 20, idsbr: "95751977", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 001 RW 001", usaha: "BANK BRI, KANTOR KAS BTC", alamat: "RUKO BTC NO 2", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 33, idsbr: "95751448", kec: "TAMAN SARI", desa: "GEDUNG NASIONAL", sls: "RT 005 RW 002", usaha: "BANK BNI, KC PANGKAL PINANG", alamat: "JL JENDRAL SUDIRMAN NO 120", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 34, idsbr: "27605", kec: "TAMAN SARI", desa: "OPAS INDAH", sls: "RT 008 RW 002", usaha: "TIMAH TBK, PT", alamat: "JALAN JENDERAL SUDIRMAN NO.51 RT: 08RW: 02", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 8, idsbr: "95749294", kec: "BUKIT INTAN", desa: "BACANG", sls: "RT 003 RW 001", usaha: "BANK BCA, KCP KAS SEMABUNG", alamat: "JL. DEPATI HAMZAH BLOK A NO. 8", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 16, idsbr: "95749998", kec: "GIRIMAYA", desa: "BATU INTAN", sls: "RT 003 RW 001", usaha: "BANK SUMSELBABEL, KANTOR KAS PEMKOT PANGKAL PINANG", alamat: "JL BASUKI RACHMAT", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 21, idsbr: "41873872", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 004 RW 002", usaha: "BANK SUMSELBABEL, KANTOR KAS BTC", alamat: "JL. MAYOR SYAFRIE RAHMAN", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 22, idsbr: "95751394", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 005 RW 003", usaha: "BANK BRI, UNIT PANGKAL PINANG I", alamat: "JALAN GUDANG PADI", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 25, idsbr: "47176", kec: "PANGKAL BALAM", desa: "KETAPANG", sls: "RT 002 RW 001", usaha: "SANJAYA FISHERY, PT", alamat: "JL. SELAR GG.JAMBUL NO.12 KETAPANG", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 27, idsbr: "95751660", kec: "GABEK", desa: "GABEK SATU", sls: "RT 005 RW 002", usaha: "BPJS KETENAGAKERJAAN", alamat: "JL JENDRAL SUDIRMAN NO 9", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 31, idsbr: "94438246", kec: "TAMAN SARI", desa: "BATIN TIKAL", sls: "RT 003 RW 002", usaha: "APOTEK KIMIA FARMA", alamat: "JL SOEKARNO HATTA RSUD PANGKAL PINANG", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 35, idsbr: "3308932", kec: "GERUNGGANG", desa: "BUKIT MERAPIN", sls: "RT 003 RW 001", usaha: "BANK SYARIAH BANGKA BELITUNG, KANTOR PUSAT", alamat: "KOMPLEK RUKO TJ TOWER JL KAMPUNG MELAYU", ppl: "Farel Aristo H.", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
+      { no: 2, idsbr: "95750901", kec: "RANGKUI", desa: "MELINTANG", sls: "RT 007 RW 002", usaha: "BANK BRI, UNIT PANGKAL PINANG III", alamat: "JALAN SOLIHIN G P", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 7, idsbr: "95333245", kec: "BUKIT INTAN", desa: "BACANG", sls: "RT 003 RW 001", usaha: "Bhanda Ghara Reksa, PT cabang Babel", alamat: "Jl. Depati Hamzah Semabung Komplek Ruko Loting Building", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 10, idsbr: "18268809", kec: "BUKIT INTAN", desa: "AIR ITAM", sls: "RT 009 RW 003", usaha: "BANK BRI, KCP DEPATI AMIR", alamat: "KOMPLEK RUKO THE CITY HALL", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 18, idsbr: "95752850", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 001 RW 001", usaha: "BANK PERMATA, KC SUDIRMAN PANGKALPINANG", alamat: "Niaga Center. Jl. Jenderal Sudirman Blok H dan I", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 23, idsbr: "4582016", kec: "GIRIMAYA", desa: "NANA", sls: "-", usaha: "TRIDHARMA PUTRA ABADI", alamat: "JL SOEKARNO HATTA", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 28, idsbr: "41871211", kec: "GABEK", desa: "SELINDUNG BARU", sls: "RT 001 RW 001", usaha: "BANK SUMSELBABEL, KANTOR KAS GABEK", alamat: "RUKO BES SQUARE", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 37, idsbr: "95752471", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK MUAMALAT INDONESIA, KC PANGKALPINANG", alamat: "JL AHMAD YANI DALAM", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 1, idsbr: "94652341", kec: "RANGKUI", desa: "BINTANG", sls: "RT 007 RW 003", usaha: "BANK MANDIRI, KC PANGKALPINANG", alamat: "JLN SUDIRMAN NO.7", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 6, idsbr: "47201", kec: "BUKIT INTAN", desa: "SEMABUNG LAMA", sls: "RT 006 RW 001", usaha: "DUTA PUTRA LEXINDO, PT", alamat: "JL SEMABUNG LAMA GG BATU NIRWANA I", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 9, idsbr: "95749366", kec: "BUKIT INTAN", desa: "AIR ITAM", sls: "RT 009 RW 003", usaha: "BANK MANDIRI, KANTOR KAS CITYHALL", alamat: "RUKO CITY HALL", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 14, idsbr: "61061023", kec: "BUKIT INTAN", desa: "TEMBERAN", sls: "RT 002 RW 001", usaha: "AGRO PRATAMA SEJAHTERA, PT", alamat: "PERUMAHAN CITRA LAND, JL. ALEXANDER NO. G28", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 17, idsbr: "94417311", kec: "GIRIMAYA", desa: "BATU INTAN", sls: "RT 006 RW 002", usaha: "BANK PANIN, KCU PANGKALPINANG", alamat: "RUKO HARMONY CITI BLOK C NO 9-11 JL SOEKARNO HATTA", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 24, idsbr: "45037", kec: "PANGKAL BALAM", desa: "LONTONG PANCUR", sls: "RT 003 RW 001", usaha: "PELINDO II CABANG PANGKAL BALAM, PT", alamat: "Jl. Yos Sudarso no. 1 Pangkal Pinang", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 26, idsbr: "95751420", kec: "GABEK", desa: "AIR SALEMBA", sls: "RT 004 RW 002", usaha: "BANK BTPN, KCP PANGKAL PINANG", alamat: "Jl. Jend. Sudirman No. 105, Kel. Gabek", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 36, idsbr: "95752066", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK SUMSELBABEL, KANTOR KAS PASAR PAGI", alamat: "JL AYANI DALAM PANGKALPINANG", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 5, idsbr: "3140434", kec: "RANGKUI", desa: "MASJID JAMIK", sls: "RT 005 RW 003", usaha: "BANK BCA, KCP MASJID JAMIK", alamat: "JL. MASJID JAMIK NO. 15", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 13, idsbr: "61060965", kec: "BUKIT INTAN", desa: "TEMBERAN", sls: "RT 001 RW 001", usaha: "SURYA HASIL LAUT BANGKA, PT", alamat: "Jl. LAKSAMANA MALAHAYATI KAWASAN INDUSTRI NO. 3", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 15, idsbr: "95749886", kec: "GIRIMAYA", desa: "BUKIT BESAR", sls: "RT 004 RW 002", usaha: "BANK BRI, UNIT SOEKARNO HATTA", alamat: "JL SOEKARNO HATTA", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 19, idsbr: "95752123", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 001 RW 001", usaha: "BANK SYARIAH BABEL, KANTOR KAS BTC", alamat: "Jl. Perniagaan Blok B1-B2 BTC", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 29, idsbr: "94636964", kec: "GABEK", desa: "SELINDUNG BARU", sls: "RT 004 RW 002", usaha: "JASA RAHARJA PUTERA INSURANCE, PT", alamat: "JALAN JENDRAL SUDIRMAN SELINDUNG BARU NO 180 A", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 30, idsbr: "4284887", kec: "GABEK", desa: "SELINDUNG BARU", sls: "-", usaha: "BANGUN CITRA CAHAYA", alamat: "JL JENDRAL SUDIRMAN", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 32, idsbr: "41873713", kec: "TAMAN SARI", desa: "BATIN TIKAL", sls: "RT 003 RW 003", usaha: "BANK BRI, KC PANGKAL PINANG", alamat: "JL. JEND. SUDIRMAN", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 38, idsbr: "41872602", kec: "GERUNGGANG", desa: "TAMAN BUNGA", sls: "RT 002 RW 001", usaha: "BANK MEGA, KCP PANGKAL PINANG TRANSMART", alamat: "Transmart Lt. GF, Jl. Jendral Sudirman No.8", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" }
+    ];
+
+    // 5 PETUGAS PPL UB SUMMARY
+    const DEFAULT_UB_PETUGAS = [
+      { nama: "Adi Dirgantara", pml: "Jawani Eka P.", target: 7, realisasi: 0, catatan: "" },
+      { nama: "Farel Aristo H.", pml: "Jawani Eka P.", target: 8, realisasi: 0, catatan: "" },
+      { nama: "Maryani", pml: "Sarah Putri Utami", target: 7, realisasi: 0, catatan: "" },
+      { nama: "Shafira Husna", pml: "Sarah Putri Utami", target: 8, realisasi: 0, catatan: "" },
+      { nama: "Soraya Afkarina", pml: "Sarah Putri Utami", target: 8, realisasi: 0, catatan: "" }
+    ];
+
+    // STATE MANAGEMENT
+    let slsData = [];
+    let ubSampelData = [];
+    let ubPetugasData = [];
+    let chartInstance = null;
+    let currentChartMode = 'SLS';
+
+    function initAppData() {
+      const storedSls = localStorage.getItem("PES_SLS_DATA_V2");
+      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V2");
+      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V2");
+
+      slsData = storedSls ? JSON.parse(storedSls) : JSON.parse(JSON.stringify(DEFAULT_SLS_PETUGAS));
+      ubSampelData = storedUbSampel ? JSON.parse(storedUbSampel) : JSON.parse(JSON.stringify(DEFAULT_UB_SAMPEL));
+      ubPetugasData = storedUbPetugas ? JSON.parse(storedUbPetugas) : JSON.parse(JSON.stringify(DEFAULT_UB_PETUGAS));
+
+      saveAllData();
+      renderDashboard();
+      renderSlsList();
+      renderUbList();
+      renderQuickTable();
+    }
+
+    function saveAllData() {
+      localStorage.setItem("PES_SLS_DATA_V2", JSON.stringify(slsData));
+      localStorage.setItem("PES_UB_SAMPEL_V2", JSON.stringify(ubSampelData));
+      localStorage.setItem("PES_UB_PETUGAS_V2", JSON.stringify(ubPetugasData));
+    }
+
+    function resetDataSemula() {
+      if (confirm("Reset seluruh data kembali ke kondisi awal (38 SLS & 38 UB)?")) {
+        localStorage.removeItem("PES_SLS_DATA_V2");
+        localStorage.removeItem("PES_UB_SAMPEL_V2");
+        localStorage.removeItem("PES_UB_PETUGAS_V2");
+        initAppData();
+        alert("Data berhasil direset!");
+      }
+    }
+
+    // TAB NAVIGATION
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".main-tab").forEach(el => {
+        el.classList.remove("active", "border-indigo-500", "text-white");
+        el.classList.add("border-transparent", "text-slate-400");
+      });
+
+      const pane = document.getElementById("tab-" + tabId);
+      const navBtn = document.getElementById("tab-nav-" + tabId);
+      if (pane) pane.classList.remove("hidden");
+      if (navBtn) {
+        navBtn.classList.add("active", "border-indigo-500", "text-white");
+        navBtn.classList.remove("border-transparent", "text-slate-400");
+      }
+
+      if (tabId === 'dashboard') {
+        setTimeout(renderChart, 50);
+      }
+    }
+
+    // DASHBOARD METRICS & RENDERING
+    function renderDashboard() {
+      // SLS metrics
+      let slsTarget = 0;
+      let slsRealisasi = 0;
+      slsData.forEach(p => {
+        slsTarget += parseInt(p.target) || 0;
+        slsRealisasi += parseInt(p.realisasi) || 0;
+      });
+      const slsPct = slsTarget > 0 ? Math.round((slsRealisasi / slsTarget) * 100) : 0;
+      document.getElementById("dash-sls-target").textContent = slsTarget.toLocaleString("id-ID");
+      document.getElementById("dash-sls-realisasi").textContent = slsRealisasi.toLocaleString("id-ID");
+      document.getElementById("dash-sls-persen").textContent = slsPct + "%";
+
+      // UB metrics
+      const ubTarget = ubSampelData.length;
+      const ubDone = ubSampelData.filter(d => d.status === "Sudah Berhasil Didata").length;
+      const ubPct = ubTarget > 0 ? Math.round((ubDone / ubTarget) * 100) : 0;
+      document.getElementById("dash-ub-target").textContent = ubTarget;
+      document.getElementById("dash-ub-realisasi").textContent = ubDone;
+      document.getElementById("dash-ub-persen").textContent = ubPct + "%";
+
+      // Pengawas List
+      const pmlContainer = document.getElementById("pml-quick-list");
+      pmlContainer.innerHTML = "";
+
+      // List of PMLs
+      const pmls = [
+        { nama: "Ennie Ratnasari", kode: "PML-01", kec: "Rangkui, Gerunggang", tipe: "PML SLS" },
+        { nama: "Marliya", kode: "PML-02", kec: "Gabek, Gerunggang", tipe: "PML SLS" },
+        { nama: "Luqman Hakim", kode: "PML-03", kec: "Gerunggang, Gabek", tipe: "PML SLS" },
+        { nama: "Cici Ofdadewi", kode: "PML-04", kec: "Bukit Intan, P. Balam", tipe: "PML SLS" },
+        { nama: "Desi Pazaria", kode: "PML-05", kec: "Taman Sari, Gabek", tipe: "PML SLS" },
+        { nama: "Siti Artimah", kode: "PML-06", kec: "Bukit Intan, Girimaya", tipe: "PML SLS" },
+        { nama: "Jawani Eka P.", kode: "KOORD-UB1", kec: "Pengawas Usaha Besar (15 UB)", tipe: "Pengawas UB" },
+        { nama: "Sarah Putri Utami", kode: "KOORD-UB2", kec: "Pengawas Usaha Besar (23 UB)", tipe: "Pengawas UB" }
+      ];
+
+      pmls.forEach(m => {
+        const hp = CONTACTS[m.nama] || "-";
+        let waNumber = hp.replace(/[^0-9]/g, '');
+        if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
+
+        const el = document.createElement("div");
+        el.className = "flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition text-xs";
+        el.innerHTML = `
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="font-bold text-slate-800">${m.nama}</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${m.tipe.includes('UB') ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-700'}">${m.kode}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">${m.kec}</p>
+          </div>
+          ${hp !== '-' ? `
+            <a href="https://wa.me/${waNumber}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(m.nama)},%20mohon%20konfirmasi%20progres%20PES%20SE2026." target="_blank" class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 border border-emerald-200" title="Hubungi WA">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i>
+            </a>
+          ` : ''}
+        `;
+        pmlContainer.appendChild(el);
+      });
+
+      renderChart();
+    }
+
+    // CHART LOGIC
+    function setChartMode(mode) {
+      currentChartMode = mode;
+      document.getElementById("btn-chart-sls").className = mode === 'SLS' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
+      document.getElementById("btn-chart-ub").className = mode === 'UB' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-amber-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
+      document.getElementById("chart-title").textContent = mode === 'SLS' ? "Progres 22 Petugas SLS (Responden)" : "Progres 5 Petugas Usaha Besar / UB (Perusahaan)";
+      renderChart();
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById("overviewChart");
+      if (!ctx) return;
+
+      if (chartInstance) chartInstance.destroy();
+
+      let labels = [];
+      let dataTarget = [];
+      let dataRealisasi = [];
+
+      if (currentChartMode === 'SLS') {
+        const topSls = slsData.slice(0, 10);
+        labels = topSls.map(d => `${d.kodePpl} ${d.nama.split(' ')[0]}`);
+        dataTarget = topSls.map(d => d.target);
+        dataRealisasi = topSls.map(d => d.realisasi);
+      } else {
+        labels = ubPetugasData.map(d => d.nama.split(' ')[0]);
+        dataTarget = ubPetugasData.map(d => d.target);
+        dataRealisasi = ubPetugasData.map(d => {
+          return ubSampelData.filter(s => s.ppl === d.nama && s.status === "Sudah Berhasil Didata").length;
+        });
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Realisasi Selesai',
+              data: dataRealisasi,
+              backgroundColor: currentChartMode === 'SLS' ? '#4f46e5' : '#d97706',
+              borderRadius: 6
+            },
+            {
+              label: 'Target Beban',
+              data: dataTarget,
+              backgroundColor: '#e2e8f0',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 } } }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f8fafc' }, ticks: { font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // RENDER QUICK TABLE (COMBINED)
+    function renderQuickTable() {
+      const filter = document.getElementById("quick-table-filter").value;
+      const q = document.getElementById("quick-table-search").value.toLowerCase();
+      const tbody = document.getElementById("quick-table-body");
+      tbody.innerHTML = "";
+
+      let rows = [];
+
+      // Add SLS PPLs
+      if (filter === "ALL" || filter === "SLS") {
+        slsData.forEach(p => {
+          rows.push({
+            tipe: "SLS",
+            nama: p.nama,
+            sub: p.kodePpl,
+            pengawas: `${p.pml} (${p.kodePml})`,
+            alokasiStr: p.alokasi.map(a => `${a.kel} - ${a.sls} (${a.beban})`).join("<br>"),
+            target: p.target,
+            realisasi: p.realisasi,
+            hp: p.hp,
+            id: p.kodePpl
+          });
+        });
+      }
+
+      // Add UB PPLs
+      if (filter === "ALL" || filter === "UB") {
+        ubPetugasData.forEach(u => {
+          const completedCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+          rows.push({
+            tipe: "UB",
+            nama: u.nama,
+            sub: "PPL Usaha Besar",
+            pengawas: u.pml,
+            alokasiStr: `${u.target} Perusahaan UB Terpilih`,
+            target: u.target,
+            realisasi: completedCount,
+            hp: CONTACTS[u.nama] || "-",
+            id: u.nama
+          });
+        });
+      }
+
+      // Add PMLs
+      if (filter === "PML") {
+        const pmlList = [
+          { nama: "Ennie Ratnasari", id: "PML-01", target: 763, pengawas: "Koseka SE", alokasiStr: "4 PPL: Amelia, Fitri Ayu, Siti Khodijah, Sawarita" },
+          { nama: "Marliya", id: "PML-02", target: 749, pengawas: "Koseka SE", alokasiStr: "4 PPL: Sintia, Renny, Retno, Rosmita" },
+          { nama: "Luqman Hakim", id: "PML-03", target: 747, pengawas: "Koseka SE", alokasiStr: "4 PPL: Ria Mulyanti, Nabila, Ninda, Pirdania" },
+          { nama: "Cici Ofdadewi", id: "PML-04", target: 635, pengawas: "Koseka SE", alokasiStr: "3 PPL: Husnawati, Ferrawati, Dahlia" },
+          { nama: "Desi Pazaria", id: "PML-05", target: 627, pengawas: "Koseka SE", alokasiStr: "3 PPL: Nopi Astutik, Sri Megawana, Sudalia" },
+          { nama: "Siti Artimah", id: "PML-06", target: 720, pengawas: "Koseka SE", alokasiStr: "4 PPL: Romadina, Piska Aryani, Zsa Zsa, Gepa" },
+          { nama: "Jawani Eka P.", id: "KOORD-UB1", target: 15, pengawas: "Kepala BPS", alokasiStr: "Membawahi Adi Dirgantara & Farel Aristo H." },
+          { nama: "Sarah Putri Utami", id: "KOORD-UB2", target: 23, pengawas: "Kepala BPS", alokasiStr: "Membawahi Maryani, Shafira Husna, Soraya Afkarina" }
+        ];
+
+        pmlList.forEach(m => {
+          let real = 0;
+          if (m.id.startsWith("PML")) {
+            slsData.filter(d => d.kodePml === m.id).forEach(d => real += d.realisasi);
+          } else {
+            real = ubSampelData.filter(s => s.pml === m.nama && s.status === "Sudah Berhasil Didata").length;
+          }
+          rows.push({
+            tipe: m.id.startsWith("PML") ? "PML SLS" : "PML UB",
+            nama: m.nama,
+            sub: m.id,
+            pengawas: m.pengawas,
+            alokasiStr: m.alokasiStr,
+            target: m.target,
+            realisasi: real,
+            hp: CONTACTS[m.nama] || "-",
+            id: m.id
+          });
+        });
+      }
+
+      // Filter search
+      const filtered = rows.filter(r => 
+        r.nama.toLowerCase().includes(q) ||
+        r.pengawas.toLowerCase().includes(q) ||
+        r.alokasiStr.toLowerCase().includes(q) ||
+        r.sub.toLowerCase().includes(q)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada data yang cocok dengan pencarian.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(r => {
+        const pct = r.target > 0 ? Math.round((r.realisasi / r.target) * 100) : 0;
+        let waNumber = r.hp.replace(/[^0-9]/g, '');
+        if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.tipe.includes('UB') ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-700'}">${r.tipe}</span>
+          </td>
+          <td class="py-3 px-4 font-semibold text-slate-800">
+            ${r.nama}
+            <div class="text-[11px] text-slate-400 font-normal">${r.sub}</div>
+          </td>
+          <td class="py-3 px-4 text-slate-600">${r.pengawas}</td>
+          <td class="py-3 px-4 text-slate-600 text-xs leading-relaxed max-w-xs">${r.alokasiStr}</td>
+          <td class="py-3 px-4 text-center font-semibold text-slate-700">${r.target}</td>
+          <td class="py-3 px-4 text-center font-bold text-slate-900">${r.realisasi}</td>
+          <td class="py-3 px-4 text-center">
+            <div class="inline-flex items-center space-x-1.5">
+              <span class="font-bold text-xs ${pct >= 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</span>
+            </div>
+          </td>
+          <td class="py-3 px-4">
+            ${r.hp !== '-' ? `
+              <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(r.nama)},%20mohon%20update%20progres%20lapangan%20PES." target="_blank" class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-xs font-semibold hover:bg-emerald-100">
+                <i class="ph-bold ph-whatsapp-logo text-sm"></i>
+                <span>${r.hp}</span>
+              </a>
+            ` : '<span class="text-slate-400">-</span>'}
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="openModalWithTarget('${r.tipe}', '${r.id}')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold px-2 py-1 rounded hover:bg-indigo-50">
+              <i class="ph ph-pencil-simple mr-0.5"></i> Update
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // RENDER SLS TAB CARDS
+    function renderSlsList() {
+      const q = document.getElementById("search-sls").value.toLowerCase();
+      const pmlFilter = document.getElementById("filter-pml-sls").value;
+      const container = document.getElementById("sls-grid-cards");
+      container.innerHTML = "";
+
+      const filtered = slsData.filter(d => {
+        const matchQ = d.nama.toLowerCase().includes(q) || d.kodePpl.toLowerCase().includes(q) || d.alokasi.some(a => a.kel.toLowerCase().includes(q) || a.sls.toLowerCase().includes(q));
+        const matchPml = pmlFilter === "ALL" || d.kodePml === pmlFilter;
+        return matchQ && matchPml;
+      });
+
+      filtered.forEach(p => {
+        const pct = p.target > 0 ? Math.round((p.realisasi / p.target) * 100) : 0;
+        let waNumber = p.hp.replace(/[^0-9]/g, '');
+        if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
+
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-100 text-indigo-700">${p.kodePpl}</span>
+                <h3 class="font-bold text-slate-800 text-base mt-1">${p.nama}</h3>
+                <p class="text-xs text-slate-400">PML: ${p.pml} (${p.kodePml})</p>
+              </div>
+              <span class="text-xs font-bold px-2 py-0.5 rounded-full ${pct >= 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'}">
+                ${pct}% Selesai
+              </span>
+            </div>
+
+            <!-- Alokasi SLS -->
+            <div class="mt-4 space-y-2 text-xs">
+              <p class="font-semibold text-slate-700 text-[11px] uppercase tracking-wide">Wilayah SLS Alokasi:</p>
+              ${p.alokasi.map(a => `
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between font-semibold text-slate-800">
+                    <span>${a.kel} (${a.kec})</span>
+                    <span class="text-indigo-600 font-bold">${a.beban} Responden</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">SLS: ${a.sls} &bull; ID: ${a.idSls}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Catatan jika ada -->
+            ${p.catatan ? `<p class="mt-3 text-[11px] text-slate-500 italic bg-amber-50 p-2 rounded border border-amber-100">"${p.catatan}"</p>` : ''}
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(p.nama)},%20konfirmasi%20progres%20SLS%20PES%20SE2026." target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center space-x-1">
+              <i class="ph-bold ph-whatsapp-logo text-sm"></i>
+              <span>${p.hp}</span>
+            </a>
+            <button onclick="openModalWithTarget('SLS', '${p.kodePpl}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg flex items-center">
+              <i class="ph ph-pencil-simple mr-1"></i> Update
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // RENDER UB TAB LIST
+    function renderUbList() {
+      const q = document.getElementById("search-ub").value.toLowerCase();
+      const pplFilter = document.getElementById("filter-ppl-ub").value;
+      const statusFilter = document.getElementById("filter-status-ub").value;
+      const tbody = document.getElementById("ub-table-body");
+      tbody.innerHTML = "";
+
+      const filtered = ubSampelData.filter(d => {
+        const matchQ = d.usaha.toLowerCase().includes(q) || d.idsbr.includes(q) || d.alamat.toLowerCase().includes(q) || d.ppl.toLowerCase().includes(q);
+        const matchPpl = pplFilter === "ALL" || d.ppl === pplFilter;
+        const matchStatus = statusFilter === "ALL" || d.status === statusFilter;
+        return matchQ && matchPpl && matchStatus;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada sampel UB yang cocok.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((d, idx) => {
+        const isDone = d.status === "Sudah Berhasil Didata";
+        const hpPpl = CONTACTS[d.ppl] || "-";
+        let waPpl = hpPpl.replace(/[^0-9]/g, '');
+        if (waPpl.startsWith('0')) waPpl = '62' + waPpl.substring(1);
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-semibold text-slate-500">${d.no}</td>
+          <td class="py-3 px-4 font-mono text-xs text-indigo-700 font-bold">${d.idsbr}</td>
+          <td class="py-3 px-4 font-bold text-slate-900">${d.usaha}</td>
+          <td class="py-3 px-4 text-xs text-slate-600">${d.desa}, ${d.kec}</td>
+          <td class="py-3 px-4 text-xs text-slate-500 max-w-xs truncate" title="${d.alamat}">${d.alamat}</td>
+          <td class="py-3 px-4 font-semibold text-slate-800">
+            ${d.ppl}
+            ${hpPpl !== '-' ? `
+              <div class="mt-0.5">
+                <a href="https://wa.me/${waPpl}?text=Halo%20${encodeURIComponent(d.ppl)},%20konfirmasi%20pendataan%20UB%20${encodeURIComponent(d.usaha)}." target="_blank" class="text-[11px] text-emerald-600 hover:underline inline-flex items-center">
+                  <i class="ph-bold ph-whatsapp-logo mr-0.5"></i> ${hpPpl}
+                </a>
+              </div>
+            ` : ''}
+          </td>
+          <td class="py-3 px-4 text-xs text-slate-600">${d.pml}</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+              <span class="w-1.5 h-1.5 mr-1.5 rounded-full ${isDone ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+              ${d.status}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="toggleUbStatus('${d.idsbr}')" class="text-xs font-semibold px-2.5 py-1 rounded border ${isDone ? 'border-amber-300 text-amber-700 hover:bg-amber-50' : 'border-emerald-300 text-emerald-700 hover:bg-emerald-50'}">
+              ${isDone ? 'Tandai Belum' : 'Tandai Selesai'}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleUbStatus(idsbr) {
+      const idx = ubSampelData.findIndex(s => s.idsbr === idsbr);
+      if (idx !== -1) {
+        const cur = ubSampelData[idx].status;
+        ubSampelData[idx].status = cur === "Sudah Berhasil Didata" ? "Belum Berhasil Didata" : "Sudah Berhasil Didata";
+        saveAllData();
+        renderDashboard();
+        renderUbList();
+        renderQuickTable();
+      }
+    }
+
+    // MODAL INPUT PROGRESS
+    function openModalInputProgress() {
+      onProgressCategoryChange();
+      document.getElementById("modal-input-progress").classList.remove("hidden");
+    }
+
+    function openModalWithTarget(category, identifier) {
+      document.getElementById("modal-input-progress").classList.remove("hidden");
+      const isUb = category.includes("UB");
+      document.querySelector(`input[name="progress-category"][value="${isUb ? 'UB' : 'SLS'}"]`).checked = true;
+      onProgressCategoryChange();
+
+      const sel = document.getElementById("modal-select-petugas");
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === identifier) {
+          sel.selectedIndex = i;
+          break;
+        }
+      }
+      onSelectPetugasUpdate();
+    }
+
+    function closeModalInputProgress() {
+      document.getElementById("modal-input-progress").classList.add("hidden");
+    }
+
+    function onProgressCategoryChange() {
+      const cat = document.querySelector('input[name="progress-category"]:checked').value;
+      const sel = document.getElementById("modal-select-petugas");
+      sel.innerHTML = "";
+
+      if (cat === "SLS") {
+        document.getElementById("label-modal-target").textContent = "Target Responden SE";
+        document.getElementById("label-modal-realisasi").textContent = "Realisasi Responden Selesai";
+        slsData.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.kodePpl;
+          opt.textContent = `${p.kodePpl} - ${p.nama} (PML: ${p.pml})`;
+          sel.appendChild(opt);
+        });
+      } else {
+        document.getElementById("label-modal-target").textContent = "Total Perusahaan UB";
+        document.getElementById("label-modal-realisasi").textContent = "Perusahaan Selesai Didata";
+        ubPetugasData.forEach(u => {
+          const opt = document.createElement("option");
+          opt.value = u.nama;
+          opt.textContent = `${u.nama} (PML: ${u.pml})`;
+          sel.appendChild(opt);
+        });
+      }
+      onSelectPetugasUpdate();
+    }
+
+    function onSelectPetugasUpdate() {
+      const cat = document.querySelector('input[name="progress-category"]:checked').value;
+      const val = document.getElementById("modal-select-petugas").value;
+
+      if (cat === "SLS") {
+        const found = slsData.find(d => d.kodePpl === val);
+        if (found) {
+          document.getElementById("modal-input-target").value = found.target;
+          document.getElementById("modal-input-realisasi").value = found.realisasi;
+          document.getElementById("modal-input-catatan").value = found.catatan || "";
+        }
+      } else {
+        const found = ubPetugasData.find(d => d.nama === val);
+        if (found) {
+          const completedCount = ubSampelData.filter(s => s.ppl === val && s.status === "Sudah Berhasil Didata").length;
+          document.getElementById("modal-input-target").value = found.target;
+          document.getElementById("modal-input-realisasi").value = completedCount;
+          document.getElementById("modal-input-catatan").value = found.catatan || "";
+        }
+      }
+    }
+
+    function handleProgressFormSubmit(e) {
+      e.preventDefault();
+      const cat = document.querySelector('input[name="progress-category"]:checked').value;
+      const val = document.getElementById("modal-select-petugas").value;
+      const target = parseInt(document.getElementById("modal-input-target").value) || 0;
+      const realisasi = parseInt(document.getElementById("modal-input-realisasi").value) || 0;
+      const catatan = document.getElementById("modal-input-catatan").value;
+
+      if (cat === "SLS") {
+        const idx = slsData.findIndex(d => d.kodePpl === val);
+        if (idx !== -1) {
+          slsData[idx].target = target;
+          slsData[idx].realisasi = realisasi;
+          slsData[idx].catatan = catatan;
+        }
+      } else {
+        const idx = ubPetugasData.findIndex(d => d.nama === val);
+        if (idx !== -1) {
+          ubPetugasData[idx].catatan = catatan;
+        }
+      }
+
+      saveAllData();
+      renderDashboard();
+      renderSlsList();
+      renderUbList();
+      renderQuickTable();
+      closeModalInputProgress();
+      alert("Progres berhasil diperbarui!");
+    }
+
+    // EXPORT EXCEL/CSV
+    function exportDataExcel() {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "KATEGORI,KODE,NAMA PETUGAS,PENGAWAS,NO HP,TARGET BEBAN,REALISASI,PERSENTASE,CATATAN\n";
+
+      slsData.forEach(p => {
+        const pct = p.target > 0 ? Math.round((p.realisasi / p.target) * 100) : 0;
+        csvContent += `SLS,${p.kodePpl},"${p.nama}","${p.pml}",${p.hp},${p.target},${p.realisasi},${pct}%,"${(p.catatan||'').replace(/"/g, '""')}"\n`;
+      });
+
+      ubPetugasData.forEach(u => {
+        const done = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+        const pct = u.target > 0 ? Math.round((done / u.target) * 100) : 0;
+        csvContent += `UB,PPL-UB,"${u.nama}","${u.pml}",${CONTACTS[u.nama]||'-'},${u.target},${done},${pct}%,"${(u.catatan||'').replace(/"/g, '""')}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Rekap_PES_SE2026_Pangkalpinang_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // KB DETAILS MODAL & FILTER
+    const KB_CONTENTS = {
+      'sop-ub': {
+        title: 'SOP Rinci Pendataan Sampel Usaha Besar (UB)',
+        body: `
+          <p class="font-bold text-slate-800">1. Prinsip Kerahasiaan & Legalitas:</p>
+          <p>Petugas PPL UB wajib mengantongi Surat Tugas BPS resmi dan mematuhi Pasal 21 UU No. 16 Tahun 1997 tentang Statistik bahwa data individu perusahaan dijamin kerahasiaannya dan tidak dipublikasikan ke publik.</p>
+          <p class="font-bold text-slate-800 mt-3">2. Langkah Pendataan ke Perusahaan:</p>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Menghubungi nomor narahubung/HRD atau datang langsung ke kantor pimpinan.</li>
+            <li>Menyerahkan kuesioner PES UB beserta surat pengantar Kepala BPS Kota Pangkalpinang.</li>
+            <li>Menjelaskan tujuan survei yaitu mengukur kualitas cakupan dan isian Sensus Ekonomi 2026.</li>
+            <li>Jika kuesioner ditinggal (*drop-off*), sepakati tanggal dan jam penjemputan (*pick-up*) dengan PIC akuntansi.</li>
+          </ol>
+        `
+      },
+      'sop-sls': {
+        title: 'SOP Rinci Pelaksanaan Listing & Pencacahan SLS',
+        body: `
+          <p class="font-bold text-slate-800">1. Batas Wilayah & Identifikasi SLS:</p>
+          <p>Ketua RT/RW setempat harus dilibatkan dalam mengenali batas fisik SLS guna menghindari *over-coverage* (mencacah di luar RT) atau *under-coverage* (melewatkan lorong/gang perbatasan).</p>
+          <p class="font-bold text-slate-800 mt-3">2. Penyisiran Bangunan Fisik & Sensus:</p>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Penyisiran dimulai dari sudut barat daya SLS dan bergerak searah putaran jarum jam.</li>
+            <li>Seluruh bangunan fisik tempat tinggal maupun tempat usaha wajib diverifikasi keberadaannya.</li>
+            <li>Pastikan tidak ada usaha rumahan atau perdagangan online berdomisili fisik yang terlewat.</li>
+          </ol>
+        `
+      },
+      'sop-matching': {
+        title: 'Pedoman Rekonsiliasi & Matching (Penyandingan)',
+        body: `
+          <p>Penyandingan dilakukan antara hasil pencacahan Sensus Ekonomi utama dengan hasil pendataan PES. Setiap perbedaan status (misal usaha tercatat aktif di PES namun tutup di sensus awal) harus diverifikasi ulang (*re-interview*) oleh Pengawas Lapangan (PML) sebelum dikirim ke BPS Provinsi.</p>
+        `
+      },
+      'sop-penolakan': {
+        title: 'Protokol Penanganan Responden Menolak / Sulit Ditemui',
+        body: `
+          <p>1. Lakukan kunjungan ulang minimal 3 kali pada waktu berbeda (pagi, sore hari, dan akhir pekan).</p>
+          <p class="mt-2">2. Apabila responden rumah tangga/usaha mikro menolak, minta pendampingan Ketua RT setempat.</p>
+          <p class="mt-2">3. Apabila perusahaan UB menolak, laporkan ke Pengawas (Jawani Eka P. / Sarah Putri Utami) untuk diterbitkan surat resmi penegasan pimpinan BPS.</p>
+        `
+      },
+      'sop-kontak': {
+        title: 'Daftar Kontak Koordinator & Helpdesk Lapangan',
+        body: `
+          <p><strong>BPS Kota Pangkalpinang:</strong> Tim Manajemen Sensus Ekonomi 2026</p>
+          <p class="mt-2"><strong>Pengawas Sampel Usaha Besar (UB):</strong></p>
+          <ul class="list-disc list-inside">
+            <li>Jawani Eka P. (Koordinator Alokasi 1)</li>
+            <li>Sarah Putri Utami (Koordinator Alokasi 2)</li>
+          </ul>
+          <p class="mt-2"><strong>Koordinator Pengawas SLS (PML 01 - 06):</strong></p>
+          <p>Ennie Ratnasari, Marliya, Luqman Hakim, Cici Ofdadewi, Desi Pazaria, Siti Artimah.</p>
+        `
+      }
+    };
+
+    function openKbModal(key) {
+      const item = KB_CONTENTS[key];
+      if (item) {
+        document.getElementById("modal-kb-title").textContent = item.title;
+        document.getElementById("modal-kb-body").innerHTML = item.body;
+        document.getElementById("modal-kb").classList.remove("hidden");
+      }
+    }
+
+    function closeKbModal() {
+      document.getElementById("modal-kb").classList.add("hidden");
+    }
+
+    function filterKbArticles() {
+      const q = document.getElementById("search-kb").value.toLowerCase();
+      document.querySelectorAll(".kb-card").forEach(c => {
+        const text = c.getAttribute("data-text") + " " + c.innerText.toLowerCase();
+        c.style.display = text.includes(q) ? "flex" : "none";
+      });
+    }
+
+    function filterKbTag(tag) {
+      document.querySelectorAll(".kb-tag-btn").forEach(b => {
+        b.className = b.textContent.includes(tag) || (tag==='ALL'&&b.textContent==='Semua') 
+          ? "kb-tag-btn px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium" 
+          : "kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700";
+      });
+
+      document.querySelectorAll(".kb-card").forEach(c => {
+        const cardTag = c.getAttribute("data-tag");
+        if (tag === 'ALL' || cardTag === tag || cardTag === 'ALL') {
+          c.style.display = "flex";
+        } else {
+          c.style.display = "none";
+        }
+      });
+    }
+
+    // RUN ON STARTUP
+    window.addEventListener("DOMContentLoaded", () => {
+      initAppData();
+    });
+  </script>
+</body>
+</html>
