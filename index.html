@@ -191,12 +191,12 @@
             </div>
             <div>
               <p class="text-[11px] text-slate-400">Sudah Didata</p>
-              <p class="text-lg font-bold text-emerald-400" id="dash-ub-realisasi">0</p>
+              <p class="text-lg font-bold text-emerald-400" id="dash-ub-realisasi">2</p>
               <p class="text-[10px] text-slate-400">Valid/Clear</p>
             </div>
             <div>
               <p class="text-[11px] text-slate-400">Progres</p>
-              <p class="text-lg font-bold text-amber-400" id="dash-ub-persen">0%</p>
+              <p class="text-lg font-bold text-amber-400" id="dash-ub-persen">5.3%</p>
               <p class="text-[10px] text-slate-400">Ketercapaian</p>
             </div>
           </div>
@@ -1520,12 +1520,77 @@
 
     // 38 SAMPEL USAHA BESAR (UB)
     const DEFAULT_UB_PETUGAS = [
-      { nama: "Adi Dirgantara", pml: "Jawani Eka P.", target: 7, realisasi: 0 },
-      { nama: "Farel Aristo H.", pml: "Jawani Eka P.", target: 8, realisasi: 0 },
-      { nama: "Maryani", pml: "Sarah Putri Utami", target: 7, realisasi: 0 },
-      { nama: "Shafira Husna", pml: "Sarah Putri Utami", target: 8, realisasi: 0 },
-      { nama: "Soraya Afkarina", pml: "Sarah Putri Utami", target: 8, realisasi: 0 }
-    ];
+      {
+            "nama": "Adi Dirgantara",
+            "email": "dirgantara@bps.go.id",
+            "pml": "Jawani Eka P.",
+            "target": 7,
+            "realisasi": 0,
+            "open": 7,
+            "draft": 0,
+            "dicacah": 0,
+            "submit": 0,
+            "approve": 0,
+            "diolah": 0,
+            "catatan": "7 perusahaan masih Open."
+      },
+      {
+            "nama": "Farel Aristo H.",
+            "email": "farel.aristo@bps.go.id",
+            "pml": "Jawani Eka P.",
+            "target": 8,
+            "realisasi": 0,
+            "open": 8,
+            "draft": 0,
+            "dicacah": 0,
+            "submit": 0,
+            "approve": 0,
+            "diolah": 0,
+            "catatan": "8 perusahaan masih Open."
+      },
+      {
+            "nama": "Shafira Husna",
+            "email": "shafirahusna@bps.go.id",
+            "pml": "Sarah Putri Utami",
+            "target": 8,
+            "realisasi": 0,
+            "open": 7,
+            "draft": 1,
+            "dicacah": 0,
+            "submit": 0,
+            "approve": 0,
+            "diolah": 0,
+            "catatan": "1 perusahaan Draft, 7 perusahaan Open."
+      },
+      {
+            "nama": "Soraya Afkarina",
+            "email": "sorayaafkarina@bps.go.id",
+            "pml": "Sarah Putri Utami",
+            "target": 8,
+            "realisasi": 2,
+            "open": 5,
+            "draft": 1,
+            "dicacah": 2,
+            "submit": 2,
+            "approve": 0,
+            "diolah": 2,
+            "catatan": "2 perusahaan selesai dicacah & masuk tahap pengolahan (Submit/Diolah: 2, Draft: 1, Open: 5)."
+      },
+      {
+            "nama": "Maryani",
+            "email": "marian@bps.go.id",
+            "pml": "Sarah Putri Utami",
+            "target": 7,
+            "realisasi": 0,
+            "open": 6,
+            "draft": 1,
+            "dicacah": 0,
+            "submit": 0,
+            "approve": 0,
+            "diolah": 0,
+            "catatan": "1 perusahaan Draft, 6 perusahaan Open."
+      }
+]];
 
     const DEFAULT_UB_SAMPEL = [
       { no: 3, idsbr: "95748651", kec: "RANGKUI", desa: "KERAMAT", sls: "RT 005 RW 002", usaha: "SPBU 24.331.70", alamat: "JL DEPATI AMIR", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
@@ -1576,9 +1641,9 @@
     let pendingExcelPplSummary = null;
 
     function initAppData() {
-      const storedSls = localStorage.getItem("PES_SLS_DATA_V5");
-      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V5");
-      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V5");
+      const storedSls = localStorage.getItem("PES_SLS_DATA_V6");
+      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V6");
+      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V6");
 
       slsData = storedSls ? JSON.parse(storedSls) : JSON.parse(JSON.stringify(DEFAULT_SLS_PETUGAS));
       ubSampelData = storedUbSampel ? JSON.parse(storedUbSampel) : JSON.parse(JSON.stringify(DEFAULT_UB_SAMPEL));
@@ -1593,9 +1658,9 @@
     }
 
     function saveAllData() {
-      localStorage.setItem("PES_SLS_DATA_V5", JSON.stringify(slsData));
-      localStorage.setItem("PES_UB_SAMPEL_V5", JSON.stringify(ubSampelData));
-      localStorage.setItem("PES_UB_PETUGAS_V5", JSON.stringify(ubPetugasData));
+      localStorage.setItem("PES_SLS_DATA_V6", JSON.stringify(slsData));
+      localStorage.setItem("PES_UB_SAMPEL_V6", JSON.stringify(ubSampelData));
+      localStorage.setItem("PES_UB_PETUGAS_V6", JSON.stringify(ubPetugasData));
     }
 
     // TAB NAVIGATION
@@ -1633,7 +1698,7 @@
       document.getElementById("dash-sls-persen").textContent = slsPct + "%";
 
       const ubTarget = ubSampelData.length;
-      const ubDone = ubSampelData.filter(d => d.status === "Sudah Berhasil Didata").length;
+      const ubDone = ubPetugasData.reduce((acc, cur) => acc + (parseInt(cur.realisasi) || 0), 0);
       const ubPct = ubTarget > 0 ? Math.round((ubDone / ubTarget) * 100) : 0;
       document.getElementById("dash-ub-target").textContent = ubTarget;
       document.getElementById("dash-ub-realisasi").textContent = ubDone;
@@ -1779,18 +1844,24 @@
 
       if (filter === "ALL" || filter === "UB") {
         ubPetugasData.forEach(u => {
-          const doneCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+          const doneCount = u.realisasi || 0;
           const pct = u.target > 0 ? (doneCount / u.target * 100).toFixed(1) : 0;
           rows.push({
             tipe: "UB",
             nama: u.nama,
-            sub: "PPL Usaha Besar",
+            sub: `PPL Usaha Besar (${u.email || ''})`,
             pengawas: u.pml,
             alokasiStr: `${u.target} Perusahaan UB Terpilih`,
             target: u.target,
             realisasi: doneCount,
             pct: pct,
-            detailBadge: `<span class="text-[11px] text-slate-500">${doneCount} dari ${u.target} Perusahaan</span>`,
+            detailBadge: `
+              <div class="text-[10px] space-y-0.5">
+                <span class="inline-block bg-emerald-100 text-emerald-800 px-1 rounded font-semibold">${u.diolah || 0} Diolah</span>
+                <span class="inline-block bg-blue-100 text-blue-800 px-1 rounded font-semibold">${u.submit || 0} Submit</span>
+                <span class="inline-block bg-amber-100 text-amber-800 px-1 rounded">${u.draft || 0} Draft</span>
+              </div>
+            `,
             hp: CONTACTS[u.nama] || "-",
             id: u.nama
           });
@@ -2032,7 +2103,53 @@
         return;
       }
 
-      // Structure parsing
+      // Cek apakah berkas adalah Rekap UB (punya kolom PENCACAH atau Assigned)
+      const isUbFile = rows.some(r => r["PENCACAH"] || r["Assigned"] || r["pencacah"]);
+      if (isUbFile) {
+        let totalAssigned = 0;
+        let totalDone = 0;
+        let totalDraft = 0;
+        let totalOpen = 0;
+
+        rows.forEach(r => {
+          const email = (r["PENCACAH"] || r["pencacah"] || "").toString().trim().toLowerCase();
+          const assigned = parseInt(r["Assigned"] || r["assigned"] || 0) || 0;
+          const open = parseInt(r["Open"] || r["open"] || 0) || 0;
+          const draft = parseInt(r["Draft"] || r["draft"] || 0) || 0;
+          const dicacah = parseInt(r["DICACAH"] || r["dicacah"] || 0) || 0;
+          const submit = parseInt(r["Submit"] || r["submit"] || 0) || 0;
+          const diolah = parseInt(r["DIOLAH"] || r["diolah"] || 0) || 0;
+
+          // Cari di ubPetugasData
+          const found = ubPetugasData.find(u => (u.email && u.email.toLowerCase().includes(email.split('@')[0])) || (email.includes('dirgantara') && u.nama.includes('Dirgantara')) || (email.includes('farel') && u.nama.includes('Farel')) || (email.includes('shafira') && u.nama.includes('Shafira')) || (email.includes('soraya') && u.nama.includes('Soraya')) || (email.includes('marian') && u.nama.includes('Maryani')));
+          if (found) {
+            found.target = assigned;
+            found.realisasi = dicacah || submit || diolah;
+            found.open = open;
+            found.draft = draft;
+            found.dicacah = dicacah;
+            found.submit = submit;
+            found.diolah = diolah;
+          }
+          totalAssigned += assigned;
+          totalDone += (dicacah || submit || diolah);
+          totalDraft += draft;
+          totalOpen += open;
+        });
+
+        pendingExcelPplSummary = { isUb: true, total: totalAssigned, done: totalDone, draft: totalDraft, open: totalOpen };
+        document.getElementById("preview-filename").textContent = `File UB: ${filename}`;
+        document.getElementById("preview-details").innerHTML = `
+          Terdeteksi Berkas Progres <strong>Usaha Besar (UB)</strong>.<br>
+          Total Target: <strong>${totalAssigned} Perusahaan</strong>.<br>
+          Selesai Dicacah / Diolah: <strong class="text-emerald-700">${totalDone}</strong> &bull; Draft: <strong>${totalDraft}</strong> &bull; Open: <strong>${totalOpen}</strong>.
+        `;
+        document.getElementById("excel-preview-info").classList.remove("hidden");
+        document.getElementById("btn-apply-excel").disabled = false;
+        return;
+      }
+
+      // Structure parsing SLS
       const slsMapParsed = {};
       let totalAssignments = 0;
       let totalCompleted = 0;
@@ -2106,6 +2223,17 @@
 
     function applyImportedExcel() {
       if (!pendingExcelPplSummary) return;
+
+      if (pendingExcelPplSummary.isUb) {
+        saveAllData();
+        renderDashboard();
+        renderUbList();
+        renderQuickTable();
+        closeModalImportExcel();
+        alert(`Berhasil memperbarui data Usaha Besar (UB)!
+${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan telah selesai didata.`);
+        return;
+      }
 
       const pSum = pendingExcelPplSummary.pplSummary;
       const sMap = pendingExcelPplSummary.slsMap;

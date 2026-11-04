@@ -231,5 +231,90 @@
       "rejected": 5,
       "open": 201
     }
+  },
+  "ub_summary": {
+    "last_updated": "2026-11-04 14:04:24 WIB",
+    "total_target": 38,
+    "total_realisasi": 2,
+    "persen": "5.3%",
+    "status_breakdown": {
+      "dicacah": 2,
+      "submit": 2,
+      "diolah": 2,
+      "draft": 3,
+      "open": 33
+    },
+    "petugas_progress": [
+      {
+        "nama": "Adi Dirgantara",
+        "email": "dirgantara@bps.go.id",
+        "pml": "Jawani Eka P.",
+        "target": 7,
+        "realisasi": 0,
+        "open": 7,
+        "draft": 0,
+        "dicacah": 0,
+        "submit": 0,
+        "approve": 0,
+        "diolah": 0,
+        "catatan": "7 perusahaan masih Open."
+      },
+      {
+        "nama": "Farel Aristo H.",
+        "email": "farel.aristo@bps.go.id",
+        "pml": "Jawani Eka P.",
+        "target": 8,
+        "realisasi": 0,
+        "open": 8,
+        "draft": 0,
+        "dicacah": 0,
+        "submit": 0,
+        "approve": 0,
+        "diolah": 0,
+        "catatan": "8 perusahaan masih Open."
+      },
+      {
+        "nama": "Shafira Husna",
+        "email": "shafirahusna@bps.go.id",
+        "pml": "Sarah Putri Utami",
+        "target": 8,
+        "realisasi": 0,
+        "open": 7,
+        "draft": 1,
+        "dicacah": 0,
+        "submit": 0,
+        "approve": 0,
+        "diolah": 0,
+        "catatan": "1 perusahaan Draft, 7 perusahaan Open."
+      },
+      {
+        "nama": "Soraya Afkarina",
+        "email": "sorayaafkarina@bps.go.id",
+        "pml": "Sarah Putri Utami",
+        "target": 8,
+        "realisasi": 2,
+        "open": 5,
+        "draft": 1,
+        "dicacah": 2,
+        "submit": 2,
+        "approve": 0,
+        "diolah": 2,
+        "catatan": "2 perusahaan selesai dicacah & masuk tahap pengolahan (Submit/Diolah: 2, Draft: 1, Open: 5)."
+      },
+      {
+        "nama": "Maryani",
+        "email": "marian@bps.go.id",
+        "pml": "Sarah Putri Utami",
+        "target": 7,
+        "realisasi": 0,
+        "open": 6,
+        "draft": 1,
+        "dicacah": 0,
+        "submit": 0,
+        "approve": 0,
+        "diolah": 0,
+        "catatan": "1 perusahaan Draft, 6 perusahaan Open."
+      }
+    ]
   }
 }
