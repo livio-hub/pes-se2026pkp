@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Knowledge Base & Monitoring PES SE2026 - Pangkal Pinang</title>
+  <title>Portal Knowledge Base & Monitoring PES SE2026 - Pangkalpinang</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons -->
@@ -48,7 +48,7 @@
           <div class="min-w-0">
             <div class="flex items-center space-x-1.5 flex-wrap">
               <h1 class="font-bold text-sm sm:text-base leading-tight tracking-tight truncate">PES SE2026</h1>
-              <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded">Pangkal Pinang</span>
+              <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded">Pangkalpinang</span>
             </div>
             <p class="text-[10px] sm:text-xs text-slate-300 truncate">Monitoring SLS & Usaha Besar</p>
           </div>
@@ -145,7 +145,7 @@
             <i class="ph-bold ph-database"></i>
           </div>
           <div>
-            <h4 class="font-bold text-slate-800 text-sm">Status Sinkronisasi FASIH BPS Kota Pangkal Pinang</h4>
+            <h4 class="font-bold text-slate-800 text-sm">Status Sinkronisasi FASIH BPS Kota Pangkalpinang</h4>
             <p class="text-xs text-slate-600 mt-0.5" id="fasih-summary-text">
               Data terintegrasi: 6.479 total beban penugasan di 38 SLS (353 Selesai PML, 333 Terkirim PCL, 474 Draft, 23 Retur PML, 5.296 Open).
             </p>
@@ -263,7 +263,7 @@
           </div>
 
           <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs text-slate-500">
-            <span>BPS Kota Pangkal Pinang</span>
+            <span>BPS Kota Pangkalpinang</span>
             <span class="text-[11px] text-slate-400">SE2026</span>
           </div>
         </div>
@@ -321,7 +321,7 @@
             <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-700">PES SE2026 - SLS</span>
             <span class="text-xs text-slate-500">38 Sampel SLS &bull; Beban Penugasan FASIH: 6.479 Responden</span>
           </div>
-          <h2 class="text-lg font-bold text-slate-800 mt-1">Daftar Alokasi & Petugas SLS (Pangkal Pinang)</h2>
+          <h2 class="text-lg font-bold text-slate-800 mt-1">Daftar Alokasi & Petugas SLS (Pangkalpinang)</h2>
           <p class="text-xs sm:text-sm text-slate-500">Data alokasi beban dan capaian real-time per Satuan Lingkungan Setempat.</p>
         </div>
         <div class="flex items-center space-x-2">
@@ -422,7 +422,7 @@
             <h3 class="font-bold text-slate-800 text-base mt-2 mb-2">1. SOP Pendataan Sampel Usaha Besar (UB)</h3>
             <p class="text-xs text-slate-600 leading-relaxed">Petugas PPL UB wajib membawa Surat Tugas resmi, identitas BPS, dan surat pengantar kepala BPS ditujukan kepada pimpinan / manajer keuangan perusahaan.</p>
           </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 text-xs font-semibold text-indigo-600">38 UB Pangkal Pinang</div>
+          <div class="pt-3 border-t border-slate-100 mt-4 text-xs font-semibold text-indigo-600">38 UB Pangkalpinang</div>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -484,8 +484,8 @@
           <button type="button" onclick="saveCloudConfig()" class="flex-1 px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow">
             Simpan & Sambungkan
           </button>
-          <button type="button" onclick="initializeCloudWithCurrentUb()" class="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg" title="Upload 38 data awal UB ke Google Sheet">
-            Upload 38 Data Awal UB
+          <button type="button" onclick="syncAllToCloud()" class="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg" title="Upload 38 data awal UB ke Google Sheet">
+            Upload Semua Data ke Cloud
           </button>
         </div>
 
@@ -517,7 +517,7 @@
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
           <input type="password" id="admin-password-input" required placeholder="Masukkan kata sandi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
-          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono"></code></p>
+          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">admin1971</code></p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
@@ -619,14 +619,20 @@
     }
 
     function recalcUbStats() {
-      ubPetugasData.forEach(u => {
-        const doneCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
-        u.realisasi = doneCount;
-        u.diolah = doneCount;
-      });
+      // Jika ada sampel yang secara manual ditandai selesai di web
+      const manualDones = ubSampelData.filter(s => s.status === "Sudah Berhasil Didata").length;
+      if (manualDones > 0) {
+        ubPetugasData.forEach(u => {
+          const count = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+          if (count > u.realisasi) {
+            u.realisasi = count;
+            u.diolah = count;
+          }
+        });
+      }
     }
 
-    // TARIK DATA REAL-TIME DARI GOOGLE SPREADSHEET
+    // TARIK DATA REAL-TIME DARI GOOGLE SPREADSHEET (SEMUA PERANGKAT)
     async function syncFromCloudDatabase() {
       if (!cloudGasUrl) {
         updateCloudStatusBadge(false, "Cloud Offline");
@@ -639,7 +645,8 @@
           const data = await res.json();
           if (data && data.status === "success") {
             let updatedCount = 0;
-            // Update data UB dari Google Sheets
+
+            // 1. Update status 38 Sampel UB dari Google Sheets
             if (data.ub_data && Array.isArray(data.ub_data) && data.ub_data.length > 0) {
               data.ub_data.forEach(cloudUb => {
                 const found = ubSampelData.find(u => String(u.idsbr) === String(cloudUb.idsbr));
@@ -648,20 +655,55 @@
                   updatedCount++;
                 }
               });
-              recalcUbStats();
             } else if (data.ub_data && data.ub_data.length === 0 && isAdmin) {
-              // Jika sheet baru/kosong dan admin sedang buka, inisialisasi otomatis 38 UB
               console.log("[Cloud] Sheet Data_UB masih kosong, menginisialisasi 38 sampel awal...");
               initializeCloudWithCurrentUbSilently();
             }
 
+            // 2. Update data SLS (22 PPL & FASIH) dari Google Sheets jika ada
+            if (data.sls_data && Array.isArray(data.sls_data) && data.sls_data.length > 0) {
+              data.sls_data.forEach(cloudSls => {
+                const foundSls = slsData.find(s => s.kodePpl === cloudSls.kodePpl || (s.nama && s.nama.toLowerCase() === (cloudSls.nama || "").toLowerCase()));
+                if (foundSls) {
+                  if (cloudSls.target) foundSls.target = Number(cloudSls.target);
+                  if (cloudSls.realisasi !== undefined) foundSls.realisasi = Number(cloudSls.realisasi);
+                  foundSls.fasihDetail = {
+                    completed: Number(cloudSls.completed) || 0,
+                    submitted: Number(cloudSls.submitted) || 0,
+                    draft: Number(cloudSls.draft) || 0,
+                    rejected: Number(cloudSls.rejected) || 0,
+                    open: Number(cloudSls.open) || 0
+                  };
+                  updatedCount++;
+                }
+              });
+            }
+
+            // 3. Update data Petugas UB (5 PPL) dari Google Sheets jika ada
+            if (data.ub_petugas_data && Array.isArray(data.ub_petugas_data) && data.ub_petugas_data.length > 0) {
+              data.ub_petugas_data.forEach(cloudUbP => {
+                const foundP = ubPetugasData.find(u => u.nama.toLowerCase().includes(cloudUbP.nama.toLowerCase().split(' ')[0]));
+                if (foundP) {
+                  if (cloudUbP.target) foundP.target = Number(cloudUbP.target);
+                  if (cloudUbP.realisasi !== undefined) foundP.realisasi = Number(cloudUbP.realisasi);
+                  foundP.dicacah = Number(cloudUbP.dicacah) || 0;
+                  foundP.submit = Number(cloudUbP.submit) || 0;
+                  foundP.diolah = Number(cloudUbP.diolah) || 0;
+                  foundP.draft = Number(cloudUbP.draft) || 0;
+                  foundP.open = Number(cloudUbP.open) || 0;
+                  updatedCount++;
+                }
+              });
+            }
+
+            recalcUbStats();
             saveAllData();
             renderDashboard();
+            renderSlsList();
             renderUbList();
             renderQuickTable();
-      syncFromCloudDatabase();
             updateCloudStatusBadge(true, "Cloud Live");
-            console.log(`[Cloud] Berhasil mensinkronkan ${updatedCount} data dari Google Spreadsheet!`);
+            console.log(`[Cloud] Berhasil sinkronisasi ${updatedCount} data dari Google Sheets!`);
           }
         }
       } catch (err) {
@@ -682,7 +724,6 @@
           ppl: item.ppl,
           pml: item.pml
         };
-        // Menggunakan mode no-cors jika perlu, atau JSON fetch
         await fetch(cloudGasUrl, {
           method: "POST",
           mode: "no-cors",
@@ -711,30 +752,38 @@
       }
     }
 
-    // INITIALIZE GOOGLE SPREADSHEET DENGAN 38 DATA UB
-    async function initializeCloudWithCurrentUb() {
+    // UPLOAD SEMUA DATA AWAL (SLS, UB, PETUGAS) KE GOOGLE SPREADSHEET
+    async function syncAllToCloud() {
       if (!cloudGasUrl) {
         alert("Masukkan URL Google Apps Script terlebih dahulu!");
         return;
       }
-      if (confirm("Unggah seluruh 38 data sampel UB saat ini ke Google Spreadsheet?")) {
-        try {
-          const payload = {
-            action: "bulk_sync_ub",
-            items: ubSampelData
-          };
-          await fetch(cloudGasUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          });
-          alert("38 Data awal UB berhasil diunggah ke Google Spreadsheet!");
-          syncFromCloudDatabase();
-        } catch (e) {
-          alert("Gagal mengunggah ke Google Sheets: " + e.message);
-        }
+      if (!confirm("Unggah seluruh data progres saat ini (SLS 22 PPL, 38 Sampel UB, dan 5 Petugas UB) ke Google Spreadsheet?")) return;
+
+      updateCloudStatusBadge(true, "Mengunggah...");
+      try {
+        const payload = {
+          action: "sync_all",
+          sls_items: slsData,
+          ub_items: ubSampelData,
+          ub_petugas: ubPetugasData
+        };
+        await fetch(cloudGasUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        alert("Seluruh data berhasil diunggah ke Google Spreadsheet!\nBuka Google Spreadsheet Anda untuk memeriksa sheet Data_SLS, Data_UB, dan Data_UB_Petugas.");
+        updateCloudStatusBadge(true, "Cloud Live");
+      } catch (err) {
+        alert("Gagal mengunggah ke Google Sheets: " + err.message);
+        updateCloudStatusBadge(false, "Gagal Unggah");
       }
+    }
+
+    async function initializeCloudWithCurrentUb() {
+      syncAllToCloud();
     }
 
     // AUTHENTICATION STATE
@@ -2473,18 +2522,47 @@
       document.getElementById("btn-apply-excel").disabled = false;
     }
 
-    function applyImportedExcel() {
+    async function applyImportedExcel() {
       if (!pendingExcelPplSummary) return;
+
+      const btnApply = document.getElementById("btn-apply-excel");
+      const originalText = btnApply ? btnApply.innerHTML : "";
+      if (btnApply) {
+        btnApply.disabled = true;
+        btnApply.innerHTML = `<i class="ph-bold ph-spinner animate-spin mr-1"></i> Menyimpan ke Google Sheets...`;
+      }
 
       if (pendingExcelPplSummary.isUb) {
         saveAllData();
         renderDashboard();
         renderUbList();
         renderQuickTable();
-      syncFromCloudDatabase();
+
+        // SIMPAN KE GOOGLE SHEETS
+        if (cloudGasUrl) {
+          try {
+            const payload = {
+              action: "sync_ub_petugas",
+              petugas: ubPetugasData
+            };
+            await fetch(cloudGasUrl, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(payload)
+            });
+            console.log("[Cloud] Data Petugas UB berhasil disimpan ke Google Sheets!");
+          } catch (err) {
+            console.warn("[Cloud] Gagal mengirim data UB ke Google Sheets:", err);
+          }
+        }
+
         closeModalImportExcel();
-        alert(`Berhasil memperbarui data Usaha Besar (UB)!
-${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan telah selesai didata.`);
+        if (btnApply) {
+          btnApply.disabled = false;
+          btnApply.innerHTML = originalText || `<i class="ph-bold ph-check mr-1.5"></i> Terapkan Data FASIH`;
+        }
+        alert(`Berhasil memperbarui data Usaha Besar (UB)!\n${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan telah selesai didata.\n\nData otomatis disimpan ke Google Sheets secara real-time.`);
         return;
       }
 
@@ -2525,10 +2603,32 @@ ${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan t
       renderDashboard();
       renderSlsList();
       renderQuickTable();
-      syncFromCloudDatabase();
+
+      // SIMPAN KE GOOGLE SHEETS
+      if (cloudGasUrl) {
+        try {
+          const payload = {
+            action: "sync_sls",
+            items: slsData
+          };
+          await fetch(cloudGasUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          console.log("[Cloud] Data SLS 22 PPL berhasil disimpan ke Google Sheets!");
+        } catch (err) {
+          console.warn("[Cloud] Gagal mengirim data SLS ke Google Sheets:", err);
+        }
+      }
+
       closeModalImportExcel();
-      alert(`Berhasil memperbarui data portal dari Excel FASIH!
-Total beban penugasan: ${pendingExcelPplSummary.total} sampel.`);
+      if (btnApply) {
+        btnApply.disabled = false;
+        btnApply.innerHTML = originalText || `<i class="ph-bold ph-check mr-1.5"></i> Terapkan Data FASIH`;
+      }
+      alert(`Berhasil memperbarui data portal dari Excel FASIH!\nTotal beban penugasan: ${pendingExcelPplSummary.total} responden.\n\nData otomatis disimpan ke Google Sheets secara real-time.`);
     }
 
     function editPplTarget(kodePpl) {
