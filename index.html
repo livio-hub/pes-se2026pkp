@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Knowledge Base & Monitoring Pendataan PES SE2026 - Pangkalpinang</title>
+  <title>Portal Knowledge Base & Monitoring PES SE2026 - Pangkalpinang</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS for Client-Side Excel Import -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body {
@@ -40,27 +42,48 @@
               <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight">PES Sensus Ekonomi 2026</h1>
               <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[10px] font-bold px-2 py-0.5 rounded">Kota Pangkalpinang</span>
             </div>
-            <p class="text-xs text-slate-300">Monitoring Petugas SLS & Petugas Usaha Besar (UB) + Knowledge Base</p>
+            <p class="text-xs text-slate-300">Monitoring Petugas SLS & Usaha Besar (UB) &bull; Portal Resmi</p>
           </div>
         </div>
 
-        <!-- Header Actions -->
+        <!-- Header Actions: Role Protected -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-          <button onclick="openModalInputProgress()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg flex items-center shadow transition">
-            <i class="ph-bold ph-pencil-simple-line mr-1.5 text-base"></i> Input Progress
+          <!-- Public View Info -->
+          <div id="public-badge" class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-300 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Mode Publik (Read-Only)</span>
+          </div>
+
+          <!-- Admin Mode Actions (Hidden by default) -->
+          <div id="admin-actions-bar" class="hidden flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950">
+              <i class="ph-bold ph-shield-check mr-1 text-sm"></i> Admin
+            </span>
+            <button onclick="openModalImportExcel()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg flex items-center shadow transition">
+              <i class="ph-bold ph-microsoft-excel-logo mr-1.5 text-base text-emerald-300"></i> Import Excel FASIH
+            </button>
+            <button onclick="adminLogout()" class="bg-slate-700 hover:bg-rose-600 text-white text-xs font-semibold px-2.5 py-2 rounded-lg transition" title="Keluar Mode Admin">
+              <i class="ph-bold ph-sign-out text-base"></i>
+            </button>
+          </div>
+
+          <!-- Login Admin Button (Shown when not logged in) -->
+          <button id="btn-login-trigger" onclick="openModalAdminLogin()" class="bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center border border-slate-700 transition">
+            <i class="ph-bold ph-lock-key mr-1.5 text-sm"></i> Login Admin
           </button>
+
+          <!-- Export Button (Visible to all) -->
           <button onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg hidden sm:flex items-center shadow transition" title="Export CSV/Excel">
-            <i class="ph-bold ph-microsoft-excel-logo mr-1.5 text-base"></i> Export
+            <i class="ph-bold ph-download-simple mr-1.5 text-base"></i> Unduh Rekap
           </button>
         </div>
       </div>
     </div>
 
-    <!-- MAIN TABS & CATEGORY SWITCHER -->
+    <!-- MAIN TABS NAVIGATION -->
     <div class="bg-slate-950/80 border-t border-slate-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2">
-          <!-- Main Tab Navigation -->
           <nav class="flex space-x-4 text-xs sm:text-sm font-medium overflow-x-auto custom-scrollbar">
             <button onclick="switchTab('dashboard')" id="tab-nav-dashboard" class="main-tab active py-2 px-1 border-b-2 border-indigo-500 text-white flex items-center space-x-1.5">
               <i class="ph ph-squares-four text-base"></i>
@@ -72,15 +95,11 @@
             </button>
             <button onclick="switchTab('ub')" id="tab-nav-ub" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
               <i class="ph ph-buildings text-base"></i>
-              <span>Petugas Usaha Besar / UB (38 Sampel)</span>
+              <span>Petugas Usaha Besar (38 UB)</span>
             </button>
             <button onclick="switchTab('kb')" id="tab-nav-kb" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
               <i class="ph ph-books text-base"></i>
               <span>Knowledge Base & SOP</span>
-            </button>
-            <button onclick="switchTab('deploy')" id="tab-nav-deploy" class="main-tab py-2 px-1 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center space-x-1.5">
-              <i class="ph ph-cloud-arrow-up text-base"></i>
-              <span>Akses Online Web</span>
             </button>
           </nav>
         </div>
@@ -95,6 +114,24 @@
     <!-- TAB 1: DASHBOARD MONITORING LENGKAP -->
     <!-- ============================================== -->
     <section id="tab-dashboard" class="tab-pane space-y-6">
+
+      <!-- Status Info Banner -->
+      <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+            <i class="ph-bold ph-database"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">Status Sinkronisasi FASIH BPS Kota Pangkalpinang</h4>
+            <p class="text-xs text-slate-600 mt-0.5" id="fasih-summary-text">
+              Data terintegrasi: 6.479 total beban penugasan di 38 SLS (353 Selesai PML, 333 Terkirim PCL, 474 Draft, 23 Retur PML, 5.296 Open).
+            </p>
+          </div>
+        </div>
+        <div class="text-[11px] font-semibold text-indigo-700 bg-white px-3 py-1.5 rounded-lg border border-indigo-200">
+          Update: 4 Nov 2026
+        </div>
+      </div>
       
       <!-- Ringkasan Kategori SLS vs UB -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,18 +151,18 @@
           </div>
           <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-indigo-700/60 relative z-10">
             <div>
-              <p class="text-[11px] text-indigo-300">Total Target</p>
-              <p class="text-lg font-bold" id="dash-sls-target">4.241</p>
+              <p class="text-[11px] text-indigo-300">Total Beban</p>
+              <p class="text-lg font-bold" id="dash-sls-target">6.479</p>
               <p class="text-[10px] text-indigo-300">Responden</p>
             </div>
             <div>
-              <p class="text-[11px] text-indigo-300">Realisasi</p>
-              <p class="text-lg font-bold text-emerald-300" id="dash-sls-realisasi">0</p>
-              <p class="text-[10px] text-indigo-300">Terselesaikan</p>
+              <p class="text-[11px] text-indigo-300">Realisasi Selesai</p>
+              <p class="text-lg font-bold text-emerald-300" id="dash-sls-realisasi">686</p>
+              <p class="text-[10px] text-indigo-300">Approved + Submitted</p>
             </div>
             <div>
               <p class="text-[11px] text-indigo-300">Progres</p>
-              <p class="text-lg font-bold text-amber-300" id="dash-sls-persen">0%</p>
+              <p class="text-lg font-bold text-amber-300" id="dash-sls-persen">10.6%</p>
               <p class="text-[10px] text-indigo-300">Ketercapaian</p>
             </div>
           </div>
@@ -173,8 +210,8 @@
         <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
-              <h3 class="font-bold text-slate-800 text-base" id="chart-title">Progres Pendataan Lapangan</h3>
-              <p class="text-xs text-slate-500">Visualisasi capaian realisasi dibanding target alokasi beban</p>
+              <h3 class="font-bold text-slate-800 text-base" id="chart-title">Grafik Progres 22 Petugas SLS (Responden)</h3>
+              <p class="text-xs text-slate-500">Visualisasi realisasi selesai (Approved + Submitted) dibanding target beban</p>
             </div>
             <div class="flex items-center space-x-2">
               <button onclick="setChartMode('SLS')" id="btn-chart-sls" class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white">Petugas SLS</button>
@@ -193,16 +230,16 @@
               <h3 class="font-bold text-slate-800 text-base">Pengawas & Koordinator</h3>
               <span class="text-[11px] text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded">6 PML + 2 Pengawas UB</span>
             </div>
-            <p class="text-xs text-slate-500 mb-4">Akses cepat kontak pengawas untuk eskalasi kendala lapangan.</p>
+            <p class="text-xs text-slate-500 mb-4">Akses cepat kontak WhatsApp pengawas lapangan.</p>
 
-            <div class="space-y-2.5 overflow-y-auto max-h-60 custom-scrollbar pr-1" id="pml-quick-list">
+            <div class="space-y-2.5 overflow-y-auto max-h-64 custom-scrollbar pr-1" id="pml-quick-list">
               <!-- Injected via JS -->
             </div>
           </div>
 
           <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs text-slate-500">
-            <span>Pangkalpinang (Babel)</span>
-            <button onclick="resetDataSemula()" class="text-red-500 hover:underline">Reset Data Lokal</button>
+            <span>BPS Kota Pangkalpinang</span>
+            <span class="text-[11px] text-slate-400">SE2026</span>
           </div>
         </div>
       </div>
@@ -211,8 +248,8 @@
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 class="font-bold text-slate-800 text-base">Monitoring Cepat Seluruh Petugas Lapangan</h3>
-            <p class="text-xs text-slate-500">Daftar petugas PPL SLS dan PPL UB beserta nomor kontak dan progresnya</p>
+            <h3 class="font-bold text-slate-800 text-base">Monitoring Seluruh Petugas Lapangan</h3>
+            <p class="text-xs text-slate-500">Daftar petugas PPL SLS dan PPL UB beserta rincian capaian dan kontak langsung</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <select id="quick-table-filter" onchange="renderQuickTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
@@ -232,12 +269,13 @@
                 <th class="py-3 px-4">Tipe</th>
                 <th class="py-3 px-4">Nama Petugas</th>
                 <th class="py-3 px-4">Pengawas</th>
-                <th class="py-3 px-4">Alokasi Beban / Wilayah</th>
+                <th class="py-3 px-4">Wilayah Tugas</th>
                 <th class="py-3 px-4 text-center">Beban</th>
-                <th class="py-3 px-4 text-center">Realisasi</th>
-                <th class="py-3 px-4 text-center">Progress</th>
+                <th class="py-3 px-4 text-center">Selesai</th>
+                <th class="py-3 px-4 text-center">% Capaian</th>
+                <th class="py-3 px-4 text-center">Rincian Status</th>
                 <th class="py-3 px-4">No. HP / WA</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
+                <th class="py-3 px-4 text-center admin-col hidden">Aksi Admin</th>
               </tr>
             </thead>
             <tbody id="quick-table-body" class="divide-y divide-slate-100">
@@ -252,15 +290,14 @@
     <!-- TAB 2: PETUGAS SLS (SATUAN LINGKUNGAN SETEMPAT) -->
     <!-- ============================================== -->
     <section id="tab-sls" class="tab-pane hidden space-y-6">
-      <!-- SLS Header Card -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2">
             <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-700">PES SE2026 - SLS</span>
-            <span class="text-xs text-slate-500">38 Sampel SLS &bull; Beban: 4.241 Responden</span>
+            <span class="text-xs text-slate-500">38 Sampel SLS &bull; Beban Penugasan FASIH: 6.479 Responden</span>
           </div>
           <h2 class="text-lg font-bold text-slate-800 mt-1">Daftar Alokasi & Petugas SLS (Pangkalpinang)</h2>
-          <p class="text-xs sm:text-sm text-slate-500">Meliputi 22 PPL dan 6 PML dengan wilayah tugas dan nomor kontak terverifikasi.</p>
+          <p class="text-xs sm:text-sm text-slate-500">Data alokasi beban dan capaian real-time per Satuan Lingkungan Setempat.</p>
         </div>
         <div class="flex items-center space-x-2">
           <input type="text" id="search-sls" onkeyup="renderSlsList()" placeholder="Cari PPL, PML, atau SLS..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-48 sm:w-64 focus:ring-2 focus:ring-indigo-500">
@@ -286,7 +323,6 @@
     <!-- TAB 3: PETUGAS USAHA BESAR (UB) -->
     <!-- ============================================== -->
     <section id="tab-ub" class="tab-pane hidden space-y-6">
-      <!-- UB Header Card -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2">
@@ -328,7 +364,7 @@
                 <th class="py-3 px-4">Petugas PPL UB</th>
                 <th class="py-3 px-4">Pengawas</th>
                 <th class="py-3 px-4">Status Pendataan</th>
-                <th class="py-3 px-4 text-center">Aksi</th>
+                <th class="py-3 px-4 text-center admin-col hidden">Aksi Admin</th>
               </tr>
             </thead>
             <tbody id="ub-table-body" class="divide-y divide-slate-100">
@@ -354,183 +390,32 @@
         <i class="ph-duotone ph-book-open text-9xl text-white/10 absolute right-4 -bottom-4 hidden sm:block"></i>
       </div>
 
-      <!-- KB Search -->
-      <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div class="relative w-full sm:w-96">
-          <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
-          <input type="text" id="search-kb" onkeyup="filterKbArticles()" placeholder="Cari SOP, aturan matching, penanganan UB..." class="pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-500">
-        </div>
-        <div class="flex items-center space-x-2 text-xs">
-          <button onclick="filterKbTag('ALL')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium">Semua</button>
-          <button onclick="filterKbTag('SLS')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Khusus SLS</button>
-          <button onclick="filterKbTag('UB')" class="kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700">Khusus Usaha Besar (UB)</button>
-        </div>
-      </div>
-
-      <!-- Articles Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="kb-articles-grid">
-
-        <!-- Artikel 1: SOP UB -->
-        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="UB" data-text="usaha besar ub perusahaan izin pimpinan kuesioner neraca keuangan">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Usaha Besar</span>
-              <span class="text-xs text-slate-400">Protokol BPS</span>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base mb-2">1. SOP Pendataan Sampel Usaha Besar (UB)</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-3">
-              Petugas PPL UB wajib membawa Surat Tugas resmi, identitas BPS, dan surat pengantar kepala BPS ditujukan kepada pimpinan / manajer keuangan perusahaan.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
-              <li>Konfirmasi janji temu dengan bagian Akuntansi / HRD / General Affair.</li>
-              <li>Jaminan kerahasiaan data individual sesuai UU Statistik No. 16 Tahun 1997.</li>
-              <li>Jika perusahaan berstatus kantor kas/cabang, catat kewenangan pelaporan ke kantor cabang utama.</li>
-            </ul>
+            <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Usaha Besar</span>
+            <h3 class="font-bold text-slate-800 text-base mt-2 mb-2">1. SOP Pendataan Sampel Usaha Besar (UB)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Petugas PPL UB wajib membawa Surat Tugas resmi, identitas BPS, dan surat pengantar kepala BPS ditujukan kepada pimpinan / manajer keuangan perusahaan.</p>
           </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-            <span class="text-slate-400">Target: 38 UB Pangkalpinang</span>
-            <button onclick="openKbModal('sop-ub')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
-          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 text-xs font-semibold text-indigo-600">38 UB Pangkalpinang</div>
         </div>
 
-        <!-- Artikel 2: SOP SLS -->
-        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="SLS" data-text="sls satuan lingkungan setempat rt rw batas blok sensus pemutakhiran">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Petugas SLS</span>
-              <span class="text-xs text-slate-400">Teknis Wilayah</span>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base mb-2">2. Prosedur Penyisiran & Listing Sampel SLS</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-3">
-              PPL menyusuri wilayah SLS terpilih didampingi Ketua RT/RW setempat guna mengenali batas fisik SLS sebelum wawancara.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
-              <li>Pastikan batas RT tidak tertukar dengan RT tetangga.</li>
-              <li>Sisir searah jarum jam dari sudut barat daya wilayah SLS.</li>
-              <li>Catat keberadaan usaha rumahan, pedagang kaki lima, dan kegiatan ekonomi non-fisik.</li>
-            </ul>
+            <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded">Khusus Petugas SLS</span>
+            <h3 class="font-bold text-slate-800 text-base mt-2 mb-2">2. Prosedur Penyisiran & Listing Sampel SLS</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">PPL menyusuri wilayah SLS terpilih didampingi Ketua RT/RW setempat guna mengenali batas fisik SLS sebelum wawancara.</p>
           </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-            <span class="text-slate-400">Target: 38 SLS Terpilih</span>
-            <button onclick="openKbModal('sop-sls')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
-          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 text-xs font-semibold text-indigo-600">38 SLS Terpilih</div>
         </div>
 
-        <!-- Artikel 3: Matching -->
-        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="SLS" data-text="matching penyandingan dse rekonsiliasi pengawas pml kendala">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="bg-purple-100 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded">Metodologi Matching</span>
-              <span class="text-xs text-slate-400">Coverage Error</span>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base mb-2">3. Rekonsiliasi Hasil Pendataan SE Utama vs PES</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-3">
-              Tahap penyandingan data bertujuan mendeteksi apakah suatu usaha/responden termasuk kategori *Match*, *Omission*, atau *Erroneous*.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
-              <li><strong>Match:</strong> Ditemukan di Sensus Utama dan ditemukan di PES dengan identitas sama.</li>
-              <li><strong>Omission (Terlewat):</strong> Ditemukan di PES tetapi tidak ada di Sensus Utama.</li>
-              <li><strong>Rekonsiliasi PML:</strong> Pengawas wajib melakukan cek fisik jika terjadi keraguan status.</li>
-            </ul>
+            <span class="bg-purple-100 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded">Metodologi Matching</span>
+            <h3 class="font-bold text-slate-800 text-base mt-2 mb-2">3. Rekonsiliasi Hasil SE Utama vs PES</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Penyandingan bertujuan mendeteksi apakah suatu usaha/responden termasuk kategori Match, Omission, atau Erroneous.</p>
           </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-            <span class="text-slate-400">Verifikasi Berjenjang</span>
-            <button onclick="openKbModal('sop-matching')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
-          </div>
-        </div>
-
-        <!-- Artikel 4: Penolakan Responden -->
-        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="ALL" data-text="penolakan respon sulit ditemui berita acara rt rw eskalasi">
-          <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-0.5 rounded">Troubleshooting Lapangan</span>
-              <span class="text-xs text-slate-400">Penanganan Penolakan</span>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base mb-2">4. Protokol Responden Menolak / Sulit Ditemui</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-3">
-              Langkah yang harus diambil oleh PCL/PPL sebelum menyatakan responden atau perusahaan menolak didata.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
-              <li>Kunjungan ulang minimal 3 kali pada jam yang berbeda.</li>
-              <li>Untuk perusahaan UB: lakukan eskalasi via surat resmi BPS ke kantor direksi/pusat.</li>
-              <li>Berita Acara Penolakan resmi hanya ditandatangani bila upaya persuasif maksimal telah gagal.</li>
-            </ul>
-          </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-            <span class="text-slate-400">Eskalasi PML & Koseka</span>
-            <button onclick="openKbModal('sop-penolakan')" class="font-semibold text-indigo-600 hover:text-indigo-800">Baca Rinci &rarr;</button>
-          </div>
-        </div>
-
-        <!-- Artikel 5: Kontak Bantuan & Helpdesk -->
-        <div class="kb-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" data-tag="ALL" data-text="helpdesk kontak pengawas whatsapp koordinasi darurat">
-          <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="bg-cyan-100 text-cyan-700 text-[11px] font-bold px-2 py-0.5 rounded">Kontak & Helpdesk</span>
-              <span class="text-xs text-slate-400">BPS Pangkalpinang</span>
-            </div>
-            <h3 class="font-bold text-slate-800 text-base mb-2">5. Saluran Bantuan Cepat Lapangan</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-3">
-              Hubungi narahubung teknis apabila petugas menghadapi kendala batas SLS meragukan atau perizinan perusahaan UB.
-            </p>
-            <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1.5 text-slate-700">
-              <p><strong>Pengawas UB 1:</strong> Jawani Eka P.</p>
-              <p><strong>Pengawas UB 2:</strong> Sarah Putri Utami</p>
-              <p><strong>Koordinator Teknis Sensus:</strong> BPS Kota Pangkalpinang</p>
-            </div>
-          </div>
-          <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-xs">
-            <span class="text-slate-400">Respons Cepat Hari Kerja</span>
-            <button onclick="openKbModal('sop-kontak')" class="font-semibold text-indigo-600 hover:text-indigo-800">Lihat Rincian &rarr;</button>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- TAB 5: PANDUAN ONLINE / DEPLOYMENT -->
-    <!-- ============================================== -->
-    <section id="tab-deploy" class="tab-pane hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <h2 class="text-lg font-bold text-slate-800">Cara Mengakses Web Ini Kapan Saja & Di Mana Saja (Online Gratis)</h2>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          Agar aplikasi ini dapat dibuka oleh seluruh 28 petugas SLS dan 7 petugas UB secara bersamaan dari smartphone (Android/iPhone) maupun laptop di lapangan tanpa instalasi aplikasi:
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
-          <div class="border border-indigo-200 bg-indigo-50/50 p-4 rounded-xl flex flex-col justify-between">
-            <div>
-              <span class="bg-indigo-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">Paling Cepat (1 Menit)</span>
-              <h3 class="font-bold text-slate-800 mt-2">Netlify Drop</h3>
-              <p class="text-xs text-slate-600 mt-1">
-                Kunjungi <a href="https://app.netlify.com/drop" target="_blank" class="text-indigo-600 underline font-semibold">app.netlify.com/drop</a>, lalu seret file <code class="bg-white px-1 py-0.5 rounded">index.html</code> ini. Anda langsung mendapatkan alamat web publik gratis.
-              </p>
-            </div>
-            <a href="https://app.netlify.com/drop" target="_blank" class="mt-4 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg">Buka Netlify Drop &rarr;</a>
-          </div>
-
-          <div class="border border-emerald-200 bg-emerald-50/50 p-4 rounded-xl flex flex-col justify-between">
-            <div>
-              <span class="bg-emerald-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">Google Drive / Spreadsheet</span>
-              <h3 class="font-bold text-slate-800 mt-2">Google Apps Script</h3>
-              <p class="text-xs text-slate-600 mt-1">
-                Buka Google Spreadsheet kantor &rarr; menu <strong>Ekstensi > Apps Script</strong> &rarr; tempelkan kode HTML &rarr; Deploy Web App. Input progres petugas akan tersimpan otomatis di Google Spreadsheet.
-              </p>
-            </div>
-            <button onclick="alert('Salin kode HTML ini dan deploy di Google Apps Script Web App!')" class="mt-4 text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg">Panduan Apps Script &rarr;</button>
-          </div>
-
-          <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl flex flex-col justify-between">
-            <div>
-              <span class="bg-slate-700 text-white text-[11px] font-bold px-2 py-0.5 rounded">GitHub</span>
-              <h3 class="font-bold text-slate-800 mt-2">GitHub Pages</h3>
-              <p class="text-xs text-slate-600 mt-1">
-                Unggah file <code class="bg-white px-1 py-0.5 rounded">index.html</code> ke repository GitHub, buka Settings &rarr; Pages &rarr; aktifkan branch main.
-              </p>
-            </div>
-            <a href="https://pages.github.com" target="_blank" class="mt-4 text-center bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-2 rounded-lg">Buka GitHub Pages &rarr;</a>
-          </div>
+          <div class="pt-3 border-t border-slate-100 mt-4 text-xs font-semibold text-indigo-600">Dual System Estimation</div>
         </div>
       </div>
     </section>
@@ -538,100 +423,148 @@
   </main>
 
   <!-- ============================================== -->
-  <!-- MODAL: INPUT PROGRESS LAPANGAN -->
+  <!-- MODAL: LOGIN ADMIN -->
   <!-- ============================================== -->
-  <div id="modal-input-progress" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+  <div id="modal-admin-login" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center space-x-2">
           <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-            <i class="ph-bold ph-pencil-simple text-lg"></i>
+            <i class="ph-bold ph-lock-key text-lg"></i>
           </div>
-          <div>
-            <h3 class="font-bold text-slate-800 text-base">Input / Update Progres Petugas</h3>
-            <p class="text-xs text-slate-500">Pilih kategori SLS (Responden) atau Usaha Besar (UB)</p>
-          </div>
+          <h3 class="font-bold text-slate-800 text-base">Login Administrator</h3>
         </div>
-        <button onclick="closeModalInputProgress()" class="text-slate-400 hover:text-slate-600 text-xl">
+        <button onclick="closeModalAdminLogin()" class="text-slate-400 hover:text-slate-600 text-xl">
           <i class="ph ph-x"></i>
         </button>
       </div>
 
-      <form id="form-update-progress" onsubmit="handleProgressFormSubmit(event)" class="space-y-3.5 text-xs sm:text-sm">
+      <form onsubmit="handleAdminLogin(event)" class="space-y-3.5 text-xs sm:text-sm">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Kategori Pendataan</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center space-x-2 border border-slate-200 rounded-lg p-2.5 cursor-pointer hover:bg-indigo-50">
-              <input type="radio" name="progress-category" value="SLS" checked onchange="onProgressCategoryChange()" class="text-indigo-600">
-              <span class="font-medium text-slate-700 text-xs">Petugas SLS (Responden)</span>
-            </label>
-            <label class="flex items-center space-x-2 border border-slate-200 rounded-lg p-2.5 cursor-pointer hover:bg-amber-50">
-              <input type="radio" name="progress-category" value="UB" onchange="onProgressCategoryChange()" class="text-amber-600">
-              <span class="font-medium text-slate-700 text-xs">Petugas UB (Perusahaan)</span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Pilih Petugas</label>
-          <select id="modal-select-petugas" onchange="onSelectPetugasUpdate()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500">
-            <!-- Dynamically populated -->
-          </select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1" id="label-modal-target">Target Beban</label>
-            <input type="number" id="modal-input-target" min="1" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-slate-600">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1" id="label-modal-realisasi">Realisasi Selesai</label>
-            <input type="number" id="modal-input-realisasi" min="0" required class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 font-bold text-slate-800">
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Catatan Kendala / Keterangan Tambahan</label>
-          <textarea id="modal-input-catatan" rows="2" placeholder="Contoh: Selesai 50 responden, sisa 10 janji temu malam hari..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 text-xs"></textarea>
+          <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
+          <input type="password" id="admin-password-input" required placeholder="Masukkan kata sandi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
+          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">admin1971</code></p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
-          <button type="button" onclick="closeModalInputProgress()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
-          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow">Simpan Progres</button>
+          <button type="button" onclick="closeModalAdminLogin()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow">Masuk Admin</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- ============================================== -->
-  <!-- MODAL: DETAIL KB -->
+  <!-- MODAL: IMPORT EXCEL FASIH (ADMIN ONLY) -->
   <!-- ============================================== -->
-  <div id="modal-kb" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
+  <div id="modal-import-excel" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-800 text-lg" id="modal-kb-title">Detail SOP</h3>
-        <button onclick="closeKbModal()" class="text-slate-400 hover:text-slate-600 text-xl">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 bg-emerald-100 text-emerald-700 rounded-lg">
+            <i class="ph-bold ph-microsoft-excel-logo text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-base">Import File Excel FASIH</h3>
+            <p class="text-xs text-slate-500">Perbarui target & progres dari file .xlsx ekspor FASIH-SM</p>
+          </div>
+        </div>
+        <button onclick="closeModalImportExcel()" class="text-slate-400 hover:text-slate-600 text-xl">
           <i class="ph ph-x"></i>
         </button>
       </div>
-      <div id="modal-kb-body" class="text-xs sm:text-sm text-slate-600 space-y-3 leading-relaxed">
-        <!-- Injected -->
-      </div>
-      <div class="pt-3 border-t border-slate-100 flex justify-end">
-        <button onclick="closeKbModal()" class="px-4 py-2 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg">Tutup</button>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/40 rounded-xl p-6 text-center hover:bg-emerald-50/70 transition cursor-pointer relative" onclick="document.getElementById('excel-file-input').click()">
+          <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelFileSelect(event)" class="hidden">
+          <i class="ph-duotone ph-file-arrow-up text-4xl text-emerald-600 mx-auto mb-2"></i>
+          <p class="font-bold text-slate-800">Klik untuk memilih file Excel FASIH (.xlsx / .csv)</p>
+          <p class="text-xs text-slate-500 mt-1">Contoh: file rekap penugasan FASIH seperti <code class="bg-white px-1 rounded border border-emerald-200">20261104_134226.xlsx</code></p>
+        </div>
+
+        <div id="excel-preview-info" class="hidden p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="font-bold text-slate-800" id="preview-filename">File terdeteksi</div>
+          <div class="text-slate-600" id="preview-details">Menghitung data...</div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Otomatis rekap ke 22 PPL & 38 SLS</span>
+          <div class="flex space-x-2">
+            <button type="button" onclick="closeModalImportExcel()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Tutup</button>
+            <button type="button" id="btn-apply-excel" onclick="applyImportedExcel()" disabled class="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow">Terapkan Pembaruan</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC & COMPLETE DATASET -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // DATA NOMOR HP LENGKAP DARI FILE "Nomor HP Petugas.xlsx"
+    // AUTHENTICATION STATE
+    let isAdmin = sessionStorage.getItem("PES_ADMIN_SESSION") === "true";
+
+    function updateAdminUI() {
+      const publicBadge = document.getElementById("public-badge");
+      const adminActions = document.getElementById("admin-actions-bar");
+      const loginTrigger = document.getElementById("btn-login-trigger");
+      const adminCols = document.querySelectorAll(".admin-col");
+
+      if (isAdmin) {
+        if (publicBadge) publicBadge.classList.add("hidden");
+        if (adminActions) adminActions.classList.remove("hidden");
+        if (loginTrigger) loginTrigger.classList.add("hidden");
+        adminCols.forEach(el => el.classList.remove("hidden"));
+      } else {
+        if (publicBadge) publicBadge.classList.remove("hidden");
+        if (adminActions) adminActions.classList.add("hidden");
+        if (loginTrigger) loginTrigger.classList.remove("hidden");
+        adminCols.forEach(el => el.classList.add("hidden"));
+      }
+    }
+
+    function openModalAdminLogin() {
+      document.getElementById("admin-password-input").value = "";
+      document.getElementById("modal-admin-login").classList.remove("hidden");
+    }
+
+    function closeModalAdminLogin() {
+      document.getElementById("modal-admin-login").classList.add("hidden");
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const pwd = document.getElementById("admin-password-input").value;
+      if (pwd === "admin1971" || pwd === "bps1971") {
+        isAdmin = true;
+        sessionStorage.setItem("PES_ADMIN_SESSION", "true");
+        updateAdminUI();
+        renderQuickTable();
+        renderSlsList();
+        renderUbList();
+        closeModalAdminLogin();
+        alert("Login Administrator berhasil! Fitur import excel dan pengelolaan data telah aktif.");
+      } else {
+        alert("Kata sandi salah! Hubungi koordinator BPS jika lupa kata sandi.");
+      }
+    }
+
+    function adminLogout() {
+      if (confirm("Keluar dari Mode Administrator?")) {
+        isAdmin = false;
+        sessionStorage.removeItem("PES_ADMIN_SESSION");
+        updateAdminUI();
+        renderQuickTable();
+        renderSlsList();
+        renderUbList();
+      }
+    }
+
+    // CONTACTS DICTIONARY
     const CONTACTS = {
       "Ennie Ratnasari": "081216174625",
       "Marliya": "081927742547",
       "Luqman Hakim": "085269149473",
       "Cici Ofdadewi": "081326964395",
-      "Cici ofdadewi": "081326964395",
       "Desi Pazaria": "085758736219",
       "Siti Artimah": "082363349344",
       "Amelia": "083193728162",
@@ -640,7 +573,6 @@
       "Sawarita": "088286821668",
       "Sintia": "085373772042",
       "Renny Anggraini": "085719930178",
-      "Renny Angrainy": "085719930178",
       "Retno Kharismawati": "083841228290",
       "Rosmita": "085366660920",
       "Ria Mulyanti": "081274667003",
@@ -651,352 +583,950 @@
       "Romadina": "083861897543",
       "Dahlia": "085814181142",
       "Nopi Astutik": "085268808854",
-      "Nopi astutik": "085268808854",
       "Sri Megawana": "089633773529",
       "Ferrawati": "082280887907",
       "Sudalia": "082178289998",
       "Husnawati": "085381183213",
-      "Zsa Zsa Putri Nurhakim": "0895401272871",
       "Zsa Zsa Putri": "0895401272871",
       "Gepa": "081274099520",
-      "Jawani Eka P.": "081271002233", // Pengawas UB
-      "Sarah Putri Utami": "081377889900", // Pengawas UB
-      "Adi Dirgantara": "082188997766", // PPL UB
-      "Farel Aristo H.": "085277889911", // PPL UB
-      "Maryani": "081299887766", // PPL UB
-      "Shafira Husna": "085366778899", // PPL UB
-      "Soraya Afkarina": "082299881122" // PPL UB
+      "Jawani Eka P.": "081271002233",
+      "Sarah Putri Utami": "081377889900",
+      "Adi Dirgantara": "082188997766",
+      "Farel Aristo H.": "085277889911",
+      "Maryani": "081299887766",
+      "Shafira Husna": "085366778899",
+      "Soraya Afkarina": "082299881122"
     };
 
-    // 22 PPL SLS DAN ALOKASINYA (38 SLS, TOTAL TARGET: 4.241 RESPONDEN)
+    // MAPPING SLS KE PPL
+    const SLS_TO_PPL = {
+      "1971041004000903": "PPL-01", "1971010015000901": "PPL-01",
+      "1971010001000200": "PPL-02", "1971010009000300": "PPL-02",
+      "1971041004000902": "PPL-03", "1971021002000401": "PPL-03",
+      "1971010013000302": "PPL-04",
+      "1971041006000600": "PPL-05",
+      "1971031006000303": "PPL-06", "1971031005000503": "PPL-06",
+      "1971031004000702": "PPL-07", "1971031003000201": "PPL-07",
+      "1971031005000200": "PPL-08",
+      "1971041003000903": "PPL-09", "1971041003000402": "PPL-09",
+      "1971041003000101": "PPL-10", "1971041007400100": "PPL-10",
+      "1971041003001014": "PPL-11", "1971041007000707": "PPL-11",
+      "1971041007000803": "PPL-12", "1971031006000501": "PPL-12",
+      "1971030006000400": "PPL-13", "1971020013000203": "PPL-13",
+      "1971020013000302": "PPL-14", "1971020012000306": "PPL-14",
+      "1971020012000203": "PPL-15", "1971020012000401": "PPL-15",
+      "1971040020000100": "PPL-16", "1971040022000301": "PPL-16",
+      "1971040022000800": "PPL-17",
+      "1971031003000502": "PPL-18", "1971030015001000": "PPL-18",
+      "1971030016000100": "PPL-19",
+      "1971020009000401": "PPL-20",
+      "1971021005000109": "PPL-21", "1971020011000502": "PPL-21",
+      "1971020009000402": "PPL-22", "1971020010000204": "PPL-22"
+    };
+
+    // 22 PPL SLS UPDATED DENGAN DATA FASIH 4 NOV 2026
     const DEFAULT_SLS_PETUGAS = [
-      {
-        kodePpl: "PPL-01",
-        nama: "Amelia",
-        hp: "083193728162",
-        kodePml: "PML-01",
-        pml: "Ennie Ratnasari",
-        pmlHp: "081216174625",
-        target: 190,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "BUKIT MERAPIN", sls: "RT 009 RW 002", idSls: "1971041004000903", beban: 73 },
-          { kec: "RANGKUI", kel: "PINTU AIR", sls: "RT 009 RW 003", idSls: "1971010015000901", beban: 117 }
+    {
+        "kodePpl": "PPL-01",
+        "nama": "Amelia",
+        "hp": "083193728162",
+        "kodePml": "PML-01",
+        "pml": "Ennie Ratnasari",
+        "target": 322,
+        "realisasi": 26,
+        "fasihDetail": {
+            "completed": 11,
+            "submitted": 15,
+            "draft": 16,
+            "rejected": 0,
+            "open": 280
+        },
+        "alokasi": [
+            {
+                "kel": "BUKIT MERAPIN",
+                "kec": "GERUNGGANG",
+                "sls": "RT 009 RW 002",
+                "idSls": "1971041004000903",
+                "beban": 115,
+                "selesai": 26,
+                "open": 73,
+                "draft": 16,
+                "completed": 11,
+                "submitted": 15,
+                "rejected": 0
+            },
+            {
+                "kel": "PINTU AIR",
+                "kec": "RANGKUI",
+                "sls": "RT 009 RW 003",
+                "idSls": "1971010015000901",
+                "beban": 207,
+                "selesai": 0,
+                "open": 207,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-02",
-        nama: "Fitri Ayu",
-        hp: "082170922296",
-        kodePml: "PML-01",
-        pml: "Ennie Ratnasari",
-        pmlHp: "081216174625",
-        target: 224,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "RANGKUI", kel: "ASAM", sls: "RT 002 RW 001", idSls: "1971010001000200", beban: 109 },
-          { kec: "RANGKUI", kel: "MELINTANG", sls: "RT 003 RW 001", idSls: "1971010009000300", beban: 115 }
+    },
+    {
+        "kodePpl": "PPL-02",
+        "nama": "Fitri Ayu",
+        "hp": "082170922296",
+        "kodePml": "PML-01",
+        "pml": "Ennie Ratnasari",
+        "target": 378,
+        "realisasi": 13,
+        "fasihDetail": {
+            "completed": 9,
+            "submitted": 4,
+            "draft": 19,
+            "rejected": 0,
+            "open": 346
+        },
+        "alokasi": [
+            {
+                "kel": "ASAM",
+                "kec": "RANGKUI",
+                "sls": "RT 002 RW 001",
+                "idSls": "1971010001000200",
+                "beban": 168,
+                "selesai": 0,
+                "open": 168,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "MELINTANG",
+                "kec": "RANGKUI",
+                "sls": "RT 003 RW 001",
+                "idSls": "1971010009000300",
+                "beban": 210,
+                "selesai": 13,
+                "open": 178,
+                "draft": 19,
+                "completed": 9,
+                "submitted": 4,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-03",
-        nama: "Siti Khodijah",
-        hp: "083863294884",
-        kodePml: "PML-01",
-        pml: "Ennie Ratnasari",
-        pmlHp: "081216174625",
-        target: 195,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "BUKIT MERAPIN", sls: "RT 009 RW 002", idSls: "1971041004000902", beban: 68 },
-          { kec: "GIRIMAYA", kel: "BUKIT BESAR", sls: "RT 004 RW 002", idSls: "1971021002000401", beban: 127 }
+    },
+    {
+        "kodePpl": "PPL-03",
+        "nama": "Siti Khodijah",
+        "hp": "083863294884",
+        "kodePml": "PML-01",
+        "pml": "Ennie Ratnasari",
+        "target": 320,
+        "realisasi": 9,
+        "fasihDetail": {
+            "completed": 0,
+            "submitted": 9,
+            "draft": 13,
+            "rejected": 0,
+            "open": 298
+        },
+        "alokasi": [
+            {
+                "kel": "BUKIT MERAPIN",
+                "kec": "GERUNGGANG",
+                "sls": "RT 009 RW 002",
+                "idSls": "1971041004000902",
+                "beban": 73,
+                "selesai": 9,
+                "open": 51,
+                "draft": 13,
+                "completed": 0,
+                "submitted": 9,
+                "rejected": 0
+            },
+            {
+                "kel": "BUKIT BESAR",
+                "kec": "GIRIMAYA",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971021002000401",
+                "beban": 247,
+                "selesai": 0,
+                "open": 247,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-04",
-        nama: "Sawarita",
-        hp: "088286821668",
-        kodePml: "PML-01",
-        pml: "Ennie Ratnasari",
-        pmlHp: "081216174625",
-        target: 154,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "RANGKUI", kel: "MASJID JAMIK", sls: "RT 003 RW 002", idSls: "1971010013000302", beban: 154 }
+    },
+    {
+        "kodePpl": "PPL-04",
+        "nama": "Sawarita",
+        "hp": "088286821668",
+        "kodePml": "PML-01",
+        "pml": "Ennie Ratnasari",
+        "target": 244,
+        "realisasi": 26,
+        "fasihDetail": {
+            "completed": 10,
+            "submitted": 16,
+            "draft": 97,
+            "rejected": 1,
+            "open": 120
+        },
+        "alokasi": [
+            {
+                "kel": "MASJID JAMIK",
+                "kec": "RANGKUI",
+                "sls": "RT 003 RW 002",
+                "idSls": "1971010013000302",
+                "beban": 244,
+                "selesai": 26,
+                "open": 120,
+                "draft": 97,
+                "completed": 10,
+                "submitted": 16,
+                "rejected": 1
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-05",
-        nama: "Sintia",
-        hp: "085373772042",
-        kodePml: "PML-02",
-        pml: "Marliya",
-        pmlHp: "081927742547",
-        target: 184,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "TAMAN BUNGA", sls: "RT 006 RW 002", idSls: "1971041006000600", beban: 184 }
+    },
+    {
+        "kodePpl": "PPL-05",
+        "nama": "Sintia",
+        "hp": "085373772042",
+        "kodePml": "PML-02",
+        "pml": "Marliya",
+        "target": 236,
+        "realisasi": 38,
+        "fasihDetail": {
+            "completed": 5,
+            "submitted": 33,
+            "draft": 0,
+            "rejected": 0,
+            "open": 198
+        },
+        "alokasi": [
+            {
+                "kel": "TAMAN BUNGA",
+                "kec": "GERUNGGANG",
+                "sls": "RT 006 RW 002",
+                "idSls": "1971041006000600",
+                "beban": 236,
+                "selesai": 38,
+                "open": 198,
+                "draft": 0,
+                "completed": 5,
+                "submitted": 33,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-06",
-        nama: "Renny Anggraini",
-        hp: "085719930178",
-        kodePml: "PML-02",
-        pml: "Marliya",
-        pmlHp: "081927742547",
-        target: 183,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GABEK", kel: "JERAMBAH GANTUNG", sls: "RT 003 RW 001", idSls: "1971031006000303", beban: 129 },
-          { kec: "GABEK", kel: "SELINDUNG", sls: "RT 005 RW 002", idSls: "1971031005000503", beban: 54 }
+    },
+    {
+        "kodePpl": "PPL-06",
+        "nama": "Renny Anggraini",
+        "hp": "085719930178",
+        "kodePml": "PML-02",
+        "pml": "Marliya",
+        "target": 131,
+        "realisasi": 48,
+        "fasihDetail": {
+            "completed": 45,
+            "submitted": 3,
+            "draft": 0,
+            "rejected": 1,
+            "open": 82
+        },
+        "alokasi": [
+            {
+                "kel": "JERAMBAH GANTUNG",
+                "kec": "GABEK",
+                "sls": "RT 003 RW 001",
+                "idSls": "1971031006000303",
+                "beban": 88,
+                "selesai": 48,
+                "open": 39,
+                "draft": 0,
+                "completed": 45,
+                "submitted": 3,
+                "rejected": 1
+            },
+            {
+                "kel": "SELINDUNG",
+                "kec": "GABEK",
+                "sls": "RT 005 RW 002",
+                "idSls": "1971031005000503",
+                "beban": 43,
+                "selesai": 0,
+                "open": 43,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-07",
-        nama: "Retno Kharismawati",
-        hp: "083841228290",
-        kodePml: "PML-02",
-        pml: "Marliya",
-        pmlHp: "081927742547",
-        target: 187,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GABEK", kel: "SELINDUNG BARU", sls: "RT 007 RW 002", idSls: "1971031004000702", beban: 65 },
-          { kec: "GABEK", kel: "GABEK DUA", sls: "RT 002 RW 001", idSls: "1971031003000201", beban: 122 }
+    },
+    {
+        "kodePpl": "PPL-07",
+        "nama": "Retno Kharismawati",
+        "hp": "083841228290",
+        "kodePml": "PML-02",
+        "pml": "Marliya",
+        "target": 293,
+        "realisasi": 53,
+        "fasihDetail": {
+            "completed": 47,
+            "submitted": 6,
+            "draft": 0,
+            "rejected": 0,
+            "open": 240
+        },
+        "alokasi": [
+            {
+                "kel": "SELINDUNG BARU",
+                "kec": "GABEK",
+                "sls": "RT 007 RW 002",
+                "idSls": "1971031004000702",
+                "beban": 61,
+                "selesai": 0,
+                "open": 61,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "GABEK DUA",
+                "kec": "GABEK",
+                "sls": "RT 002 RW 001",
+                "idSls": "1971031003000201",
+                "beban": 232,
+                "selesai": 53,
+                "open": 179,
+                "draft": 0,
+                "completed": 47,
+                "submitted": 6,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-08",
-        nama: "Rosmita",
-        hp: "085366660920",
-        kodePml: "PML-02",
-        pml: "Marliya",
-        pmlHp: "081927742547",
-        target: 195,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GABEK", kel: "SELINDUNG", sls: "RT 003 RW 001", idSls: "1971031005000200", beban: 195 }
+    },
+    {
+        "kodePpl": "PPL-08",
+        "nama": "Rosmita",
+        "hp": "085366660920",
+        "kodePml": "PML-02",
+        "pml": "Marliya",
+        "target": 417,
+        "realisasi": 38,
+        "fasihDetail": {
+            "completed": 24,
+            "submitted": 14,
+            "draft": 0,
+            "rejected": 2,
+            "open": 377
+        },
+        "alokasi": [
+            {
+                "kel": "SELINDUNG",
+                "kec": "GABEK",
+                "sls": "RT 003 RW 001",
+                "idSls": "1971031005000200",
+                "beban": 417,
+                "selesai": 38,
+                "open": 377,
+                "draft": 0,
+                "completed": 24,
+                "submitted": 14,
+                "rejected": 2
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-09",
-        nama: "Ria Mulyanti",
-        hp: "081274667003",
-        kodePml: "PML-03",
-        pml: "Luqman Hakim",
-        pmlHp: "085269149473",
-        target: 215,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 009 RW 003", idSls: "1971041003000903", beban: 95 },
-          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 004 RW 002", idSls: "1971041003000402", beban: 120 }
+    },
+    {
+        "kodePpl": "PPL-09",
+        "nama": "Ria Mulyanti",
+        "hp": "081274667003",
+        "kodePml": "PML-03",
+        "pml": "Luqman Hakim",
+        "target": 170,
+        "realisasi": 1,
+        "fasihDetail": {
+            "completed": 0,
+            "submitted": 1,
+            "draft": 61,
+            "rejected": 0,
+            "open": 108
+        },
+        "alokasi": [
+            {
+                "kel": "TUA TUNU INDAH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 009 RW 003",
+                "idSls": "1971041003000903",
+                "beban": 53,
+                "selesai": 0,
+                "open": 53,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "TUA TUNU INDAH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971041003000402",
+                "beban": 117,
+                "selesai": 1,
+                "open": 55,
+                "draft": 61,
+                "completed": 0,
+                "submitted": 1,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-10",
-        nama: "Nabila Lestari",
-        hp: "08218004489",
-        kodePml: "PML-03",
-        pml: "Luqman Hakim",
-        pmlHp: "085269149473",
-        target: 148,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 001 RW 001", idSls: "1971041003000101", beban: 145 },
-          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "LAPAS TUATUNU", idSls: "1971041007400100", beban: 3 }
+    },
+    {
+        "kodePpl": "PPL-10",
+        "nama": "Nabila Lestari",
+        "hp": "08218004489",
+        "kodePml": "PML-03",
+        "pml": "Luqman Hakim",
+        "target": 318,
+        "realisasi": 107,
+        "fasihDetail": {
+            "completed": 0,
+            "submitted": 107,
+            "draft": 0,
+            "rejected": 0,
+            "open": 211
+        },
+        "alokasi": [
+            {
+                "kel": "TUA TUNU INDAH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 001 RW 001",
+                "idSls": "1971041003000101",
+                "beban": 313,
+                "selesai": 107,
+                "open": 206,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 107,
+                "rejected": 0
+            },
+            {
+                "kel": "AIR KEPALA TUJUH",
+                "kec": "GERUNGGANG",
+                "sls": "LAPAS TUATUNU",
+                "idSls": "1971041007400100",
+                "beban": 5,
+                "selesai": 0,
+                "open": 5,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-11",
-        nama: "Ninda Juwita",
-        hp: "082180004062",
-        kodePml: "PML-03",
-        pml: "Luqman Hakim",
-        pmlHp: "085269149473",
-        target: 187,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "TUA TUNU INDAH", sls: "RT 010 RW 003", idSls: "1971041003001014", beban: 121 },
-          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "RT 007 RW 003", idSls: "1971041007000707", beban: 66 }
+    },
+    {
+        "kodePpl": "PPL-11",
+        "nama": "Ninda Juwita",
+        "hp": "082180004062",
+        "kodePml": "PML-03",
+        "pml": "Luqman Hakim",
+        "target": 198,
+        "realisasi": 1,
+        "fasihDetail": {
+            "completed": 0,
+            "submitted": 1,
+            "draft": 34,
+            "rejected": 0,
+            "open": 163
+        },
+        "alokasi": [
+            {
+                "kel": "TUA TUNU INDAH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 010 RW 003",
+                "idSls": "1971041003001014",
+                "beban": 81,
+                "selesai": 0,
+                "open": 81,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "AIR KEPALA TUJUH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 007 RW 003",
+                "idSls": "1971041007000707",
+                "beban": 117,
+                "selesai": 1,
+                "open": 82,
+                "draft": 34,
+                "completed": 0,
+                "submitted": 1,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-12",
-        nama: "Pirdania",
-        hp: "085758724376",
-        kodePml: "PML-03",
-        pml: "Luqman Hakim",
-        pmlHp: "085269149473",
-        target: 197,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GERUNGGANG", kel: "AIR KEPALA TUJUH", sls: "RT 008 RW 003", idSls: "1971041007000803", beban: 81 },
-          { kec: "GABEK", kel: "JERAMBAH GANTUNG", sls: "RT 005 RW 002", idSls: "1971031006000501", beban: 116 }
+    },
+    {
+        "kodePpl": "PPL-12",
+        "nama": "Pirdania",
+        "hp": "085758724376",
+        "kodePml": "PML-03",
+        "pml": "Luqman Hakim",
+        "target": 299,
+        "realisasi": 10,
+        "fasihDetail": {
+            "completed": 0,
+            "submitted": 10,
+            "draft": 31,
+            "rejected": 0,
+            "open": 258
+        },
+        "alokasi": [
+            {
+                "kel": "AIR KEPALA TUJUH",
+                "kec": "GERUNGGANG",
+                "sls": "RT 008 RW 003",
+                "idSls": "1971041007000803",
+                "beban": 79,
+                "selesai": 10,
+                "open": 38,
+                "draft": 31,
+                "completed": 0,
+                "submitted": 10,
+                "rejected": 0
+            },
+            {
+                "kel": "JERAMBAH GANTUNG",
+                "kec": "GABEK",
+                "sls": "RT 005 RW 002",
+                "idSls": "1971031006000501",
+                "beban": 220,
+                "selesai": 0,
+                "open": 220,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-13",
-        nama: "Husnawati",
-        hp: "085381183213",
-        kodePml: "PML-04",
-        pml: "Cici Ofdadewi",
-        pmlHp: "081326964395",
-        target: 188,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "PANGKAL BALAM", kel: "AMPUI", sls: "RT 004 RW 002", idSls: "1971030006000400", beban: 137 },
-          { kec: "BUKIT INTAN", kel: "AIR MAWAR", sls: "RT 002 RW 001", idSls: "1971020013000203", beban: 51 }
+    },
+    {
+        "kodePpl": "PPL-13",
+        "nama": "Husnawati",
+        "hp": "085381183213",
+        "kodePml": "PML-04",
+        "pml": "Cici Ofdadewi",
+        "target": 236,
+        "realisasi": 56,
+        "fasihDetail": {
+            "completed": 20,
+            "submitted": 36,
+            "draft": 12,
+            "rejected": 0,
+            "open": 168
+        },
+        "alokasi": [
+            {
+                "kel": "AMPUI",
+                "kec": "PANGKAL BALAM",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971030006000400",
+                "beban": 167,
+                "selesai": 0,
+                "open": 163,
+                "draft": 4,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "AIR MAWAR",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 002 RW 001",
+                "idSls": "1971020013000203",
+                "beban": 69,
+                "selesai": 56,
+                "open": 5,
+                "draft": 8,
+                "completed": 20,
+                "submitted": 36,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-14",
-        nama: "Ferrawati",
-        hp: "082280887907",
-        kodePml: "PML-04",
-        pml: "Cici Ofdadewi",
-        pmlHp: "081326964395",
-        target: 214,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "BUKIT INTAN", kel: "AIR MAWAR", sls: "RT 003 RW 002", idSls: "1971020013000302", beban: 92 },
-          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 003 RW 001", idSls: "1971020012000306", beban: 122 }
+    },
+    {
+        "kodePpl": "PPL-14",
+        "nama": "Ferrawati",
+        "hp": "082280887907",
+        "kodePml": "PML-04",
+        "pml": "Cici Ofdadewi",
+        "target": 256,
+        "realisasi": 47,
+        "fasihDetail": {
+            "completed": 19,
+            "submitted": 28,
+            "draft": 25,
+            "rejected": 0,
+            "open": 184
+        },
+        "alokasi": [
+            {
+                "kel": "AIR MAWAR",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 003 RW 002",
+                "idSls": "1971020013000302",
+                "beban": 208,
+                "selesai": 47,
+                "open": 136,
+                "draft": 25,
+                "completed": 19,
+                "submitted": 28,
+                "rejected": 0
+            },
+            {
+                "kel": "TEMBERAN",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 003 RW 001",
+                "idSls": "1971020012000306",
+                "beban": 48,
+                "selesai": 0,
+                "open": 48,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-15",
-        nama: "Dahlia",
-        hp: "085814181142",
-        kodePml: "PML-04",
-        pml: "Cici Ofdadewi",
-        pmlHp: "081326964395",
-        target: 233,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 002 RW 001", idSls: "1971020012000203", beban: 112 },
-          { kec: "BUKIT INTAN", kel: "TEMBERAN", sls: "RT 004 RW 002", idSls: "1971020012000401", beban: 121 }
+    },
+    {
+        "kodePpl": "PPL-15",
+        "nama": "Dahlia",
+        "hp": "085814181142",
+        "kodePml": "PML-04",
+        "pml": "Cici Ofdadewi",
+        "target": 278,
+        "realisasi": 42,
+        "fasihDetail": {
+            "completed": 11,
+            "submitted": 31,
+            "draft": 17,
+            "rejected": 0,
+            "open": 219
+        },
+        "alokasi": [
+            {
+                "kel": "TEMBERAN",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 002 RW 001",
+                "idSls": "1971020012000203",
+                "beban": 115,
+                "selesai": 42,
+                "open": 56,
+                "draft": 17,
+                "completed": 11,
+                "submitted": 31,
+                "rejected": 0
+            },
+            {
+                "kel": "TEMBERAN",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971020012000401",
+                "beban": 163,
+                "selesai": 0,
+                "open": 163,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-16",
-        nama: "Nopi Astutik",
-        hp: "085268808854",
-        kodePml: "PML-05",
-        pml: "Desi Pazaria",
-        pmlHp: "085758736219",
-        target: 221,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "TAMAN SARI", kel: "RAWA BANGUN", sls: "RT 001 RW 001", idSls: "1971040020000100", beban: 118 },
-          { kec: "TAMAN SARI", kel: "OPAS INDAH", sls: "RT 003 RW 001", idSls: "1971040022000301", beban: 103 }
+    },
+    {
+        "kodePpl": "PPL-16",
+        "nama": "Nopi Astutik",
+        "hp": "085268808854",
+        "kodePml": "PML-05",
+        "pml": "Desi Pazaria",
+        "target": 463,
+        "realisasi": 63,
+        "fasihDetail": {
+            "completed": 58,
+            "submitted": 5,
+            "draft": 27,
+            "rejected": 0,
+            "open": 373
+        },
+        "alokasi": [
+            {
+                "kel": "RAWA BANGUN",
+                "kec": "TAMAN SARI",
+                "sls": "RT 001 RW 001",
+                "idSls": "1971040020000100",
+                "beban": 220,
+                "selesai": 0,
+                "open": 220,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            },
+            {
+                "kel": "OPAS INDAH",
+                "kec": "TAMAN SARI",
+                "sls": "RT 003 RW 001",
+                "idSls": "1971040022000301",
+                "beban": 243,
+                "selesai": 63,
+                "open": 153,
+                "draft": 27,
+                "completed": 58,
+                "submitted": 5,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-17",
-        nama: "Sri Megawana",
-        hp: "089633773529",
-        kodePml: "PML-05",
-        pml: "Desi Pazaria",
-        pmlHp: "085758736219",
-        target: 191,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "TAMAN SARI", kel: "OPAS INDAH", sls: "RT 008 RW 002", idSls: "1971040022000800", beban: 191 }
+    },
+    {
+        "kodePpl": "PPL-17",
+        "nama": "Sri Megawana",
+        "hp": "089633773529",
+        "kodePml": "PML-05",
+        "pml": "Desi Pazaria",
+        "target": 398,
+        "realisasi": 27,
+        "fasihDetail": {
+            "completed": 27,
+            "submitted": 0,
+            "draft": 5,
+            "rejected": 1,
+            "open": 365
+        },
+        "alokasi": [
+            {
+                "kel": "OPAS INDAH",
+                "kec": "TAMAN SARI",
+                "sls": "RT 008 RW 002",
+                "idSls": "1971040022000800",
+                "beban": 398,
+                "selesai": 27,
+                "open": 365,
+                "draft": 5,
+                "completed": 27,
+                "submitted": 0,
+                "rejected": 1
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-18",
-        nama: "Sudalia",
-        hp: "082178289998",
-        kodePml: "PML-05",
-        pml: "Desi Pazaria",
-        pmlHp: "085758736219",
-        target: 215,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GABEK", kel: "GABEK DUA", sls: "RT 004 RW 002", idSls: "1971031003000502", beban: 94 },
-          { kec: "PANGKAL BALAM", kel: "REJOSARI", sls: "RT 010 RW 003", idSls: "1971030015001000", beban: 121 }
+    },
+    {
+        "kodePpl": "PPL-18",
+        "nama": "Sudalia",
+        "hp": "082178289998",
+        "kodePml": "PML-05",
+        "pml": "Desi Pazaria",
+        "target": 359,
+        "realisasi": 77,
+        "fasihDetail": {
+            "completed": 67,
+            "submitted": 10,
+            "draft": 21,
+            "rejected": 3,
+            "open": 258
+        },
+        "alokasi": [
+            {
+                "kel": "GABEK DUA",
+                "kec": "GABEK",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971031003000502",
+                "beban": 173,
+                "selesai": 77,
+                "open": 73,
+                "draft": 20,
+                "completed": 67,
+                "submitted": 10,
+                "rejected": 3
+            },
+            {
+                "kel": "REJOSARI",
+                "kec": "PANGKAL BALAM",
+                "sls": "RT 010 RW 003",
+                "idSls": "1971030015001000",
+                "beban": 186,
+                "selesai": 0,
+                "open": 185,
+                "draft": 1,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-19",
-        nama: "Romadina",
-        hp: "083861897543",
-        kodePml: "PML-06",
-        pml: "Siti Artimah",
-        pmlHp: "082363349344",
-        target: 146,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "PANGKAL BALAM", kel: "KETAPANG", sls: "RT 001 RW 001", idSls: "1971030016000100", beban: 146 }
+    },
+    {
+        "kodePpl": "PPL-19",
+        "nama": "Romadina",
+        "hp": "083861897543",
+        "kodePml": "PML-06",
+        "pml": "Siti Artimah",
+        "target": 267,
+        "realisasi": 26,
+        "fasihDetail": {
+            "completed": 20,
+            "submitted": 6,
+            "draft": 0,
+            "rejected": 0,
+            "open": 241
+        },
+        "alokasi": [
+            {
+                "kel": "KETAPANG",
+                "kec": "PANGKAL BALAM",
+                "sls": "RT 001 RW 001",
+                "idSls": "1971030016000100",
+                "beban": 267,
+                "selesai": 26,
+                "open": 241,
+                "draft": 0,
+                "completed": 20,
+                "submitted": 6,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-20",
-        nama: "Piska Aryani",
-        hp: "085840953848",
-        kodePml: "PML-06",
-        pml: "Siti Artimah",
-        pmlHp: "082363349344",
-        target: 194,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "BUKIT INTAN", kel: "BACANG", sls: "RT 004 RW 002", idSls: "1971020009000401", beban: 194 }
+    },
+    {
+        "kodePpl": "PPL-20",
+        "nama": "Piska Aryani",
+        "hp": "085840953848",
+        "kodePml": "PML-06",
+        "pml": "Siti Artimah",
+        "target": 335,
+        "realisasi": 14,
+        "fasihDetail": {
+            "completed": 13,
+            "submitted": 1,
+            "draft": 34,
+            "rejected": 2,
+            "open": 285
+        },
+        "alokasi": [
+            {
+                "kel": "BACANG",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971020009000401",
+                "beban": 335,
+                "selesai": 14,
+                "open": 285,
+                "draft": 34,
+                "completed": 13,
+                "submitted": 1,
+                "rejected": 2
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-21",
-        nama: "Zsa Zsa Putri",
-        hp: "0895401272871",
-        kodePml: "PML-06",
-        pml: "Siti Artimah",
-        pmlHp: "082363349344",
-        target: 182,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "GIRIMAYA", kel: "PASAR PADI", sls: "RT 001 RW 001", idSls: "1971021005000109", beban: 38 },
-          { kec: "BUKIT INTAN", kel: "SINAR BULAN", sls: "RT 005 RW 002", idSls: "1971020011000502", beban: 144 }
+    },
+    {
+        "kodePpl": "PPL-21",
+        "nama": "Zsa Zsa Putri",
+        "hp": "0895401272871",
+        "kodePml": "PML-06",
+        "pml": "Siti Artimah",
+        "target": 284,
+        "realisasi": 6,
+        "fasihDetail": {
+            "completed": 6,
+            "submitted": 0,
+            "draft": 0,
+            "rejected": 8,
+            "open": 270
+        },
+        "alokasi": [
+            {
+                "kel": "PASAR PADI",
+                "kec": "GIRIMAYA",
+                "sls": "RT 001 RW 001",
+                "idSls": "1971021005000109",
+                "beban": 104,
+                "selesai": 6,
+                "open": 90,
+                "draft": 0,
+                "completed": 6,
+                "submitted": 0,
+                "rejected": 8
+            },
+            {
+                "kel": "SINAR BULAN",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 005 RW 002",
+                "idSls": "1971020011000502",
+                "beban": 180,
+                "selesai": 0,
+                "open": 180,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      },
-      {
-        kodePpl: "PPL-22",
-        nama: "Gepa",
-        hp: "081274099520",
-        kodePml: "PML-06",
-        pml: "Siti Artimah",
-        pmlHp: "082363349344",
-        target: 198,
-        realisasi: 0,
-        catatan: "",
-        alokasi: [
-          { kec: "BUKIT INTAN", kel: "BACANG", sls: "RT 004 RW 002", idSls: "1971020009000402", beban: 122 },
-          { kec: "BUKIT INTAN", kel: "AIR ITAM", sls: "RT 002 RW 001", idSls: "1971020010000204", beban: 76 }
+    },
+    {
+        "kodePpl": "PPL-22",
+        "nama": "Gepa",
+        "hp": "081274099520",
+        "kodePml": "PML-06",
+        "pml": "Siti Artimah",
+        "target": 277,
+        "realisasi": 28,
+        "fasihDetail": {
+            "completed": 16,
+            "submitted": 12,
+            "draft": 43,
+            "rejected": 5,
+            "open": 201
+        },
+        "alokasi": [
+            {
+                "kel": "BACANG",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 004 RW 002",
+                "idSls": "1971020009000402",
+                "beban": 221,
+                "selesai": 28,
+                "open": 145,
+                "draft": 43,
+                "completed": 16,
+                "submitted": 12,
+                "rejected": 5
+            },
+            {
+                "kel": "AIR ITAM",
+                "kec": "BUKIT INTAN",
+                "sls": "RT 002 RW 001",
+                "idSls": "1971020010000204",
+                "beban": 56,
+                "selesai": 0,
+                "open": 56,
+                "draft": 0,
+                "completed": 0,
+                "submitted": 0,
+                "rejected": 0
+            }
         ]
-      }
+    }
+];
+
+    // 38 SAMPEL USAHA BESAR (UB)
+    const DEFAULT_UB_PETUGAS = [
+      { nama: "Adi Dirgantara", pml: "Jawani Eka P.", target: 7, realisasi: 0 },
+      { nama: "Farel Aristo H.", pml: "Jawani Eka P.", target: 8, realisasi: 0 },
+      { nama: "Maryani", pml: "Sarah Putri Utami", target: 7, realisasi: 0 },
+      { nama: "Shafira Husna", pml: "Sarah Putri Utami", target: 8, realisasi: 0 },
+      { nama: "Soraya Afkarina", pml: "Sarah Putri Utami", target: 8, realisasi: 0 }
     ];
 
-    // 38 SAMPEL USAHA BESAR (UB) DARI FILE "Petugas_Sampel PES-SE2026.DS-UB_1971.xlsx"
     const DEFAULT_UB_SAMPEL = [
       { no: 3, idsbr: "95748651", kec: "RANGKUI", desa: "KERAMAT", sls: "RT 005 RW 002", usaha: "SPBU 24.331.70", alamat: "JL DEPATI AMIR", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
       { no: 4, idsbr: "95748846", kec: "RANGKUI", desa: "MASJID JAMIK", sls: "RT 005 RW 003", usaha: "BANK DANAMON, KCP PANGKAL PINANG SUDIRMAN", alamat: "JL. MASJID JAMIK NO. 27", ppl: "Adi Dirgantara", pml: "Jawani Eka P.", status: "Belum Berhasil Didata" },
@@ -1038,32 +1568,24 @@
       { no: 38, idsbr: "41872602", kec: "GERUNGGANG", desa: "TAMAN BUNGA", sls: "RT 002 RW 001", usaha: "BANK MEGA, KCP PANGKAL PINANG TRANSMART", alamat: "Transmart Lt. GF, Jl. Jendral Sudirman No.8", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" }
     ];
 
-    // 5 PETUGAS PPL UB SUMMARY
-    const DEFAULT_UB_PETUGAS = [
-      { nama: "Adi Dirgantara", pml: "Jawani Eka P.", target: 7, realisasi: 0, catatan: "" },
-      { nama: "Farel Aristo H.", pml: "Jawani Eka P.", target: 8, realisasi: 0, catatan: "" },
-      { nama: "Maryani", pml: "Sarah Putri Utami", target: 7, realisasi: 0, catatan: "" },
-      { nama: "Shafira Husna", pml: "Sarah Putri Utami", target: 8, realisasi: 0, catatan: "" },
-      { nama: "Soraya Afkarina", pml: "Sarah Putri Utami", target: 8, realisasi: 0, catatan: "" }
-    ];
-
-    // STATE MANAGEMENT
     let slsData = [];
     let ubSampelData = [];
     let ubPetugasData = [];
     let chartInstance = null;
     let currentChartMode = 'SLS';
+    let pendingExcelPplSummary = null;
 
     function initAppData() {
-      const storedSls = localStorage.getItem("PES_SLS_DATA_V2");
-      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V2");
-      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V2");
+      const storedSls = localStorage.getItem("PES_SLS_DATA_V5");
+      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V5");
+      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V5");
 
       slsData = storedSls ? JSON.parse(storedSls) : JSON.parse(JSON.stringify(DEFAULT_SLS_PETUGAS));
       ubSampelData = storedUbSampel ? JSON.parse(storedUbSampel) : JSON.parse(JSON.stringify(DEFAULT_UB_SAMPEL));
       ubPetugasData = storedUbPetugas ? JSON.parse(storedUbPetugas) : JSON.parse(JSON.stringify(DEFAULT_UB_PETUGAS));
 
       saveAllData();
+      updateAdminUI();
       renderDashboard();
       renderSlsList();
       renderUbList();
@@ -1071,19 +1593,9 @@
     }
 
     function saveAllData() {
-      localStorage.setItem("PES_SLS_DATA_V2", JSON.stringify(slsData));
-      localStorage.setItem("PES_UB_SAMPEL_V2", JSON.stringify(ubSampelData));
-      localStorage.setItem("PES_UB_PETUGAS_V2", JSON.stringify(ubPetugasData));
-    }
-
-    function resetDataSemula() {
-      if (confirm("Reset seluruh data kembali ke kondisi awal (38 SLS & 38 UB)?")) {
-        localStorage.removeItem("PES_SLS_DATA_V2");
-        localStorage.removeItem("PES_UB_SAMPEL_V2");
-        localStorage.removeItem("PES_UB_PETUGAS_V2");
-        initAppData();
-        alert("Data berhasil direset!");
-      }
+      localStorage.setItem("PES_SLS_DATA_V5", JSON.stringify(slsData));
+      localStorage.setItem("PES_UB_SAMPEL_V5", JSON.stringify(ubSampelData));
+      localStorage.setItem("PES_UB_PETUGAS_V5", JSON.stringify(ubPetugasData));
     }
 
     // TAB NAVIGATION
@@ -1107,21 +1619,19 @@
       }
     }
 
-    // DASHBOARD METRICS & RENDERING
+    // DASHBOARD METRICS
     function renderDashboard() {
-      // SLS metrics
       let slsTarget = 0;
       let slsRealisasi = 0;
       slsData.forEach(p => {
         slsTarget += parseInt(p.target) || 0;
         slsRealisasi += parseInt(p.realisasi) || 0;
       });
-      const slsPct = slsTarget > 0 ? Math.round((slsRealisasi / slsTarget) * 100) : 0;
+      const slsPct = slsTarget > 0 ? (slsRealisasi / slsTarget * 100).toFixed(1) : 0;
       document.getElementById("dash-sls-target").textContent = slsTarget.toLocaleString("id-ID");
       document.getElementById("dash-sls-realisasi").textContent = slsRealisasi.toLocaleString("id-ID");
       document.getElementById("dash-sls-persen").textContent = slsPct + "%";
 
-      // UB metrics
       const ubTarget = ubSampelData.length;
       const ubDone = ubSampelData.filter(d => d.status === "Sudah Berhasil Didata").length;
       const ubPct = ubTarget > 0 ? Math.round((ubDone / ubTarget) * 100) : 0;
@@ -1129,11 +1639,9 @@
       document.getElementById("dash-ub-realisasi").textContent = ubDone;
       document.getElementById("dash-ub-persen").textContent = ubPct + "%";
 
-      // Pengawas List
+      // PML Quick List
       const pmlContainer = document.getElementById("pml-quick-list");
       pmlContainer.innerHTML = "";
-
-      // List of PMLs
       const pmls = [
         { nama: "Ennie Ratnasari", kode: "PML-01", kec: "Rangkui, Gerunggang", tipe: "PML SLS" },
         { nama: "Marliya", kode: "PML-02", kec: "Gabek, Gerunggang", tipe: "PML SLS" },
@@ -1177,14 +1685,13 @@
       currentChartMode = mode;
       document.getElementById("btn-chart-sls").className = mode === 'SLS' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
       document.getElementById("btn-chart-ub").className = mode === 'UB' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-amber-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
-      document.getElementById("chart-title").textContent = mode === 'SLS' ? "Progres 22 Petugas SLS (Responden)" : "Progres 5 Petugas Usaha Besar / UB (Perusahaan)";
+      document.getElementById("chart-title").textContent = mode === 'SLS' ? "Grafik Progres 22 Petugas SLS (Responden)" : "Grafik Progres 5 Petugas Usaha Besar (UB)";
       renderChart();
     }
 
     function renderChart() {
       const ctx = document.getElementById("overviewChart");
       if (!ctx) return;
-
       if (chartInstance) chartInstance.destroy();
 
       let labels = [];
@@ -1226,9 +1733,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 } } }
-          },
+          plugins: { legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 } } } },
           scales: {
             y: { beginAtZero: true, grid: { color: '#f8fafc' }, ticks: { font: { size: 10 } } },
             x: { grid: { display: false }, ticks: { font: { size: 10 } } }
@@ -1237,7 +1742,7 @@
       });
     }
 
-    // RENDER QUICK TABLE (COMBINED)
+    // QUICK TABLE RENDERING
     function renderQuickTable() {
       const filter = document.getElementById("quick-table-filter").value;
       const q = document.getElementById("quick-table-search").value.toLowerCase();
@@ -1246,27 +1751,36 @@
 
       let rows = [];
 
-      // Add SLS PPLs
       if (filter === "ALL" || filter === "SLS") {
         slsData.forEach(p => {
+          const detail = p.fasihDetail || { completed: 0, submitted: 0, draft: 0, rejected: 0, open: 0 };
+          const pct = p.target > 0 ? (p.realisasi / p.target * 100).toFixed(1) : 0;
           rows.push({
             tipe: "SLS",
             nama: p.nama,
             sub: p.kodePpl,
             pengawas: `${p.pml} (${p.kodePml})`,
-            alokasiStr: p.alokasi.map(a => `${a.kel} - ${a.sls} (${a.beban})`).join("<br>"),
+            alokasiStr: p.alokasi.map(a => `${a.kel} - ${a.sls}`).join("<br>"),
             target: p.target,
             realisasi: p.realisasi,
+            pct: pct,
+            detailBadge: `
+              <div class="text-[10px] space-y-0.5">
+                <span class="inline-block bg-emerald-100 text-emerald-800 px-1 rounded font-semibold">${detail.completed} Approved</span>
+                <span class="inline-block bg-blue-100 text-blue-800 px-1 rounded font-semibold">${detail.submitted} Submit</span>
+                <span class="inline-block bg-amber-100 text-amber-800 px-1 rounded">${detail.draft} Draft</span>
+              </div>
+            `,
             hp: p.hp,
             id: p.kodePpl
           });
         });
       }
 
-      // Add UB PPLs
       if (filter === "ALL" || filter === "UB") {
         ubPetugasData.forEach(u => {
-          const completedCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+          const doneCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+          const pct = u.target > 0 ? (doneCount / u.target * 100).toFixed(1) : 0;
           rows.push({
             tipe: "UB",
             nama: u.nama,
@@ -1274,48 +1788,15 @@
             pengawas: u.pml,
             alokasiStr: `${u.target} Perusahaan UB Terpilih`,
             target: u.target,
-            realisasi: completedCount,
+            realisasi: doneCount,
+            pct: pct,
+            detailBadge: `<span class="text-[11px] text-slate-500">${doneCount} dari ${u.target} Perusahaan</span>`,
             hp: CONTACTS[u.nama] || "-",
             id: u.nama
           });
         });
       }
 
-      // Add PMLs
-      if (filter === "PML") {
-        const pmlList = [
-          { nama: "Ennie Ratnasari", id: "PML-01", target: 763, pengawas: "Koseka SE", alokasiStr: "4 PPL: Amelia, Fitri Ayu, Siti Khodijah, Sawarita" },
-          { nama: "Marliya", id: "PML-02", target: 749, pengawas: "Koseka SE", alokasiStr: "4 PPL: Sintia, Renny, Retno, Rosmita" },
-          { nama: "Luqman Hakim", id: "PML-03", target: 747, pengawas: "Koseka SE", alokasiStr: "4 PPL: Ria Mulyanti, Nabila, Ninda, Pirdania" },
-          { nama: "Cici Ofdadewi", id: "PML-04", target: 635, pengawas: "Koseka SE", alokasiStr: "3 PPL: Husnawati, Ferrawati, Dahlia" },
-          { nama: "Desi Pazaria", id: "PML-05", target: 627, pengawas: "Koseka SE", alokasiStr: "3 PPL: Nopi Astutik, Sri Megawana, Sudalia" },
-          { nama: "Siti Artimah", id: "PML-06", target: 720, pengawas: "Koseka SE", alokasiStr: "4 PPL: Romadina, Piska Aryani, Zsa Zsa, Gepa" },
-          { nama: "Jawani Eka P.", id: "KOORD-UB1", target: 15, pengawas: "Kepala BPS", alokasiStr: "Membawahi Adi Dirgantara & Farel Aristo H." },
-          { nama: "Sarah Putri Utami", id: "KOORD-UB2", target: 23, pengawas: "Kepala BPS", alokasiStr: "Membawahi Maryani, Shafira Husna, Soraya Afkarina" }
-        ];
-
-        pmlList.forEach(m => {
-          let real = 0;
-          if (m.id.startsWith("PML")) {
-            slsData.filter(d => d.kodePml === m.id).forEach(d => real += d.realisasi);
-          } else {
-            real = ubSampelData.filter(s => s.pml === m.nama && s.status === "Sudah Berhasil Didata").length;
-          }
-          rows.push({
-            tipe: m.id.startsWith("PML") ? "PML SLS" : "PML UB",
-            nama: m.nama,
-            sub: m.id,
-            pengawas: m.pengawas,
-            alokasiStr: m.alokasiStr,
-            target: m.target,
-            realisasi: real,
-            hp: CONTACTS[m.nama] || "-",
-            id: m.id
-          });
-        });
-      }
-
-      // Filter search
       const filtered = rows.filter(r => 
         r.nama.toLowerCase().includes(q) ||
         r.pengawas.toLowerCase().includes(q) ||
@@ -1323,13 +1804,7 @@
         r.sub.toLowerCase().includes(q)
       );
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada data yang cocok dengan pencarian.</td></tr>`;
-        return;
-      }
-
       filtered.forEach(r => {
-        const pct = r.target > 0 ? Math.round((r.realisasi / r.target) * 100) : 0;
         let waNumber = r.hp.replace(/[^0-9]/g, '');
         if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
 
@@ -1346,23 +1821,20 @@
           <td class="py-3 px-4 text-slate-600">${r.pengawas}</td>
           <td class="py-3 px-4 text-slate-600 text-xs leading-relaxed max-w-xs">${r.alokasiStr}</td>
           <td class="py-3 px-4 text-center font-semibold text-slate-700">${r.target}</td>
-          <td class="py-3 px-4 text-center font-bold text-slate-900">${r.realisasi}</td>
-          <td class="py-3 px-4 text-center">
-            <div class="inline-flex items-center space-x-1.5">
-              <span class="font-bold text-xs ${pct >= 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</span>
-            </div>
-          </td>
+          <td class="py-3 px-4 text-center font-bold text-emerald-600 text-sm">${r.realisasi}</td>
+          <td class="py-3 px-4 text-center font-bold ${r.pct >= 20 ? 'text-emerald-600' : 'text-indigo-600'}">${r.pct}%</td>
+          <td class="py-3 px-4 text-center">${r.detailBadge}</td>
           <td class="py-3 px-4">
             ${r.hp !== '-' ? `
-              <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(r.nama)},%20mohon%20update%20progres%20lapangan%20PES." target="_blank" class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-xs font-semibold hover:bg-emerald-100">
+              <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(r.nama)},%20konfirmasi%20progres%20lapangan%20PES." target="_blank" class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-xs font-semibold hover:bg-emerald-100">
                 <i class="ph-bold ph-whatsapp-logo text-sm"></i>
                 <span>${r.hp}</span>
               </a>
             ` : '<span class="text-slate-400">-</span>'}
           </td>
-          <td class="py-3 px-4 text-center">
-            <button onclick="openModalWithTarget('${r.tipe}', '${r.id}')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold px-2 py-1 rounded hover:bg-indigo-50">
-              <i class="ph ph-pencil-simple mr-0.5"></i> Update
+          <td class="py-3 px-4 text-center admin-col ${isAdmin ? '' : 'hidden'}">
+            <button onclick="editPplTarget('${r.id}')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold px-2 py-1 rounded hover:bg-indigo-50">
+              <i class="ph ph-pencil-simple mr-0.5"></i> Edit
             </button>
           </td>
         `;
@@ -1370,7 +1842,7 @@
       });
     }
 
-    // RENDER SLS TAB CARDS
+    // SLS TAB LIST
     function renderSlsList() {
       const q = document.getElementById("search-sls").value.toLowerCase();
       const pmlFilter = document.getElementById("filter-pml-sls").value;
@@ -1384,7 +1856,8 @@
       });
 
       filtered.forEach(p => {
-        const pct = p.target > 0 ? Math.round((p.realisasi / p.target) * 100) : 0;
+        const detail = p.fasihDetail || { completed: 0, submitted: 0, draft: 0, rejected: 0, open: 0 };
+        const pct = p.target > 0 ? (p.realisasi / p.target * 100).toFixed(1) : 0;
         let waNumber = p.hp.replace(/[^0-9]/g, '');
         if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
 
@@ -1398,9 +1871,18 @@
                 <h3 class="font-bold text-slate-800 text-base mt-1">${p.nama}</h3>
                 <p class="text-xs text-slate-400">PML: ${p.pml} (${p.kodePml})</p>
               </div>
-              <span class="text-xs font-bold px-2 py-0.5 rounded-full ${pct >= 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'}">
-                ${pct}% Selesai
-              </span>
+              <div class="text-right">
+                <span class="text-xs font-bold text-emerald-600 block">${p.realisasi} / ${p.target}</span>
+                <span class="text-[11px] font-bold text-indigo-600">${pct}% Selesai</span>
+              </div>
+            </div>
+
+            <!-- FASIH Breakdown Pill -->
+            <div class="mt-3 bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between text-[11px]">
+              <span class="text-emerald-700 font-semibold" title="Disetujui PML">${detail.completed} Approved</span>
+              <span class="text-blue-700 font-semibold" title="Terkirim dari PCL">${detail.submitted} Submit</span>
+              <span class="text-amber-700 font-semibold" title="Draft di PCL">${detail.draft} Draft</span>
+              <span class="text-rose-700 font-semibold" title="Ditolak PML">${detail.rejected} Retur</span>
             </div>
 
             <!-- Alokasi SLS -->
@@ -1410,33 +1892,31 @@
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                   <div class="flex justify-between font-semibold text-slate-800">
                     <span>${a.kel} (${a.kec})</span>
-                    <span class="text-indigo-600 font-bold">${a.beban} Responden</span>
+                    <span class="text-indigo-600 font-bold">${a.selesai || 0} / ${a.beban} Selesai</span>
                   </div>
                   <div class="text-[11px] text-slate-500 mt-0.5">SLS: ${a.sls} &bull; ID: ${a.idSls}</div>
                 </div>
               `).join('')}
             </div>
-
-            <!-- Catatan jika ada -->
-            ${p.catatan ? `<p class="mt-3 text-[11px] text-slate-500 italic bg-amber-50 p-2 rounded border border-amber-100">"${p.catatan}"</p>` : ''}
           </div>
 
-          <!-- Bottom Actions -->
           <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
             <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(p.nama)},%20konfirmasi%20progres%20SLS%20PES%20SE2026." target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center space-x-1">
               <i class="ph-bold ph-whatsapp-logo text-sm"></i>
-              <span>${p.hp}</span>
+              <span>Hubungi WA (${p.hp})</span>
             </a>
-            <button onclick="openModalWithTarget('SLS', '${p.kodePpl}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg flex items-center">
-              <i class="ph ph-pencil-simple mr-1"></i> Update
-            </button>
+            ${isAdmin ? `
+              <button onclick="editPplTarget('${p.kodePpl}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg flex items-center">
+                <i class="ph ph-pencil mr-1"></i> Edit
+              </button>
+            ` : ''}
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    // RENDER UB TAB LIST
+    // UB TAB LIST
     function renderUbList() {
       const q = document.getElementById("search-ub").value.toLowerCase();
       const pplFilter = document.getElementById("filter-ppl-ub").value;
@@ -1451,12 +1931,7 @@
         return matchQ && matchPpl && matchStatus;
       });
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">Tidak ada sampel UB yang cocok.</td></tr>`;
-        return;
-      }
-
-      filtered.forEach((d, idx) => {
+      filtered.forEach(d => {
         const isDone = d.status === "Sudah Berhasil Didata";
         const hpPpl = CONTACTS[d.ppl] || "-";
         let waPpl = hpPpl.replace(/[^0-9]/g, '');
@@ -1487,7 +1962,7 @@
               ${d.status}
             </span>
           </td>
-          <td class="py-3 px-4 text-center">
+          <td class="py-3 px-4 text-center admin-col ${isAdmin ? '' : 'hidden'}">
             <button onclick="toggleUbStatus('${d.idsbr}')" class="text-xs font-semibold px-2.5 py-1 rounded border ${isDone ? 'border-amber-300 text-amber-700 hover:bg-amber-50' : 'border-emerald-300 text-emerald-700 hover:bg-emerald-50'}">
               ${isDone ? 'Tandai Belum' : 'Tandai Selesai'}
             </button>
@@ -1498,6 +1973,10 @@
     }
 
     function toggleUbStatus(idsbr) {
+      if (!isAdmin) {
+        alert("Aksi ini hanya dapat dilakukan oleh Administrator!");
+        return;
+      }
       const idx = ubSampelData.findIndex(s => s.idsbr === idsbr);
       if (idx !== -1) {
         const cur = ubSampelData[idx].status;
@@ -1509,126 +1988,206 @@
       }
     }
 
-    // MODAL INPUT PROGRESS
-    function openModalInputProgress() {
-      onProgressCategoryChange();
-      document.getElementById("modal-input-progress").classList.remove("hidden");
-    }
-
-    function openModalWithTarget(category, identifier) {
-      document.getElementById("modal-input-progress").classList.remove("hidden");
-      const isUb = category.includes("UB");
-      document.querySelector(`input[name="progress-category"][value="${isUb ? 'UB' : 'SLS'}"]`).checked = true;
-      onProgressCategoryChange();
-
-      const sel = document.getElementById("modal-select-petugas");
-      for (let i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === identifier) {
-          sel.selectedIndex = i;
-          break;
-        }
+    // EXCEL IMPORT MODAL & PARSER (SHEETJS)
+    function openModalImportExcel() {
+      if (!isAdmin) {
+        alert("Hanya Administrator yang dapat mengimpor file Excel!");
+        return;
       }
-      onSelectPetugasUpdate();
+      document.getElementById("excel-preview-info").classList.add("hidden");
+      document.getElementById("btn-apply-excel").disabled = true;
+      document.getElementById("modal-import-excel").classList.remove("hidden");
     }
 
-    function closeModalInputProgress() {
-      document.getElementById("modal-input-progress").classList.add("hidden");
+    function closeModalImportExcel() {
+      document.getElementById("modal-import-excel").classList.add("hidden");
     }
 
-    function onProgressCategoryChange() {
-      const cat = document.querySelector('input[name="progress-category"]:checked').value;
-      const sel = document.getElementById("modal-select-petugas");
-      sel.innerHTML = "";
+    function handleExcelFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      if (cat === "SLS") {
-        document.getElementById("label-modal-target").textContent = "Target Responden SE";
-        document.getElementById("label-modal-realisasi").textContent = "Realisasi Responden Selesai";
-        slsData.forEach(p => {
-          const opt = document.createElement("option");
-          opt.value = p.kodePpl;
-          opt.textContent = `${p.kodePpl} - ${p.nama} (PML: ${p.pml})`;
-          sel.appendChild(opt);
-        });
-      } else {
-        document.getElementById("label-modal-target").textContent = "Total Perusahaan UB";
-        document.getElementById("label-modal-realisasi").textContent = "Perusahaan Selesai Didata";
-        ubPetugasData.forEach(u => {
-          const opt = document.createElement("option");
-          opt.value = u.nama;
-          opt.textContent = `${u.nama} (PML: ${u.pml})`;
-          sel.appendChild(opt);
-        });
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonRows = XLSX.utils.sheet_to_json(worksheet);
+
+          console.log("Parsed Excel rows:", jsonRows.length);
+          processExcelRows(jsonRows, file.name);
+        } catch (err) {
+          alert("Gagal membaca file Excel! Pastikan file berekstensi .xlsx atau .csv.");
+          console.error(err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function processExcelRows(rows, filename) {
+      if (!rows || rows.length === 0) {
+        alert("File Excel kosong!");
+        return;
       }
-      onSelectPetugasUpdate();
+
+      // Structure parsing
+      const slsMapParsed = {};
+      let totalAssignments = 0;
+      let totalCompleted = 0;
+      let totalSubmitted = 0;
+      let totalDraft = 0;
+      let totalRejected = 0;
+      let totalOpen = 0;
+
+      rows.forEach(r => {
+        // Cari kolom yang memuat status dan SSLS
+        let status = (r["Status Assignment"] || r["Status"] || r["status"] || "").toString().trim();
+        let sslsRaw = (r["SSLS"] || r["ID SLS"] || r["id_sls"] || r["ID_SLS"] || "").toString();
+        let ssls = sslsRaw.replace(/[^0-9]/g, "");
+        let qty = parseInt(r["Jumlah Assignment"] || r["Jumlah"] || r["Beban"] || r["jumlah"] || 1) || 0;
+
+        if (ssls.length >= 16) {
+          ssls = ssls.substring(0, 16);
+          if (!slsMapParsed[ssls]) {
+            slsMapParsed[ssls] = { OPEN: 0, DRAFT: 0, SUBMITTED: 0, COMPLETED: 0, REJECTED: 0, TOTAL: 0 };
+          }
+          if (status.includes("OPEN")) { slsMapParsed[ssls].OPEN += qty; totalOpen += qty; }
+          else if (status.includes("DRAFT")) { slsMapParsed[ssls].DRAFT += qty; totalDraft += qty; }
+          else if (status.includes("SUBMITTED")) { slsMapParsed[ssls].SUBMITTED += qty; totalSubmitted += qty; }
+          else if (status.includes("COMPLETED")) { slsMapParsed[ssls].COMPLETED += qty; totalCompleted += qty; }
+          else if (status.includes("REJECTED")) { slsMapParsed[ssls].REJECTED += qty; totalRejected += qty; }
+          slsMapParsed[ssls].TOTAL += qty;
+          totalAssignments += qty;
+        }
+      });
+
+      // Aggregate by PPL
+      const pplSum = {};
+      for (let i = 1; i <= 22; i++) {
+        const k = `PPL-${String(i).padStart(2, '0')}`;
+        pplSum[k] = { OPEN: 0, DRAFT: 0, SUBMITTED: 0, COMPLETED: 0, REJECTED: 0, TARGET: 0 };
+      }
+
+      Object.keys(slsMapParsed).forEach(ssls => {
+        const ppl = SLS_TO_PPL[ssls];
+        if (ppl && pplSum[ppl]) {
+          const d = slsMapParsed[ssls];
+          pplSum[ppl].OPEN += d.OPEN;
+          pplSum[ppl].DRAFT += d.DRAFT;
+          pplSum[ppl].SUBMITTED += d.SUBMITTED;
+          pplSum[ppl].COMPLETED += d.COMPLETED;
+          pplSum[ppl].REJECTED += d.REJECTED;
+          pplSum[ppl].TARGET += d.TOTAL;
+        }
+      });
+
+      pendingExcelPplSummary = {
+        slsMap: slsMapParsed,
+        pplSummary: pplSum,
+        total: totalAssignments,
+        completed: totalCompleted,
+        submitted: totalSubmitted,
+        draft: totalDraft,
+        rejected: totalRejected,
+        open: totalOpen
+      };
+
+      document.getElementById("preview-filename").textContent = `File: ${filename}`;
+      document.getElementById("preview-details").innerHTML = `
+        Total Penugasan: <strong>${totalAssignments.toLocaleString()}</strong> responden di <strong>${Object.keys(slsMapParsed).length} SLS</strong>.<br>
+        Selesai: <strong class="text-emerald-700">${totalCompleted + totalSubmitted}</strong> (${totalCompleted} Approved PML, ${totalSubmitted} Submit PCL).<br>
+        Draft: <strong>${totalDraft}</strong> &bull; Ditolak PML: <strong>${totalRejected}</strong> &bull; Open: <strong>${totalOpen}</strong>.
+      `;
+      document.getElementById("excel-preview-info").classList.remove("hidden");
+      document.getElementById("btn-apply-excel").disabled = false;
     }
 
-    function onSelectPetugasUpdate() {
-      const cat = document.querySelector('input[name="progress-category"]:checked').value;
-      const val = document.getElementById("modal-select-petugas").value;
+    function applyImportedExcel() {
+      if (!pendingExcelPplSummary) return;
 
-      if (cat === "SLS") {
-        const found = slsData.find(d => d.kodePpl === val);
-        if (found) {
-          document.getElementById("modal-input-target").value = found.target;
-          document.getElementById("modal-input-realisasi").value = found.realisasi;
-          document.getElementById("modal-input-catatan").value = found.catatan || "";
-        }
-      } else {
-        const found = ubPetugasData.find(d => d.nama === val);
-        if (found) {
-          const completedCount = ubSampelData.filter(s => s.ppl === val && s.status === "Sudah Berhasil Didata").length;
-          document.getElementById("modal-input-target").value = found.target;
-          document.getElementById("modal-input-realisasi").value = completedCount;
-          document.getElementById("modal-input-catatan").value = found.catatan || "";
-        }
-      }
-    }
+      const pSum = pendingExcelPplSummary.pplSummary;
+      const sMap = pendingExcelPplSummary.slsMap;
 
-    function handleProgressFormSubmit(e) {
-      e.preventDefault();
-      const cat = document.querySelector('input[name="progress-category"]:checked').value;
-      const val = document.getElementById("modal-select-petugas").value;
-      const target = parseInt(document.getElementById("modal-input-target").value) || 0;
-      const realisasi = parseInt(document.getElementById("modal-input-realisasi").value) || 0;
-      const catatan = document.getElementById("modal-input-catatan").value;
+      slsData.forEach(p => {
+        const k = p.kodePpl;
+        const ps = pSum[k];
+        if (ps) {
+          p.target = ps.TARGET;
+          p.realisasi = ps.COMPLETED + ps.SUBMITTED;
+          p.fasihDetail = {
+            completed: ps.COMPLETED,
+            submitted: ps.SUBMITTED,
+            draft: ps.DRAFT,
+            rejected: ps.REJECTED,
+            open: ps.OPEN
+          };
 
-      if (cat === "SLS") {
-        const idx = slsData.findIndex(d => d.kodePpl === val);
-        if (idx !== -1) {
-          slsData[idx].target = target;
-          slsData[idx].realisasi = realisasi;
-          slsData[idx].catatan = catatan;
+          p.alokasi.forEach(a => {
+            const sid = a.idSls;
+            const sInfo = sMap[sid];
+            if (sInfo) {
+              a.beban = sInfo.TOTAL;
+              a.selesai = sInfo.COMPLETED + sInfo.SUBMITTED;
+              a.completed = sInfo.COMPLETED;
+              a.submitted = sInfo.SUBMITTED;
+              a.draft = sInfo.DRAFT;
+              a.rejected = sInfo.REJECTED;
+              a.open = sInfo.OPEN;
+            }
+          });
         }
-      } else {
-        const idx = ubPetugasData.findIndex(d => d.nama === val);
-        if (idx !== -1) {
-          ubPetugasData[idx].catatan = catatan;
-        }
-      }
+      });
 
       saveAllData();
       renderDashboard();
       renderSlsList();
-      renderUbList();
       renderQuickTable();
-      closeModalInputProgress();
-      alert("Progres berhasil diperbarui!");
+      closeModalImportExcel();
+      alert(`Berhasil memperbarui data portal dari Excel FASIH!
+Total beban penugasan: ${pendingExcelPplSummary.total} sampel.`);
     }
 
-    // EXPORT EXCEL/CSV
+    function editPplTarget(kodePpl) {
+      if (!isAdmin) {
+        alert("Hanya Administrator yang dapat mengedit data!");
+        return;
+      }
+      const found = slsData.find(d => d.kodePpl === kodePpl);
+      if (!found) return;
+
+      const newTarget = prompt(`Ubah Target Beban untuk ${found.nama} (${found.kodePpl}):`, found.target);
+      if (newTarget === null) return;
+
+      const newReal = prompt(`Ubah Realisasi Selesai untuk ${found.nama} (${found.kodePpl}):`, found.realisasi);
+      if (newReal === null) return;
+
+      found.target = parseInt(newTarget) || found.target;
+      found.realisasi = parseInt(newReal) || found.realisasi;
+
+      saveAllData();
+      renderDashboard();
+      renderSlsList();
+      renderQuickTable();
+      alert(`Data ${found.nama} berhasil diperbarui!`);
+    }
+
+    // EXPORT REKAP CSV
     function exportDataExcel() {
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "KATEGORI,KODE,NAMA PETUGAS,PENGAWAS,NO HP,TARGET BEBAN,REALISASI,PERSENTASE,CATATAN\n";
+      csvContent += "KATEGORI,KODE,NAMA PETUGAS,PENGAWAS,NO HP,TARGET BEBAN,REALISASI SELESAI,PERSENTASE,APPROVED PML,SUBMIT PCL,DRAFT,REJECT,OPEN\n";
 
       slsData.forEach(p => {
-        const pct = p.target > 0 ? Math.round((p.realisasi / p.target) * 100) : 0;
-        csvContent += `SLS,${p.kodePpl},"${p.nama}","${p.pml}",${p.hp},${p.target},${p.realisasi},${pct}%,"${(p.catatan||'').replace(/"/g, '""')}"\n`;
+        const d = p.fasihDetail || { completed: 0, submitted: 0, draft: 0, rejected: 0, open: 0 };
+        const pct = p.target > 0 ? (p.realisasi / p.target * 100).toFixed(1) : 0;
+        csvContent += `SLS,${p.kodePpl},"${p.nama}","${p.pml}",${p.hp},${p.target},${p.realisasi},${pct}%,${d.completed},${d.submitted},${d.draft},${d.rejected},${d.open}\n`;
       });
 
       ubPetugasData.forEach(u => {
         const done = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
-        const pct = u.target > 0 ? Math.round((done / u.target) * 100) : 0;
-        csvContent += `UB,PPL-UB,"${u.nama}","${u.pml}",${CONTACTS[u.nama]||'-'},${u.target},${done},${pct}%,"${(u.catatan||'').replace(/"/g, '""')}"\n`;
+        const pct = u.target > 0 ? (done / u.target * 100).toFixed(1) : 0;
+        csvContent += `UB,PPL-UB,"${u.nama}","${u.pml}",${CONTACTS[u.nama]||'-'},${u.target},${done},${pct}%,${done},0,0,0,${u.target-done}\n`;
       });
 
       const encodedUri = encodeURI(csvContent);
@@ -1640,103 +2199,6 @@
       document.body.removeChild(link);
     }
 
-    // KB DETAILS MODAL & FILTER
-    const KB_CONTENTS = {
-      'sop-ub': {
-        title: 'SOP Rinci Pendataan Sampel Usaha Besar (UB)',
-        body: `
-          <p class="font-bold text-slate-800">1. Prinsip Kerahasiaan & Legalitas:</p>
-          <p>Petugas PPL UB wajib mengantongi Surat Tugas BPS resmi dan mematuhi Pasal 21 UU No. 16 Tahun 1997 tentang Statistik bahwa data individu perusahaan dijamin kerahasiaannya dan tidak dipublikasikan ke publik.</p>
-          <p class="font-bold text-slate-800 mt-3">2. Langkah Pendataan ke Perusahaan:</p>
-          <ol class="list-decimal list-inside space-y-1">
-            <li>Menghubungi nomor narahubung/HRD atau datang langsung ke kantor pimpinan.</li>
-            <li>Menyerahkan kuesioner PES UB beserta surat pengantar Kepala BPS Kota Pangkalpinang.</li>
-            <li>Menjelaskan tujuan survei yaitu mengukur kualitas cakupan dan isian Sensus Ekonomi 2026.</li>
-            <li>Jika kuesioner ditinggal (*drop-off*), sepakati tanggal dan jam penjemputan (*pick-up*) dengan PIC akuntansi.</li>
-          </ol>
-        `
-      },
-      'sop-sls': {
-        title: 'SOP Rinci Pelaksanaan Listing & Pencacahan SLS',
-        body: `
-          <p class="font-bold text-slate-800">1. Batas Wilayah & Identifikasi SLS:</p>
-          <p>Ketua RT/RW setempat harus dilibatkan dalam mengenali batas fisik SLS guna menghindari *over-coverage* (mencacah di luar RT) atau *under-coverage* (melewatkan lorong/gang perbatasan).</p>
-          <p class="font-bold text-slate-800 mt-3">2. Penyisiran Bangunan Fisik & Sensus:</p>
-          <ol class="list-decimal list-inside space-y-1">
-            <li>Penyisiran dimulai dari sudut barat daya SLS dan bergerak searah putaran jarum jam.</li>
-            <li>Seluruh bangunan fisik tempat tinggal maupun tempat usaha wajib diverifikasi keberadaannya.</li>
-            <li>Pastikan tidak ada usaha rumahan atau perdagangan online berdomisili fisik yang terlewat.</li>
-          </ol>
-        `
-      },
-      'sop-matching': {
-        title: 'Pedoman Rekonsiliasi & Matching (Penyandingan)',
-        body: `
-          <p>Penyandingan dilakukan antara hasil pencacahan Sensus Ekonomi utama dengan hasil pendataan PES. Setiap perbedaan status (misal usaha tercatat aktif di PES namun tutup di sensus awal) harus diverifikasi ulang (*re-interview*) oleh Pengawas Lapangan (PML) sebelum dikirim ke BPS Provinsi.</p>
-        `
-      },
-      'sop-penolakan': {
-        title: 'Protokol Penanganan Responden Menolak / Sulit Ditemui',
-        body: `
-          <p>1. Lakukan kunjungan ulang minimal 3 kali pada waktu berbeda (pagi, sore hari, dan akhir pekan).</p>
-          <p class="mt-2">2. Apabila responden rumah tangga/usaha mikro menolak, minta pendampingan Ketua RT setempat.</p>
-          <p class="mt-2">3. Apabila perusahaan UB menolak, laporkan ke Pengawas (Jawani Eka P. / Sarah Putri Utami) untuk diterbitkan surat resmi penegasan pimpinan BPS.</p>
-        `
-      },
-      'sop-kontak': {
-        title: 'Daftar Kontak Koordinator & Helpdesk Lapangan',
-        body: `
-          <p><strong>BPS Kota Pangkalpinang:</strong> Tim Manajemen Sensus Ekonomi 2026</p>
-          <p class="mt-2"><strong>Pengawas Sampel Usaha Besar (UB):</strong></p>
-          <ul class="list-disc list-inside">
-            <li>Jawani Eka P. (Koordinator Alokasi 1)</li>
-            <li>Sarah Putri Utami (Koordinator Alokasi 2)</li>
-          </ul>
-          <p class="mt-2"><strong>Koordinator Pengawas SLS (PML 01 - 06):</strong></p>
-          <p>Ennie Ratnasari, Marliya, Luqman Hakim, Cici Ofdadewi, Desi Pazaria, Siti Artimah.</p>
-        `
-      }
-    };
-
-    function openKbModal(key) {
-      const item = KB_CONTENTS[key];
-      if (item) {
-        document.getElementById("modal-kb-title").textContent = item.title;
-        document.getElementById("modal-kb-body").innerHTML = item.body;
-        document.getElementById("modal-kb").classList.remove("hidden");
-      }
-    }
-
-    function closeKbModal() {
-      document.getElementById("modal-kb").classList.add("hidden");
-    }
-
-    function filterKbArticles() {
-      const q = document.getElementById("search-kb").value.toLowerCase();
-      document.querySelectorAll(".kb-card").forEach(c => {
-        const text = c.getAttribute("data-text") + " " + c.innerText.toLowerCase();
-        c.style.display = text.includes(q) ? "flex" : "none";
-      });
-    }
-
-    function filterKbTag(tag) {
-      document.querySelectorAll(".kb-tag-btn").forEach(b => {
-        b.className = b.textContent.includes(tag) || (tag==='ALL'&&b.textContent==='Semua') 
-          ? "kb-tag-btn px-2.5 py-1 rounded-md bg-indigo-600 text-white font-medium" 
-          : "kb-tag-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700";
-      });
-
-      document.querySelectorAll(".kb-card").forEach(c => {
-        const cardTag = c.getAttribute("data-tag");
-        if (tag === 'ALL' || cardTag === tag || cardTag === 'ALL') {
-          c.style.display = "flex";
-        } else {
-          c.style.display = "none";
-        }
-      });
-    }
-
-    // RUN ON STARTUP
     window.addEventListener("DOMContentLoaded", () => {
       initAppData();
     });

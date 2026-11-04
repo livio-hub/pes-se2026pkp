@@ -1,0 +1,235 @@
+{
+  "last_updated": "2026-11-04 13:42:26 WIB",
+  "total_target": 6479,
+  "total_realisasi": 686,
+  "persen_selesai": "10.6%",
+  "status_breakdown": {
+    "completed": 353,
+    "submitted": 333,
+    "draft": 474,
+    "rejected": 23,
+    "open": 5296
+  },
+  "ppl_progress": {
+    "PPL-01": {
+      "target": 322,
+      "realisasi": 26,
+      "persen": "8.1%",
+      "completed": 11,
+      "submitted": 15,
+      "draft": 16,
+      "rejected": 0,
+      "open": 280
+    },
+    "PPL-02": {
+      "target": 378,
+      "realisasi": 13,
+      "persen": "3.4%",
+      "completed": 9,
+      "submitted": 4,
+      "draft": 19,
+      "rejected": 0,
+      "open": 346
+    },
+    "PPL-03": {
+      "target": 320,
+      "realisasi": 9,
+      "persen": "2.8%",
+      "completed": 0,
+      "submitted": 9,
+      "draft": 13,
+      "rejected": 0,
+      "open": 298
+    },
+    "PPL-04": {
+      "target": 244,
+      "realisasi": 26,
+      "persen": "10.7%",
+      "completed": 10,
+      "submitted": 16,
+      "draft": 97,
+      "rejected": 1,
+      "open": 120
+    },
+    "PPL-05": {
+      "target": 236,
+      "realisasi": 38,
+      "persen": "16.1%",
+      "completed": 5,
+      "submitted": 33,
+      "draft": 0,
+      "rejected": 0,
+      "open": 198
+    },
+    "PPL-06": {
+      "target": 131,
+      "realisasi": 48,
+      "persen": "36.6%",
+      "completed": 45,
+      "submitted": 3,
+      "draft": 0,
+      "rejected": 1,
+      "open": 82
+    },
+    "PPL-07": {
+      "target": 293,
+      "realisasi": 53,
+      "persen": "18.1%",
+      "completed": 47,
+      "submitted": 6,
+      "draft": 0,
+      "rejected": 0,
+      "open": 240
+    },
+    "PPL-08": {
+      "target": 417,
+      "realisasi": 38,
+      "persen": "9.1%",
+      "completed": 24,
+      "submitted": 14,
+      "draft": 0,
+      "rejected": 2,
+      "open": 377
+    },
+    "PPL-09": {
+      "target": 170,
+      "realisasi": 1,
+      "persen": "0.6%",
+      "completed": 0,
+      "submitted": 1,
+      "draft": 61,
+      "rejected": 0,
+      "open": 108
+    },
+    "PPL-10": {
+      "target": 318,
+      "realisasi": 107,
+      "persen": "33.6%",
+      "completed": 0,
+      "submitted": 107,
+      "draft": 0,
+      "rejected": 0,
+      "open": 211
+    },
+    "PPL-11": {
+      "target": 198,
+      "realisasi": 1,
+      "persen": "0.5%",
+      "completed": 0,
+      "submitted": 1,
+      "draft": 34,
+      "rejected": 0,
+      "open": 163
+    },
+    "PPL-12": {
+      "target": 299,
+      "realisasi": 10,
+      "persen": "3.3%",
+      "completed": 0,
+      "submitted": 10,
+      "draft": 31,
+      "rejected": 0,
+      "open": 258
+    },
+    "PPL-13": {
+      "target": 236,
+      "realisasi": 56,
+      "persen": "23.7%",
+      "completed": 20,
+      "submitted": 36,
+      "draft": 12,
+      "rejected": 0,
+      "open": 168
+    },
+    "PPL-14": {
+      "target": 256,
+      "realisasi": 47,
+      "persen": "18.4%",
+      "completed": 19,
+      "submitted": 28,
+      "draft": 25,
+      "rejected": 0,
+      "open": 184
+    },
+    "PPL-15": {
+      "target": 278,
+      "realisasi": 42,
+      "persen": "15.1%",
+      "completed": 11,
+      "submitted": 31,
+      "draft": 17,
+      "rejected": 0,
+      "open": 219
+    },
+    "PPL-16": {
+      "target": 463,
+      "realisasi": 63,
+      "persen": "13.6%",
+      "completed": 58,
+      "submitted": 5,
+      "draft": 27,
+      "rejected": 0,
+      "open": 373
+    },
+    "PPL-17": {
+      "target": 398,
+      "realisasi": 27,
+      "persen": "6.8%",
+      "completed": 27,
+      "submitted": 0,
+      "draft": 5,
+      "rejected": 1,
+      "open": 365
+    },
+    "PPL-18": {
+      "target": 359,
+      "realisasi": 77,
+      "persen": "21.4%",
+      "completed": 67,
+      "submitted": 10,
+      "draft": 21,
+      "rejected": 3,
+      "open": 258
+    },
+    "PPL-19": {
+      "target": 267,
+      "realisasi": 26,
+      "persen": "9.7%",
+      "completed": 20,
+      "submitted": 6,
+      "draft": 0,
+      "rejected": 0,
+      "open": 241
+    },
+    "PPL-20": {
+      "target": 335,
+      "realisasi": 14,
+      "persen": "4.2%",
+      "completed": 13,
+      "submitted": 1,
+      "draft": 34,
+      "rejected": 2,
+      "open": 285
+    },
+    "PPL-21": {
+      "target": 284,
+      "realisasi": 6,
+      "persen": "2.1%",
+      "completed": 6,
+      "submitted": 0,
+      "draft": 0,
+      "rejected": 8,
+      "open": 270
+    },
+    "PPL-22": {
+      "target": 277,
+      "realisasi": 28,
+      "persen": "10.1%",
+      "completed": 16,
+      "submitted": 12,
+      "draft": 43,
+      "rejected": 5,
+      "open": 201
+    }
+  }
+}
