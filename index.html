@@ -517,7 +517,7 @@
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
           <input type="password" id="admin-password-input" required placeholder="Masukkan kata sandi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
-          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono"></code></p>
+          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">admin1971</code></p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
@@ -578,7 +578,9 @@
     // ==========================================
     // CLOUD DATABASE INTEGRATION (GOOGLE SHEETS)
     // ==========================================
-    let cloudGasUrl = localStorage.getItem("PES_CLOUD_GAS_URL") || "";
+    // Tautan Google Apps Script bawaan (otomatis aktif permanen di semua HP/browser)
+    const DEFAULT_CLOUD_GAS_URL = "https://script.google.com/macros/s/AKfycbylElljhDi7QO9qMR4plWyRly5H1rVff1LUnz7mC-6RrvUrh4rOkAR-kCfuLGO27WF2/exec"; 
+    let cloudGasUrl = DEFAULT_CLOUD_GAS_URL;
 
     function updateCloudStatusBadge(isOnline, textDesc) {
       const dot = document.getElementById("cloud-dot");
@@ -616,6 +618,14 @@
       }
     }
 
+    function recalcUbStats() {
+      ubPetugasData.forEach(u => {
+        const doneCount = ubSampelData.filter(s => s.ppl === u.nama && s.status === "Sudah Berhasil Didata").length;
+        u.realisasi = doneCount;
+        u.diolah = doneCount;
+      });
+    }
+
     // TARIK DATA REAL-TIME DARI GOOGLE SPREADSHEET
     async function syncFromCloudDatabase() {
       if (!cloudGasUrl) {
@@ -630,7 +640,7 @@
           if (data && data.status === "success") {
             let updatedCount = 0;
             // Update data UB dari Google Sheets
-            if (data.ub_data && Array.isArray(data.ub_data)) {
+            if (data.ub_data && Array.isArray(data.ub_data) && data.ub_data.length > 0) {
               data.ub_data.forEach(cloudUb => {
                 const found = ubSampelData.find(u => String(u.idsbr) === String(cloudUb.idsbr));
                 if (found && cloudUb.status) {
@@ -638,6 +648,11 @@
                   updatedCount++;
                 }
               });
+              recalcUbStats();
+            } else if (data.ub_data && data.ub_data.length === 0 && isAdmin) {
+              // Jika sheet baru/kosong dan admin sedang buka, inisialisasi otomatis 38 UB
+              console.log("[Cloud] Sheet Data_UB masih kosong, menginisialisasi 38 sampel awal...");
+              initializeCloudWithCurrentUbSilently();
             }
 
             saveAllData();
@@ -670,12 +685,29 @@
         // Menggunakan mode no-cors jika perlu, atau JSON fetch
         await fetch(cloudGasUrl, {
           method: "POST",
+          mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
         console.log(`[Cloud] Status UB ${item.usaha} berhasil dikirim ke Google Sheets!`);
       } catch (e) {
         console.warn("[Cloud] Error sending update to Google Sheets:", e);
+      }
+    }
+
+    async function initializeCloudWithCurrentUbSilently() {
+      if (!cloudGasUrl) return;
+      try {
+        const payload = { action: "bulk_sync_ub", items: ubSampelData };
+        await fetch(cloudGasUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        console.log("[Cloud] 38 Data UB berhasil diinisialisasi ke Google Spreadsheet!");
+      } catch (e) {
+        console.warn("[Cloud] Silent init error:", e);
       }
     }
 
@@ -693,6 +725,7 @@
           };
           await fetch(cloudGasUrl, {
             method: "POST",
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
           });
@@ -1847,9 +1880,9 @@
     let pendingExcelPplSummary = null;
 
     function initAppData() {
-      const storedSls = localStorage.getItem("PES_SLS_DATA_V6");
-      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V6");
-      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V6");
+      const storedSls = localStorage.getItem("PES_SLS_DATA_V7");
+      const storedUbSampel = localStorage.getItem("PES_UB_SAMPEL_V7");
+      const storedUbPetugas = localStorage.getItem("PES_UB_PETUGAS_V7");
 
       slsData = storedSls ? JSON.parse(storedSls) : JSON.parse(JSON.stringify(DEFAULT_SLS_PETUGAS));
       ubSampelData = storedUbSampel ? JSON.parse(storedUbSampel) : JSON.parse(JSON.stringify(DEFAULT_UB_SAMPEL));
@@ -1865,9 +1898,9 @@
     }
 
     function saveAllData() {
-      localStorage.setItem("PES_SLS_DATA_V6", JSON.stringify(slsData));
-      localStorage.setItem("PES_UB_SAMPEL_V6", JSON.stringify(ubSampelData));
-      localStorage.setItem("PES_UB_PETUGAS_V6", JSON.stringify(ubPetugasData));
+      localStorage.setItem("PES_SLS_DATA_V7", JSON.stringify(slsData));
+      localStorage.setItem("PES_UB_SAMPEL_V7", JSON.stringify(ubSampelData));
+      localStorage.setItem("PES_UB_PETUGAS_V7", JSON.stringify(ubPetugasData));
     }
 
     // TAB NAVIGATION
