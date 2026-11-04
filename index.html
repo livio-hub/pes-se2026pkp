@@ -14,16 +14,23 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-    body {
+    html, body {
       font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      width: 100%;
+      -webkit-text-size-adjust: 100%;
     }
     .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 4px;
+    }
+    /* Touch scroll smooth */
+    .touch-scroll {
+      -webkit-overflow-scrolling: touch;
     }
   </style>
 </head>
@@ -31,50 +38,55 @@
 
   <!-- TOP NAVBAR -->
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center space-x-3">
-          <div class="bg-indigo-600 p-2.5 rounded-xl flex items-center justify-center text-white shadow-inner">
-            <i class="ph-bold ph-chart-donut text-2xl"></i>
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between min-h-[58px] py-2 gap-2">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-2.5 min-w-0">
+          <div class="bg-indigo-600 p-2 rounded-xl flex items-center justify-center text-white shadow-inner flex-shrink-0">
+            <i class="ph-bold ph-chart-donut text-xl sm:text-2xl"></i>
           </div>
-          <div>
-            <div class="flex items-center space-x-2">
-              <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight">PES Sensus Ekonomi 2026</h1>
-              <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[10px] font-bold px-2 py-0.5 rounded">Kota Pangkalpinang</span>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-1.5 flex-wrap">
+              <h1 class="font-bold text-sm sm:text-base leading-tight tracking-tight truncate">PES SE2026</h1>
+              <span class="bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded">Pangkalpinang</span>
             </div>
-            <p class="text-xs text-slate-300">Monitoring Petugas SLS & Usaha Besar (UB) &bull; Portal Resmi</p>
+            <p class="text-[10px] sm:text-xs text-slate-300 truncate">Monitoring SLS & Usaha Besar</p>
           </div>
         </div>
 
-        <!-- Header Actions: Role Protected -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          <!-- Public View Info -->
-          <div id="public-badge" class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-300 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">
+        <!-- Header Actions: Compact on Mobile -->
+        <div class="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0">
+          <!-- Public View Info (Desktop only) -->
+          <div id="public-badge" class="hidden md:flex items-center space-x-1.5 text-xs text-slate-300 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Mode Publik (Read-Only)</span>
+            <span>Mode Publik</span>
           </div>
 
-          <!-- Admin Mode Actions (Hidden by default) -->
-          <div id="admin-actions-bar" class="hidden flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950">
-              <i class="ph-bold ph-shield-check mr-1 text-sm"></i> Admin
+          <!-- Admin Mode Actions -->
+          <div id="admin-actions-bar" class="hidden flex items-center space-x-1.5 sm:space-x-2">
+            <span class="hidden sm:inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-amber-500 text-slate-950">
+              <i class="ph-bold ph-shield-check mr-1"></i> Admin
             </span>
-            <button onclick="openModalImportExcel()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg flex items-center shadow transition">
-              <i class="ph-bold ph-microsoft-excel-logo mr-1.5 text-base text-emerald-300"></i> Import Excel FASIH
+            <button onclick="openModalImportExcel()" class="bg-blue-600 hover:bg-blue-500 text-white text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg flex items-center shadow transition" title="Import Excel FASIH">
+              <i class="ph-bold ph-microsoft-excel-logo mr-1 text-sm text-emerald-300"></i>
+              <span class="hidden sm:inline">Import Excel</span>
+              <span class="sm:hidden">Excel</span>
             </button>
-            <button onclick="adminLogout()" class="bg-slate-700 hover:bg-rose-600 text-white text-xs font-semibold px-2.5 py-2 rounded-lg transition" title="Keluar Mode Admin">
-              <i class="ph-bold ph-sign-out text-base"></i>
+            <button onclick="adminLogout()" class="bg-slate-700 hover:bg-rose-600 text-white text-xs px-2 py-1.5 sm:py-2 rounded-lg transition" title="Keluar Mode Admin">
+              <i class="ph-bold ph-sign-out text-sm"></i>
             </button>
           </div>
 
-          <!-- Login Admin Button (Shown when not logged in) -->
-          <button id="btn-login-trigger" onclick="openModalAdminLogin()" class="bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center border border-slate-700 transition">
-            <i class="ph-bold ph-lock-key mr-1.5 text-sm"></i> Login Admin
+          <!-- Login Admin Button -->
+          <button id="btn-login-trigger" onclick="openModalAdminLogin()" class="bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg flex items-center border border-slate-700 transition">
+            <i class="ph-bold ph-lock-key mr-1 text-xs sm:text-sm"></i>
+            <span>Login Admin</span>
           </button>
 
-          <!-- Export Button (Visible to all) -->
-          <button onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg hidden sm:flex items-center shadow transition" title="Export CSV/Excel">
-            <i class="ph-bold ph-download-simple mr-1.5 text-base"></i> Unduh Rekap
+          <!-- Export Button -->
+          <button onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold p-1.5 sm:px-3 sm:py-2 rounded-lg flex items-center shadow transition" title="Unduh Rekap CSV/Excel">
+            <i class="ph-bold ph-download-simple text-sm sm:mr-1.5"></i>
+            <span class="hidden sm:inline">Unduh</span>
           </button>
         </div>
       </div>
@@ -84,7 +96,7 @@
     <div class="bg-slate-950/80 border-t border-slate-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2">
-          <nav class="flex space-x-4 text-xs sm:text-sm font-medium overflow-x-auto custom-scrollbar">
+          <nav class="flex space-x-2 sm:space-x-4 text-xs sm:text-sm font-medium overflow-x-auto touch-scroll custom-scrollbar whitespace-nowrap py-1">
             <button onclick="switchTab('dashboard')" id="tab-nav-dashboard" class="main-tab active py-2 px-1 border-b-2 border-indigo-500 text-white flex items-center space-x-1.5">
               <i class="ph ph-squares-four text-base"></i>
               <span>Dashboard Monitoring</span>
@@ -108,7 +120,7 @@
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- ============================================== -->
     <!-- TAB 1: DASHBOARD MONITORING LENGKAP -->
@@ -149,21 +161,21 @@
               <i class="ph-duotone ph-map-pin"></i>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-indigo-700/60 relative z-10">
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-indigo-700/60 relative z-10">
             <div>
-              <p class="text-[11px] text-indigo-300">Total Beban</p>
-              <p class="text-lg font-bold" id="dash-sls-target">6.479</p>
-              <p class="text-[10px] text-indigo-300">Responden</p>
+              <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Total Beban</p>
+              <p class="text-base sm:text-lg font-extrabold text-white mt-0.5" id="dash-sls-target">6.479</p>
+              <p class="text-[9px] sm:text-[10px] text-indigo-300">Responden</p>
             </div>
             <div>
-              <p class="text-[11px] text-indigo-300">Realisasi Selesai</p>
-              <p class="text-lg font-bold text-emerald-300" id="dash-sls-realisasi">686</p>
-              <p class="text-[10px] text-indigo-300">Approved + Submitted</p>
+              <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Selesai</p>
+              <p class="text-base sm:text-lg font-extrabold text-emerald-300 mt-0.5" id="dash-sls-realisasi">686</p>
+              <p class="text-[9px] sm:text-[10px] text-indigo-300">Diserahkan</p>
             </div>
             <div>
-              <p class="text-[11px] text-indigo-300">Progres</p>
-              <p class="text-lg font-bold text-amber-300" id="dash-sls-persen">10.6%</p>
-              <p class="text-[10px] text-indigo-300">Ketercapaian</p>
+              <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Progres</p>
+              <p class="text-base sm:text-lg font-extrabold text-amber-300 mt-0.5" id="dash-sls-persen">10.6%</p>
+              <p class="text-[9px] sm:text-[10px] text-indigo-300">Capaian</p>
             </div>
           </div>
           <i class="ph-duotone ph-users-four absolute -right-4 -bottom-6 text-8xl text-white/5"></i>
@@ -183,21 +195,21 @@
               <i class="ph-duotone ph-buildings"></i>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-slate-700/60 relative z-10">
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-slate-700/60 relative z-10">
             <div>
-              <p class="text-[11px] text-slate-400">Total Sampel</p>
-              <p class="text-lg font-bold text-white" id="dash-ub-target">38</p>
-              <p class="text-[10px] text-slate-400">Perusahaan</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 leading-tight">Total Sampel</p>
+              <p class="text-base sm:text-lg font-extrabold text-white mt-0.5" id="dash-ub-target">38</p>
+              <p class="text-[9px] sm:text-[10px] text-slate-400">Perusahaan</p>
             </div>
             <div>
-              <p class="text-[11px] text-slate-400">Sudah Didata</p>
-              <p class="text-lg font-bold text-emerald-400" id="dash-ub-realisasi">2</p>
-              <p class="text-[10px] text-slate-400">Valid/Clear</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 leading-tight">Selesai/Diolah</p>
+              <p class="text-base sm:text-lg font-extrabold text-emerald-400 mt-0.5" id="dash-ub-realisasi">2</p>
+              <p class="text-[9px] sm:text-[10px] text-slate-400">Valid/Clear</p>
             </div>
             <div>
-              <p class="text-[11px] text-slate-400">Progres</p>
-              <p class="text-lg font-bold text-amber-400" id="dash-ub-persen">5.3%</p>
-              <p class="text-[10px] text-slate-400">Ketercapaian</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 leading-tight">Progres</p>
+              <p class="text-base sm:text-lg font-extrabold text-amber-400 mt-0.5" id="dash-ub-persen">5.3%</p>
+              <p class="text-[9px] sm:text-[10px] text-slate-400">Capaian</p>
             </div>
           </div>
           <i class="ph-duotone ph-briefcase absolute -right-4 -bottom-6 text-8xl text-white/5"></i>
@@ -210,8 +222,10 @@
         <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
-              <h3 class="font-bold text-slate-800 text-base" id="chart-title">Grafik Progres 22 Petugas SLS (Responden)</h3>
-              <p class="text-xs text-slate-500">Visualisasi realisasi selesai (Approved + Submitted) dibanding target beban</p>
+              <div class="flex items-center space-x-2">
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base leading-tight" id="chart-title">Grafik Progres Seluruh 22 Petugas SLS (Responden)</h3>
+              </div>
+              <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Visualisasi realisasi selesai dibanding target beban. <span class="text-indigo-600 sm:hidden font-medium">&larr; Geser grafik ke samping &rarr;</span></p>
             </div>
             <div class="flex items-center space-x-2">
               <button onclick="setChartMode('SLS')" id="btn-chart-sls" class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white">Petugas SLS</button>
@@ -246,19 +260,19 @@
 
       <!-- Quick Summary Table (Combined) -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 class="font-bold text-slate-800 text-base">Monitoring Seluruh Petugas Lapangan</h3>
-            <p class="text-xs text-slate-500">Daftar petugas PPL SLS dan PPL UB beserta rincian capaian dan kontak langsung</p>
+            <h3 class="font-bold text-slate-800 text-sm sm:text-base">Monitoring Seluruh Petugas Lapangan</h3>
+            <p class="text-[11px] sm:text-xs text-slate-500">Daftar petugas PPL SLS dan PPL UB beserta rincian capaian dan kontak langsung</p>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <select id="quick-table-filter" onchange="renderQuickTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <select id="quick-table-filter" onchange="renderQuickTable()" class="text-xs border border-slate-300 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto bg-white">
               <option value="ALL">Semua Petugas (SLS & UB)</option>
               <option value="SLS">Hanya Petugas SLS (22 PPL)</option>
               <option value="UB">Hanya Petugas Usaha Besar / UB (5 PPL)</option>
               <option value="PML">Hanya Pengawas (PML & Koord)</option>
             </select>
-            <input type="text" id="quick-table-search" onkeyup="renderQuickTable()" placeholder="Cari nama atau wilayah..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-40 sm:w-56 focus:ring-2 focus:ring-indigo-500">
+            <input type="text" id="quick-table-search" onkeyup="renderQuickTable()" placeholder="Cari nama atau wilayah..." class="text-xs border border-slate-300 rounded-lg px-3 py-2 w-full sm:w-56 focus:ring-2 focus:ring-indigo-500">
           </div>
         </div>
 
@@ -443,7 +457,7 @@
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
           <input type="password" id="admin-password-input" required placeholder="Masukkan kata sandi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
-          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono"></code></p>
+          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">admin1971</code></p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
@@ -1750,7 +1764,7 @@
       currentChartMode = mode;
       document.getElementById("btn-chart-sls").className = mode === 'SLS' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-indigo-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
       document.getElementById("btn-chart-ub").className = mode === 'UB' ? 'text-xs font-semibold px-2.5 py-1 rounded bg-amber-600 text-white' : 'text-xs font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200';
-      document.getElementById("chart-title").textContent = mode === 'SLS' ? "Grafik Progres 22 Petugas SLS (Responden)" : "Grafik Progres 5 Petugas Usaha Besar (UB)";
+      document.getElementById("chart-title").textContent = mode === 'SLS' ? "Grafik Progres Seluruh 22 Petugas SLS (Responden)" : "Grafik Progres 5 Petugas Usaha Besar (UB)";
       renderChart();
     }
 
@@ -1764,10 +1778,10 @@
       let dataRealisasi = [];
 
       if (currentChartMode === 'SLS') {
-        const topSls = slsData.slice(0, 10);
-        labels = topSls.map(d => `${d.kodePpl} ${d.nama.split(' ')[0]}`);
-        dataTarget = topSls.map(d => d.target);
-        dataRealisasi = topSls.map(d => d.realisasi);
+        // Tampilkan SELURUH 22 PPL SLS
+        labels = slsData.map(d => `${d.kodePpl} ${d.nama.split(' ')[0]}`);
+        dataTarget = slsData.map(d => d.target);
+        dataRealisasi = slsData.map(d => d.realisasi);
       } else {
         labels = ubPetugasData.map(d => d.nama.split(' ')[0]);
         dataTarget = ubPetugasData.map(d => d.target);
@@ -1801,7 +1815,15 @@
           plugins: { legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 } } } },
           scales: {
             y: { beginAtZero: true, grid: { color: '#f8fafc' }, ticks: { font: { size: 10 } } },
-            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+            x: { 
+              grid: { display: false }, 
+              ticks: { 
+                autoSkip: false, 
+                maxRotation: 45, 
+                minRotation: 35, 
+                font: { family: 'Plus Jakarta Sans', size: 9, weight: '500' } 
+              } 
+            }
           }
         }
       });
@@ -1974,7 +1996,7 @@
           <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
             <a href="https://wa.me/${waNumber}?text=Halo%20${encodeURIComponent(p.nama)},%20konfirmasi%20progres%20SLS%20PES%20SE2026." target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center space-x-1">
               <i class="ph-bold ph-whatsapp-logo text-sm"></i>
-              <span>Hubungi WA (${p.hp})</span>
+              <span>Chat WA</span> <span class="text-[10px] opacity-80 hidden xs:inline">(${p.hp})</span>
             </a>
             ${isAdmin ? `
               <button onclick="editPplTarget('${p.kodePpl}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg flex items-center">
