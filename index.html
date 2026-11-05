@@ -147,12 +147,12 @@
           <div>
             <h4 class="font-bold text-slate-800 text-sm">Status Sinkronisasi FASIH BPS Kota Pangkal Pinang</h4>
             <p class="text-xs text-slate-600 mt-0.5" id="fasih-summary-text">
-              Data terintegrasi: 6.479 total beban penugasan di 38 SLS (353 Selesai PML, 333 Terkirim PCL, 474 Draft, 23 Retur PML, 5.296 Open).
+              Data terintegrasi: 6.615 total beban penugasan di 38 SLS (545 Selesai PML, 386 Terkirim PCL, 531 Draft, 38 Retur PML, 5.115 Open).
             </p>
           </div>
         </div>
         <div class="text-[11px] font-semibold text-indigo-700 bg-white px-3 py-1.5 rounded-lg border border-indigo-200">
-          Update: 4 Nov 2026
+          Update: 5 Nov 2026
         </div>
       </div>
       
@@ -175,17 +175,17 @@
           <div class="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-indigo-700/60 relative z-10">
             <div>
               <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Total Beban</p>
-              <p class="text-base sm:text-lg font-extrabold text-white mt-0.5" id="dash-sls-target">6.479</p>
+              <p class="text-base sm:text-lg font-extrabold text-white mt-0.5" id="dash-sls-target">6.615</p>
               <p class="text-[9px] sm:text-[10px] text-indigo-300">Responden</p>
             </div>
             <div>
               <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Selesai</p>
-              <p class="text-base sm:text-lg font-extrabold text-emerald-300 mt-0.5" id="dash-sls-realisasi">686</p>
+              <p class="text-base sm:text-lg font-extrabold text-emerald-300 mt-0.5" id="dash-sls-realisasi">931</p>
               <p class="text-[9px] sm:text-[10px] text-indigo-300">Diserahkan</p>
             </div>
             <div>
               <p class="text-[10px] sm:text-[11px] text-indigo-300 leading-tight">Progres</p>
-              <p class="text-base sm:text-lg font-extrabold text-amber-300 mt-0.5" id="dash-sls-persen">10.6%</p>
+              <p class="text-base sm:text-lg font-extrabold text-amber-300 mt-0.5" id="dash-sls-persen">14.1%</p>
               <p class="text-[9px] sm:text-[10px] text-indigo-300">Capaian</p>
             </div>
           </div>
@@ -516,9 +516,8 @@
       <form onsubmit="handleAdminLogin(event)" class="space-y-3.5 text-xs sm:text-sm">
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Admin</label>
-          <input type="password" id="admin-password-input" required placeholder="Masukkan kata sandi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
-          <p class="text-[11px] text-slate-400 mt-1">Kata sandi default: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono"></code></p>
-        </div>
+          <input type="password" id="admin-password-input" required  class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500">
+                  </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
           <button type="button" onclick="closeModalAdminLogin()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
@@ -831,7 +830,7 @@
         closeModalAdminLogin();
         alert("Login Administrator berhasil! Fitur import excel dan pengelolaan data telah aktif.");
       } else {
-        alert("Kata sandi salah! Hubungi koordinator BPS jika lupa kata sandi.");
+        alert("Kode akses salah! Hubungi koordinator BPS.");
       }
     }
 
@@ -914,896 +913,896 @@
 
     // 22 PPL SLS UPDATED DENGAN DATA FASIH 4 NOV 2026
     const DEFAULT_SLS_PETUGAS = [
-    {
-        "kodePpl": "PPL-01",
-        "nama": "Amelia",
-        "hp": "083193728162",
-        "kodePml": "PML-01",
-        "pml": "Ennie Ratnasari",
-        "target": 322,
-        "realisasi": 26,
-        "fasihDetail": {
-            "completed": 11,
-            "submitted": 15,
-            "draft": 16,
-            "rejected": 0,
-            "open": 280
-        },
-        "alokasi": [
-            {
-                "kel": "BUKIT MERAPIN",
-                "kec": "GERUNGGANG",
-                "sls": "RT 009 RW 002",
-                "idSls": "1971041004000903",
-                "beban": 115,
-                "selesai": 26,
-                "open": 73,
-                "draft": 16,
-                "completed": 11,
-                "submitted": 15,
-                "rejected": 0
+      {
+            "kodePpl": "PPL-01",
+            "nama": "Amelia",
+            "hp": "083193728162",
+            "kodePml": "PML-01",
+            "pml": "Ennie Ratnasari",
+            "target": 332,
+            "realisasi": 27,
+            "fasihDetail": {
+                  "completed": 19,
+                  "submitted": 8,
+                  "draft": 30,
+                  "rejected": 0,
+                  "open": 275
             },
-            {
-                "kel": "PINTU AIR",
-                "kec": "RANGKUI",
-                "sls": "RT 009 RW 003",
-                "idSls": "1971010015000901",
-                "beban": 207,
-                "selesai": 0,
-                "open": 207,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-02",
-        "nama": "Fitri Ayu",
-        "hp": "082170922296",
-        "kodePml": "PML-01",
-        "pml": "Ennie Ratnasari",
-        "target": 378,
-        "realisasi": 13,
-        "fasihDetail": {
-            "completed": 9,
-            "submitted": 4,
-            "draft": 19,
-            "rejected": 0,
-            "open": 346
-        },
-        "alokasi": [
-            {
-                "kel": "ASAM",
-                "kec": "RANGKUI",
-                "sls": "RT 002 RW 001",
-                "idSls": "1971010001000200",
-                "beban": 168,
-                "selesai": 0,
-                "open": 168,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "BUKIT MERAPIN",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 009 RW 002",
+                        "idSls": "1971041004000903",
+                        "beban": 125,
+                        "selesai": 27,
+                        "open": 68,
+                        "draft": 30,
+                        "completed": 19,
+                        "submitted": 8,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "PINTU AIR",
+                        "kec": "RANGKUI",
+                        "sls": "RT 009 RW 003",
+                        "idSls": "1971010015000901",
+                        "beban": 207,
+                        "selesai": 0,
+                        "open": 207,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-02",
+            "nama": "Fitri Ayu",
+            "hp": "082170922296",
+            "kodePml": "PML-01",
+            "pml": "Ennie Ratnasari",
+            "target": 382,
+            "realisasi": 16,
+            "fasihDetail": {
+                  "completed": 10,
+                  "submitted": 6,
+                  "draft": 29,
+                  "rejected": 1,
+                  "open": 336
             },
-            {
-                "kel": "MELINTANG",
-                "kec": "RANGKUI",
-                "sls": "RT 003 RW 001",
-                "idSls": "1971010009000300",
-                "beban": 210,
-                "selesai": 13,
-                "open": 178,
-                "draft": 19,
-                "completed": 9,
-                "submitted": 4,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-03",
-        "nama": "Siti Khodijah",
-        "hp": "083863294884",
-        "kodePml": "PML-01",
-        "pml": "Ennie Ratnasari",
-        "target": 320,
-        "realisasi": 9,
-        "fasihDetail": {
-            "completed": 0,
-            "submitted": 9,
-            "draft": 13,
-            "rejected": 0,
-            "open": 298
-        },
-        "alokasi": [
-            {
-                "kel": "BUKIT MERAPIN",
-                "kec": "GERUNGGANG",
-                "sls": "RT 009 RW 002",
-                "idSls": "1971041004000902",
-                "beban": 73,
-                "selesai": 9,
-                "open": 51,
-                "draft": 13,
-                "completed": 0,
-                "submitted": 9,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "ASAM",
+                        "kec": "RANGKUI",
+                        "sls": "RT 002 RW 001",
+                        "idSls": "1971010001000200",
+                        "beban": 168,
+                        "selesai": 0,
+                        "open": 168,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "MELINTANG",
+                        "kec": "RANGKUI",
+                        "sls": "RT 003 RW 001",
+                        "idSls": "1971010009000300",
+                        "beban": 214,
+                        "selesai": 16,
+                        "open": 168,
+                        "draft": 29,
+                        "completed": 10,
+                        "submitted": 6,
+                        "rejected": 1
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-03",
+            "nama": "Siti Khodijah",
+            "hp": "083863294884",
+            "kodePml": "PML-01",
+            "pml": "Ennie Ratnasari",
+            "target": 336,
+            "realisasi": 7,
+            "fasihDetail": {
+                  "completed": 6,
+                  "submitted": 1,
+                  "draft": 45,
+                  "rejected": 3,
+                  "open": 281
             },
-            {
-                "kel": "BUKIT BESAR",
-                "kec": "GIRIMAYA",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971021002000401",
-                "beban": 247,
-                "selesai": 0,
-                "open": 247,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-04",
-        "nama": "Sawarita",
-        "hp": "088286821668",
-        "kodePml": "PML-01",
-        "pml": "Ennie Ratnasari",
-        "target": 244,
-        "realisasi": 26,
-        "fasihDetail": {
-            "completed": 10,
-            "submitted": 16,
-            "draft": 97,
-            "rejected": 1,
-            "open": 120
-        },
-        "alokasi": [
-            {
-                "kel": "MASJID JAMIK",
-                "kec": "RANGKUI",
-                "sls": "RT 003 RW 002",
-                "idSls": "1971010013000302",
-                "beban": 244,
-                "selesai": 26,
-                "open": 120,
-                "draft": 97,
-                "completed": 10,
-                "submitted": 16,
-                "rejected": 1
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-05",
-        "nama": "Sintia",
-        "hp": "085373772042",
-        "kodePml": "PML-02",
-        "pml": "Marliya",
-        "target": 236,
-        "realisasi": 38,
-        "fasihDetail": {
-            "completed": 5,
-            "submitted": 33,
-            "draft": 0,
-            "rejected": 0,
-            "open": 198
-        },
-        "alokasi": [
-            {
-                "kel": "TAMAN BUNGA",
-                "kec": "GERUNGGANG",
-                "sls": "RT 006 RW 002",
-                "idSls": "1971041006000600",
-                "beban": 236,
-                "selesai": 38,
-                "open": 198,
-                "draft": 0,
-                "completed": 5,
-                "submitted": 33,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-06",
-        "nama": "Renny Anggraini",
-        "hp": "085719930178",
-        "kodePml": "PML-02",
-        "pml": "Marliya",
-        "target": 131,
-        "realisasi": 48,
-        "fasihDetail": {
-            "completed": 45,
-            "submitted": 3,
-            "draft": 0,
-            "rejected": 1,
-            "open": 82
-        },
-        "alokasi": [
-            {
-                "kel": "JERAMBAH GANTUNG",
-                "kec": "GABEK",
-                "sls": "RT 003 RW 001",
-                "idSls": "1971031006000303",
-                "beban": 88,
-                "selesai": 48,
-                "open": 39,
-                "draft": 0,
-                "completed": 45,
-                "submitted": 3,
-                "rejected": 1
+            "alokasi": [
+                  {
+                        "kel": "BUKIT MERAPIN",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 009 RW 002",
+                        "idSls": "1971041004000902",
+                        "beban": 89,
+                        "selesai": 7,
+                        "open": 34,
+                        "draft": 45,
+                        "completed": 6,
+                        "submitted": 1,
+                        "rejected": 3
+                  },
+                  {
+                        "kel": "BUKIT BESAR",
+                        "kec": "GIRIMAYA",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971021002000401",
+                        "beban": 247,
+                        "selesai": 0,
+                        "open": 247,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-04",
+            "nama": "Sawarita",
+            "hp": "088286821668",
+            "kodePml": "PML-01",
+            "pml": "Ennie Ratnasari",
+            "target": 245,
+            "realisasi": 24,
+            "fasihDetail": {
+                  "completed": 19,
+                  "submitted": 5,
+                  "draft": 94,
+                  "rejected": 7,
+                  "open": 120
             },
-            {
-                "kel": "SELINDUNG",
-                "kec": "GABEK",
-                "sls": "RT 005 RW 002",
-                "idSls": "1971031005000503",
-                "beban": 43,
-                "selesai": 0,
-                "open": 43,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-07",
-        "nama": "Retno Kharismawati",
-        "hp": "083841228290",
-        "kodePml": "PML-02",
-        "pml": "Marliya",
-        "target": 293,
-        "realisasi": 53,
-        "fasihDetail": {
-            "completed": 47,
-            "submitted": 6,
-            "draft": 0,
-            "rejected": 0,
-            "open": 240
-        },
-        "alokasi": [
-            {
-                "kel": "SELINDUNG BARU",
-                "kec": "GABEK",
-                "sls": "RT 007 RW 002",
-                "idSls": "1971031004000702",
-                "beban": 61,
-                "selesai": 0,
-                "open": 61,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "MASJID JAMIK",
+                        "kec": "RANGKUI",
+                        "sls": "RT 003 RW 002",
+                        "idSls": "1971010013000302",
+                        "beban": 245,
+                        "selesai": 24,
+                        "open": 120,
+                        "draft": 94,
+                        "completed": 19,
+                        "submitted": 5,
+                        "rejected": 7
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-05",
+            "nama": "Sintia",
+            "hp": "085373772042",
+            "kodePml": "PML-02",
+            "pml": "Marliya",
+            "target": 236,
+            "realisasi": 36,
+            "fasihDetail": {
+                  "completed": 28,
+                  "submitted": 8,
+                  "draft": 0,
+                  "rejected": 2,
+                  "open": 198
             },
-            {
-                "kel": "GABEK DUA",
-                "kec": "GABEK",
-                "sls": "RT 002 RW 001",
-                "idSls": "1971031003000201",
-                "beban": 232,
-                "selesai": 53,
-                "open": 179,
-                "draft": 0,
-                "completed": 47,
-                "submitted": 6,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-08",
-        "nama": "Rosmita",
-        "hp": "085366660920",
-        "kodePml": "PML-02",
-        "pml": "Marliya",
-        "target": 417,
-        "realisasi": 38,
-        "fasihDetail": {
-            "completed": 24,
-            "submitted": 14,
-            "draft": 0,
-            "rejected": 2,
-            "open": 377
-        },
-        "alokasi": [
-            {
-                "kel": "SELINDUNG",
-                "kec": "GABEK",
-                "sls": "RT 003 RW 001",
-                "idSls": "1971031005000200",
-                "beban": 417,
-                "selesai": 38,
-                "open": 377,
-                "draft": 0,
-                "completed": 24,
-                "submitted": 14,
-                "rejected": 2
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-09",
-        "nama": "Ria Mulyanti",
-        "hp": "081274667003",
-        "kodePml": "PML-03",
-        "pml": "Luqman Hakim",
-        "target": 170,
-        "realisasi": 1,
-        "fasihDetail": {
-            "completed": 0,
-            "submitted": 1,
-            "draft": 61,
-            "rejected": 0,
-            "open": 108
-        },
-        "alokasi": [
-            {
-                "kel": "TUA TUNU INDAH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 009 RW 003",
-                "idSls": "1971041003000903",
-                "beban": 53,
-                "selesai": 0,
-                "open": 53,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "TAMAN BUNGA",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 006 RW 002",
+                        "idSls": "1971041006000600",
+                        "beban": 236,
+                        "selesai": 36,
+                        "open": 198,
+                        "draft": 0,
+                        "completed": 28,
+                        "submitted": 8,
+                        "rejected": 2
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-06",
+            "nama": "Renny Anggraini",
+            "hp": "085719930178",
+            "kodePml": "PML-02",
+            "pml": "Marliya",
+            "target": 137,
+            "realisasi": 57,
+            "fasihDetail": {
+                  "completed": 51,
+                  "submitted": 6,
+                  "draft": 0,
+                  "rejected": 1,
+                  "open": 79
             },
-            {
-                "kel": "TUA TUNU INDAH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971041003000402",
-                "beban": 117,
-                "selesai": 1,
-                "open": 55,
-                "draft": 61,
-                "completed": 0,
-                "submitted": 1,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-10",
-        "nama": "Nabila Lestari",
-        "hp": "08218004489",
-        "kodePml": "PML-03",
-        "pml": "Luqman Hakim",
-        "target": 318,
-        "realisasi": 107,
-        "fasihDetail": {
-            "completed": 0,
-            "submitted": 107,
-            "draft": 0,
-            "rejected": 0,
-            "open": 211
-        },
-        "alokasi": [
-            {
-                "kel": "TUA TUNU INDAH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 001 RW 001",
-                "idSls": "1971041003000101",
-                "beban": 313,
-                "selesai": 107,
-                "open": 206,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 107,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "JERAMBAH GANTUNG",
+                        "kec": "GABEK",
+                        "sls": "RT 003 RW 001",
+                        "idSls": "1971031006000303",
+                        "beban": 94,
+                        "selesai": 57,
+                        "open": 36,
+                        "draft": 0,
+                        "completed": 51,
+                        "submitted": 6,
+                        "rejected": 1
+                  },
+                  {
+                        "kel": "SELINDUNG",
+                        "kec": "GABEK",
+                        "sls": "RT 005 RW 002",
+                        "idSls": "1971031005000503",
+                        "beban": 43,
+                        "selesai": 0,
+                        "open": 43,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-07",
+            "nama": "Retno Kharismawati",
+            "hp": "083841228290",
+            "kodePml": "PML-02",
+            "pml": "Marliya",
+            "target": 296,
+            "realisasi": 80,
+            "fasihDetail": {
+                  "completed": 80,
+                  "submitted": 0,
+                  "draft": 0,
+                  "rejected": 1,
+                  "open": 215
             },
-            {
-                "kel": "AIR KEPALA TUJUH",
-                "kec": "GERUNGGANG",
-                "sls": "LAPAS TUATUNU",
-                "idSls": "1971041007400100",
-                "beban": 5,
-                "selesai": 0,
-                "open": 5,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-11",
-        "nama": "Ninda Juwita",
-        "hp": "082180004062",
-        "kodePml": "PML-03",
-        "pml": "Luqman Hakim",
-        "target": 198,
-        "realisasi": 1,
-        "fasihDetail": {
-            "completed": 0,
-            "submitted": 1,
-            "draft": 34,
-            "rejected": 0,
-            "open": 163
-        },
-        "alokasi": [
-            {
-                "kel": "TUA TUNU INDAH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 010 RW 003",
-                "idSls": "1971041003001014",
-                "beban": 81,
-                "selesai": 0,
-                "open": 81,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "SELINDUNG BARU",
+                        "kec": "GABEK",
+                        "sls": "RT 007 RW 002",
+                        "idSls": "1971031004000702",
+                        "beban": 61,
+                        "selesai": 0,
+                        "open": 61,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "GABEK DUA",
+                        "kec": "GABEK",
+                        "sls": "RT 002 RW 001",
+                        "idSls": "1971031003000201",
+                        "beban": 235,
+                        "selesai": 80,
+                        "open": 154,
+                        "draft": 0,
+                        "completed": 80,
+                        "submitted": 0,
+                        "rejected": 1
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-08",
+            "nama": "Rosmita",
+            "hp": "085366660920",
+            "kodePml": "PML-02",
+            "pml": "Marliya",
+            "target": 428,
+            "realisasi": 67,
+            "fasihDetail": {
+                  "completed": 45,
+                  "submitted": 22,
+                  "draft": 0,
+                  "rejected": 4,
+                  "open": 357
             },
-            {
-                "kel": "AIR KEPALA TUJUH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 007 RW 003",
-                "idSls": "1971041007000707",
-                "beban": 117,
-                "selesai": 1,
-                "open": 82,
-                "draft": 34,
-                "completed": 0,
-                "submitted": 1,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-12",
-        "nama": "Pirdania",
-        "hp": "085758724376",
-        "kodePml": "PML-03",
-        "pml": "Luqman Hakim",
-        "target": 299,
-        "realisasi": 10,
-        "fasihDetail": {
-            "completed": 0,
-            "submitted": 10,
-            "draft": 31,
-            "rejected": 0,
-            "open": 258
-        },
-        "alokasi": [
-            {
-                "kel": "AIR KEPALA TUJUH",
-                "kec": "GERUNGGANG",
-                "sls": "RT 008 RW 003",
-                "idSls": "1971041007000803",
-                "beban": 79,
-                "selesai": 10,
-                "open": 38,
-                "draft": 31,
-                "completed": 0,
-                "submitted": 10,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "SELINDUNG",
+                        "kec": "GABEK",
+                        "sls": "RT 003 RW 001",
+                        "idSls": "1971031005000200",
+                        "beban": 428,
+                        "selesai": 67,
+                        "open": 357,
+                        "draft": 0,
+                        "completed": 45,
+                        "submitted": 22,
+                        "rejected": 4
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-09",
+            "nama": "Ria Mulyanti",
+            "hp": "081274667003",
+            "kodePml": "PML-03",
+            "pml": "Luqman Hakim",
+            "target": 173,
+            "realisasi": 1,
+            "fasihDetail": {
+                  "completed": 0,
+                  "submitted": 1,
+                  "draft": 66,
+                  "rejected": 0,
+                  "open": 106
             },
-            {
-                "kel": "JERAMBAH GANTUNG",
-                "kec": "GABEK",
-                "sls": "RT 005 RW 002",
-                "idSls": "1971031006000501",
-                "beban": 220,
-                "selesai": 0,
-                "open": 220,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-13",
-        "nama": "Husnawati",
-        "hp": "085381183213",
-        "kodePml": "PML-04",
-        "pml": "Cici Ofdadewi",
-        "target": 236,
-        "realisasi": 56,
-        "fasihDetail": {
-            "completed": 20,
-            "submitted": 36,
-            "draft": 12,
-            "rejected": 0,
-            "open": 168
-        },
-        "alokasi": [
-            {
-                "kel": "AMPUI",
-                "kec": "PANGKAL BALAM",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971030006000400",
-                "beban": 167,
-                "selesai": 0,
-                "open": 163,
-                "draft": 4,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "TUA TUNU INDAH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 009 RW 003",
+                        "idSls": "1971041003000903",
+                        "beban": 53,
+                        "selesai": 0,
+                        "open": 53,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "TUA TUNU INDAH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971041003000402",
+                        "beban": 120,
+                        "selesai": 1,
+                        "open": 53,
+                        "draft": 66,
+                        "completed": 0,
+                        "submitted": 1,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-10",
+            "nama": "Nabila Lestari",
+            "hp": "08218004489",
+            "kodePml": "PML-03",
+            "pml": "Luqman Hakim",
+            "target": 340,
+            "realisasi": 128,
+            "fasihDetail": {
+                  "completed": 0,
+                  "submitted": 128,
+                  "draft": 0,
+                  "rejected": 1,
+                  "open": 211
             },
-            {
-                "kel": "AIR MAWAR",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 002 RW 001",
-                "idSls": "1971020013000203",
-                "beban": 69,
-                "selesai": 56,
-                "open": 5,
-                "draft": 8,
-                "completed": 20,
-                "submitted": 36,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-14",
-        "nama": "Ferrawati",
-        "hp": "082280887907",
-        "kodePml": "PML-04",
-        "pml": "Cici Ofdadewi",
-        "target": 256,
-        "realisasi": 47,
-        "fasihDetail": {
-            "completed": 19,
-            "submitted": 28,
-            "draft": 25,
-            "rejected": 0,
-            "open": 184
-        },
-        "alokasi": [
-            {
-                "kel": "AIR MAWAR",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 003 RW 002",
-                "idSls": "1971020013000302",
-                "beban": 208,
-                "selesai": 47,
-                "open": 136,
-                "draft": 25,
-                "completed": 19,
-                "submitted": 28,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "TUA TUNU INDAH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 001 RW 001",
+                        "idSls": "1971041003000101",
+                        "beban": 335,
+                        "selesai": 128,
+                        "open": 206,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 128,
+                        "rejected": 1
+                  },
+                  {
+                        "kel": "AIR KEPALA TUJUH",
+                        "kec": "GERUNGGANG",
+                        "sls": "LAPAS TUATUNU",
+                        "idSls": "1971041007400100",
+                        "beban": 5,
+                        "selesai": 0,
+                        "open": 5,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-11",
+            "nama": "Ninda Juwita",
+            "hp": "082180004062",
+            "kodePml": "PML-03",
+            "pml": "Luqman Hakim",
+            "target": 198,
+            "realisasi": 2,
+            "fasihDetail": {
+                  "completed": 0,
+                  "submitted": 2,
+                  "draft": 34,
+                  "rejected": 0,
+                  "open": 162
             },
-            {
-                "kel": "TEMBERAN",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 003 RW 001",
-                "idSls": "1971020012000306",
-                "beban": 48,
-                "selesai": 0,
-                "open": 48,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-15",
-        "nama": "Dahlia",
-        "hp": "085814181142",
-        "kodePml": "PML-04",
-        "pml": "Cici Ofdadewi",
-        "target": 278,
-        "realisasi": 42,
-        "fasihDetail": {
-            "completed": 11,
-            "submitted": 31,
-            "draft": 17,
-            "rejected": 0,
-            "open": 219
-        },
-        "alokasi": [
-            {
-                "kel": "TEMBERAN",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 002 RW 001",
-                "idSls": "1971020012000203",
-                "beban": 115,
-                "selesai": 42,
-                "open": 56,
-                "draft": 17,
-                "completed": 11,
-                "submitted": 31,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "TUA TUNU INDAH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 010 RW 003",
+                        "idSls": "1971041003001014",
+                        "beban": 81,
+                        "selesai": 0,
+                        "open": 81,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "AIR KEPALA TUJUH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 007 RW 003",
+                        "idSls": "1971041007000707",
+                        "beban": 117,
+                        "selesai": 2,
+                        "open": 81,
+                        "draft": 34,
+                        "completed": 0,
+                        "submitted": 2,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-12",
+            "nama": "Pirdania",
+            "hp": "085758724376",
+            "kodePml": "PML-03",
+            "pml": "Luqman Hakim",
+            "target": 319,
+            "realisasi": 22,
+            "fasihDetail": {
+                  "completed": 0,
+                  "submitted": 22,
+                  "draft": 39,
+                  "rejected": 0,
+                  "open": 258
             },
-            {
-                "kel": "TEMBERAN",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971020012000401",
-                "beban": 163,
-                "selesai": 0,
-                "open": 163,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-16",
-        "nama": "Nopi Astutik",
-        "hp": "085268808854",
-        "kodePml": "PML-05",
-        "pml": "Desi Pazaria",
-        "target": 463,
-        "realisasi": 63,
-        "fasihDetail": {
-            "completed": 58,
-            "submitted": 5,
-            "draft": 27,
-            "rejected": 0,
-            "open": 373
-        },
-        "alokasi": [
-            {
-                "kel": "RAWA BANGUN",
-                "kec": "TAMAN SARI",
-                "sls": "RT 001 RW 001",
-                "idSls": "1971040020000100",
-                "beban": 220,
-                "selesai": 0,
-                "open": 220,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
+            "alokasi": [
+                  {
+                        "kel": "AIR KEPALA TUJUH",
+                        "kec": "GERUNGGANG",
+                        "sls": "RT 008 RW 003",
+                        "idSls": "1971041007000803",
+                        "beban": 99,
+                        "selesai": 22,
+                        "open": 38,
+                        "draft": 39,
+                        "completed": 0,
+                        "submitted": 22,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "JERAMBAH GANTUNG",
+                        "kec": "GABEK",
+                        "sls": "RT 005 RW 002",
+                        "idSls": "1971031006000501",
+                        "beban": 220,
+                        "selesai": 0,
+                        "open": 220,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-13",
+            "nama": "Husnawati",
+            "hp": "085381183213",
+            "kodePml": "PML-04",
+            "pml": "Cici Ofdadewi",
+            "target": 244,
+            "realisasi": 67,
+            "fasihDetail": {
+                  "completed": 20,
+                  "submitted": 47,
+                  "draft": 12,
+                  "rejected": 0,
+                  "open": 165
             },
-            {
-                "kel": "OPAS INDAH",
-                "kec": "TAMAN SARI",
-                "sls": "RT 003 RW 001",
-                "idSls": "1971040022000301",
-                "beban": 243,
-                "selesai": 63,
-                "open": 153,
-                "draft": 27,
-                "completed": 58,
-                "submitted": 5,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-17",
-        "nama": "Sri Megawana",
-        "hp": "089633773529",
-        "kodePml": "PML-05",
-        "pml": "Desi Pazaria",
-        "target": 398,
-        "realisasi": 27,
-        "fasihDetail": {
-            "completed": 27,
-            "submitted": 0,
-            "draft": 5,
-            "rejected": 1,
-            "open": 365
-        },
-        "alokasi": [
-            {
-                "kel": "OPAS INDAH",
-                "kec": "TAMAN SARI",
-                "sls": "RT 008 RW 002",
-                "idSls": "1971040022000800",
-                "beban": 398,
-                "selesai": 27,
-                "open": 365,
-                "draft": 5,
-                "completed": 27,
-                "submitted": 0,
-                "rejected": 1
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-18",
-        "nama": "Sudalia",
-        "hp": "082178289998",
-        "kodePml": "PML-05",
-        "pml": "Desi Pazaria",
-        "target": 359,
-        "realisasi": 77,
-        "fasihDetail": {
-            "completed": 67,
-            "submitted": 10,
-            "draft": 21,
-            "rejected": 3,
-            "open": 258
-        },
-        "alokasi": [
-            {
-                "kel": "GABEK DUA",
-                "kec": "GABEK",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971031003000502",
-                "beban": 173,
-                "selesai": 77,
-                "open": 73,
-                "draft": 20,
-                "completed": 67,
-                "submitted": 10,
-                "rejected": 3
+            "alokasi": [
+                  {
+                        "kel": "AMPUI",
+                        "kec": "PANGKAL BALAM",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971030006000400",
+                        "beban": 175,
+                        "selesai": 11,
+                        "open": 160,
+                        "draft": 4,
+                        "completed": 0,
+                        "submitted": 11,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "AIR MAWAR",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 002 RW 001",
+                        "idSls": "1971020013000203",
+                        "beban": 69,
+                        "selesai": 56,
+                        "open": 5,
+                        "draft": 8,
+                        "completed": 20,
+                        "submitted": 36,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-14",
+            "nama": "Ferrawati",
+            "hp": "082280887907",
+            "kodePml": "PML-04",
+            "pml": "Cici Ofdadewi",
+            "target": 262,
+            "realisasi": 68,
+            "fasihDetail": {
+                  "completed": 19,
+                  "submitted": 49,
+                  "draft": 27,
+                  "rejected": 1,
+                  "open": 166
             },
-            {
-                "kel": "REJOSARI",
-                "kec": "PANGKAL BALAM",
-                "sls": "RT 010 RW 003",
-                "idSls": "1971030015001000",
-                "beban": 186,
-                "selesai": 0,
-                "open": 185,
-                "draft": 1,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-19",
-        "nama": "Romadina",
-        "hp": "083861897543",
-        "kodePml": "PML-06",
-        "pml": "Siti Artimah",
-        "target": 267,
-        "realisasi": 26,
-        "fasihDetail": {
-            "completed": 20,
-            "submitted": 6,
-            "draft": 0,
-            "rejected": 0,
-            "open": 241
-        },
-        "alokasi": [
-            {
-                "kel": "KETAPANG",
-                "kec": "PANGKAL BALAM",
-                "sls": "RT 001 RW 001",
-                "idSls": "1971030016000100",
-                "beban": 267,
-                "selesai": 26,
-                "open": 241,
-                "draft": 0,
-                "completed": 20,
-                "submitted": 6,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-20",
-        "nama": "Piska Aryani",
-        "hp": "085840953848",
-        "kodePml": "PML-06",
-        "pml": "Siti Artimah",
-        "target": 335,
-        "realisasi": 14,
-        "fasihDetail": {
-            "completed": 13,
-            "submitted": 1,
-            "draft": 34,
-            "rejected": 2,
-            "open": 285
-        },
-        "alokasi": [
-            {
-                "kel": "BACANG",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971020009000401",
-                "beban": 335,
-                "selesai": 14,
-                "open": 285,
-                "draft": 34,
-                "completed": 13,
-                "submitted": 1,
-                "rejected": 2
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-21",
-        "nama": "Zsa Zsa Putri",
-        "hp": "0895401272871",
-        "kodePml": "PML-06",
-        "pml": "Siti Artimah",
-        "target": 284,
-        "realisasi": 6,
-        "fasihDetail": {
-            "completed": 6,
-            "submitted": 0,
-            "draft": 0,
-            "rejected": 8,
-            "open": 270
-        },
-        "alokasi": [
-            {
-                "kel": "PASAR PADI",
-                "kec": "GIRIMAYA",
-                "sls": "RT 001 RW 001",
-                "idSls": "1971021005000109",
-                "beban": 104,
-                "selesai": 6,
-                "open": 90,
-                "draft": 0,
-                "completed": 6,
-                "submitted": 0,
-                "rejected": 8
+            "alokasi": [
+                  {
+                        "kel": "AIR MAWAR",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 003 RW 002",
+                        "idSls": "1971020013000302",
+                        "beban": 214,
+                        "selesai": 68,
+                        "open": 118,
+                        "draft": 27,
+                        "completed": 19,
+                        "submitted": 49,
+                        "rejected": 1
+                  },
+                  {
+                        "kel": "TEMBERAN",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 003 RW 001",
+                        "idSls": "1971020012000306",
+                        "beban": 48,
+                        "selesai": 0,
+                        "open": 48,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-15",
+            "nama": "Dahlia",
+            "hp": "085814181142",
+            "kodePml": "PML-04",
+            "pml": "Cici Ofdadewi",
+            "target": 284,
+            "realisasi": 54,
+            "fasihDetail": {
+                  "completed": 11,
+                  "submitted": 43,
+                  "draft": 11,
+                  "rejected": 0,
+                  "open": 219
             },
-            {
-                "kel": "SINAR BULAN",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 005 RW 002",
-                "idSls": "1971020011000502",
-                "beban": 180,
-                "selesai": 0,
-                "open": 180,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    },
-    {
-        "kodePpl": "PPL-22",
-        "nama": "Gepa",
-        "hp": "081274099520",
-        "kodePml": "PML-06",
-        "pml": "Siti Artimah",
-        "target": 277,
-        "realisasi": 28,
-        "fasihDetail": {
-            "completed": 16,
-            "submitted": 12,
-            "draft": 43,
-            "rejected": 5,
-            "open": 201
-        },
-        "alokasi": [
-            {
-                "kel": "BACANG",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 004 RW 002",
-                "idSls": "1971020009000402",
-                "beban": 221,
-                "selesai": 28,
-                "open": 145,
-                "draft": 43,
-                "completed": 16,
-                "submitted": 12,
-                "rejected": 5
+            "alokasi": [
+                  {
+                        "kel": "TEMBERAN",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 002 RW 001",
+                        "idSls": "1971020012000203",
+                        "beban": 121,
+                        "selesai": 54,
+                        "open": 56,
+                        "draft": 11,
+                        "completed": 11,
+                        "submitted": 43,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "TEMBERAN",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971020012000401",
+                        "beban": 163,
+                        "selesai": 0,
+                        "open": 163,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-16",
+            "nama": "Nopi Astutik",
+            "hp": "085268808854",
+            "kodePml": "PML-05",
+            "pml": "Desi Pazaria",
+            "target": 465,
+            "realisasi": 81,
+            "fasihDetail": {
+                  "completed": 77,
+                  "submitted": 4,
+                  "draft": 16,
+                  "rejected": 1,
+                  "open": 367
             },
-            {
-                "kel": "AIR ITAM",
-                "kec": "BUKIT INTAN",
-                "sls": "RT 002 RW 001",
-                "idSls": "1971020010000204",
-                "beban": 56,
-                "selesai": 0,
-                "open": 56,
-                "draft": 0,
-                "completed": 0,
-                "submitted": 0,
-                "rejected": 0
-            }
-        ]
-    }
+            "alokasi": [
+                  {
+                        "kel": "RAWA BANGUN",
+                        "kec": "TAMAN SARI",
+                        "sls": "RT 001 RW 001",
+                        "idSls": "1971040020000100",
+                        "beban": 220,
+                        "selesai": 0,
+                        "open": 220,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "OPAS INDAH",
+                        "kec": "TAMAN SARI",
+                        "sls": "RT 003 RW 001",
+                        "idSls": "1971040022000301",
+                        "beban": 245,
+                        "selesai": 81,
+                        "open": 147,
+                        "draft": 16,
+                        "completed": 77,
+                        "submitted": 4,
+                        "rejected": 1
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-17",
+            "nama": "Sri Megawana",
+            "hp": "089633773529",
+            "kodePml": "PML-05",
+            "pml": "Desi Pazaria",
+            "target": 401,
+            "realisasi": 27,
+            "fasihDetail": {
+                  "completed": 27,
+                  "submitted": 0,
+                  "draft": 18,
+                  "rejected": 1,
+                  "open": 355
+            },
+            "alokasi": [
+                  {
+                        "kel": "OPAS INDAH",
+                        "kec": "TAMAN SARI",
+                        "sls": "RT 008 RW 002",
+                        "idSls": "1971040022000800",
+                        "beban": 401,
+                        "selesai": 27,
+                        "open": 355,
+                        "draft": 18,
+                        "completed": 27,
+                        "submitted": 0,
+                        "rejected": 1
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-18",
+            "nama": "Sudalia",
+            "hp": "082178289998",
+            "kodePml": "PML-05",
+            "pml": "Desi Pazaria",
+            "target": 371,
+            "realisasi": 86,
+            "fasihDetail": {
+                  "completed": 77,
+                  "submitted": 9,
+                  "draft": 33,
+                  "rejected": 0,
+                  "open": 252
+            },
+            "alokasi": [
+                  {
+                        "kel": "GABEK DUA",
+                        "kec": "GABEK",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971031003000502",
+                        "beban": 185,
+                        "selesai": 86,
+                        "open": 67,
+                        "draft": 32,
+                        "completed": 77,
+                        "submitted": 9,
+                        "rejected": 0
+                  },
+                  {
+                        "kel": "REJOSARI",
+                        "kec": "PANGKAL BALAM",
+                        "sls": "RT 010 RW 003",
+                        "idSls": "1971030015001000",
+                        "beban": 186,
+                        "selesai": 0,
+                        "open": 185,
+                        "draft": 1,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-19",
+            "nama": "Romadina",
+            "hp": "083861897543",
+            "kodePml": "PML-06",
+            "pml": "Siti Artimah",
+            "target": 270,
+            "realisasi": 33,
+            "fasihDetail": {
+                  "completed": 21,
+                  "submitted": 12,
+                  "draft": 0,
+                  "rejected": 0,
+                  "open": 237
+            },
+            "alokasi": [
+                  {
+                        "kel": "KETAPANG",
+                        "kec": "PANGKAL BALAM",
+                        "sls": "RT 001 RW 001",
+                        "idSls": "1971030016000100",
+                        "beban": 270,
+                        "selesai": 33,
+                        "open": 237,
+                        "draft": 0,
+                        "completed": 21,
+                        "submitted": 12,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-20",
+            "nama": "Piska Aryani",
+            "hp": "085840953848",
+            "kodePml": "PML-06",
+            "pml": "Siti Artimah",
+            "target": 335,
+            "realisasi": 14,
+            "fasihDetail": {
+                  "completed": 13,
+                  "submitted": 1,
+                  "draft": 34,
+                  "rejected": 2,
+                  "open": 285
+            },
+            "alokasi": [
+                  {
+                        "kel": "BACANG",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971020009000401",
+                        "beban": 335,
+                        "selesai": 14,
+                        "open": 285,
+                        "draft": 34,
+                        "completed": 13,
+                        "submitted": 1,
+                        "rejected": 2
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-21",
+            "nama": "Zsa Zsa Putri",
+            "hp": "0895401272871",
+            "kodePml": "PML-06",
+            "pml": "Siti Artimah",
+            "target": 284,
+            "realisasi": 6,
+            "fasihDetail": {
+                  "completed": 6,
+                  "submitted": 0,
+                  "draft": 0,
+                  "rejected": 8,
+                  "open": 270
+            },
+            "alokasi": [
+                  {
+                        "kel": "PASAR PADI",
+                        "kec": "GIRIMAYA",
+                        "sls": "RT 001 RW 001",
+                        "idSls": "1971021005000109",
+                        "beban": 104,
+                        "selesai": 6,
+                        "open": 90,
+                        "draft": 0,
+                        "completed": 6,
+                        "submitted": 0,
+                        "rejected": 8
+                  },
+                  {
+                        "kel": "SINAR BULAN",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 005 RW 002",
+                        "idSls": "1971020011000502",
+                        "beban": 180,
+                        "selesai": 0,
+                        "open": 180,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      },
+      {
+            "kodePpl": "PPL-22",
+            "nama": "Gepa",
+            "hp": "081274099520",
+            "kodePml": "PML-06",
+            "pml": "Siti Artimah",
+            "target": 277,
+            "realisasi": 28,
+            "fasihDetail": {
+                  "completed": 16,
+                  "submitted": 12,
+                  "draft": 43,
+                  "rejected": 5,
+                  "open": 201
+            },
+            "alokasi": [
+                  {
+                        "kel": "BACANG",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 004 RW 002",
+                        "idSls": "1971020009000402",
+                        "beban": 221,
+                        "selesai": 28,
+                        "open": 145,
+                        "draft": 43,
+                        "completed": 16,
+                        "submitted": 12,
+                        "rejected": 5
+                  },
+                  {
+                        "kel": "AIR ITAM",
+                        "kec": "BUKIT INTAN",
+                        "sls": "RT 002 RW 001",
+                        "idSls": "1971020010000204",
+                        "beban": 56,
+                        "selesai": 0,
+                        "open": 56,
+                        "draft": 0,
+                        "completed": 0,
+                        "submitted": 0,
+                        "rejected": 0
+                  }
+            ]
+      }
 ];
 
     // 38 SAMPEL USAHA BESAR (UB)
@@ -1899,18 +1898,18 @@
       { no: 2, idsbr: "95750901", kec: "RANGKUI", desa: "MELINTANG", sls: "RT 007 RW 002", usaha: "BANK BRI, UNIT PANGKAL PINANG III", alamat: "JALAN SOLIHIN G P", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 7, idsbr: "95333245", kec: "BUKIT INTAN", desa: "BACANG", sls: "RT 003 RW 001", usaha: "Bhanda Ghara Reksa, PT cabang Babel", alamat: "Jl. Depati Hamzah Semabung Komplek Ruko Loting Building", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 10, idsbr: "18268809", kec: "BUKIT INTAN", desa: "AIR ITAM", sls: "RT 009 RW 003", usaha: "BANK BRI, KCP DEPATI AMIR", alamat: "KOMPLEK RUKO THE CITY HALL", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
-      { no: 18, idsbr: "95752850", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 001 RW 001", usaha: "BANK PERMATA, KC SUDIRMAN PANGKALPINANG", alamat: "Niaga Center. Jl. Jenderal Sudirman Blok H dan I", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 18, idsbr: "95752850", kec: "GIRIMAYA", desa: "PASAR PADI", sls: "RT 001 RW 001", usaha: "BANK PERMATA, KC SUDIRMAN PANGKAL PINANG", alamat: "Niaga Center. Jl. Jenderal Sudirman Blok H dan I", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 23, idsbr: "4582016", kec: "GIRIMAYA", desa: "NANA", sls: "-", usaha: "TRIDHARMA PUTRA ABADI", alamat: "JL SOEKARNO HATTA", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 28, idsbr: "41871211", kec: "GABEK", desa: "SELINDUNG BARU", sls: "RT 001 RW 001", usaha: "BANK SUMSELBABEL, KANTOR KAS GABEK", alamat: "RUKO BES SQUARE", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
-      { no: 37, idsbr: "95752471", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK MUAMALAT INDONESIA, KC PANGKALPINANG", alamat: "JL AHMAD YANI DALAM", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
-      { no: 1, idsbr: "94652341", kec: "RANGKUI", desa: "BINTANG", sls: "RT 007 RW 003", usaha: "BANK MANDIRI, KC PANGKALPINANG", alamat: "JLN SUDIRMAN NO.7", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 37, idsbr: "95752471", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK MUAMALAT INDONESIA, KC PANGKAL PINANG", alamat: "JL AHMAD YANI DALAM", ppl: "Maryani", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 1, idsbr: "94652341", kec: "RANGKUI", desa: "BINTANG", sls: "RT 007 RW 003", usaha: "BANK MANDIRI, KC PANGKAL PINANG", alamat: "JLN SUDIRMAN NO.7", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 6, idsbr: "47201", kec: "BUKIT INTAN", desa: "SEMABUNG LAMA", sls: "RT 006 RW 001", usaha: "DUTA PUTRA LEXINDO, PT", alamat: "JL SEMABUNG LAMA GG BATU NIRWANA I", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 9, idsbr: "95749366", kec: "BUKIT INTAN", desa: "AIR ITAM", sls: "RT 009 RW 003", usaha: "BANK MANDIRI, KANTOR KAS CITYHALL", alamat: "RUKO CITY HALL", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 14, idsbr: "61061023", kec: "BUKIT INTAN", desa: "TEMBERAN", sls: "RT 002 RW 001", usaha: "AGRO PRATAMA SEJAHTERA, PT", alamat: "PERUMAHAN CITRA LAND, JL. ALEXANDER NO. G28", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
-      { no: 17, idsbr: "94417311", kec: "GIRIMAYA", desa: "BATU INTAN", sls: "RT 006 RW 002", usaha: "BANK PANIN, KCU PANGKALPINANG", alamat: "RUKO HARMONY CITI BLOK C NO 9-11 JL SOEKARNO HATTA", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 17, idsbr: "94417311", kec: "GIRIMAYA", desa: "BATU INTAN", sls: "RT 006 RW 002", usaha: "BANK PANIN, KCU PANGKAL PINANG", alamat: "RUKO HARMONY CITI BLOK C NO 9-11 JL SOEKARNO HATTA", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 24, idsbr: "45037", kec: "PANGKAL BALAM", desa: "LONTONG PANCUR", sls: "RT 003 RW 001", usaha: "PELINDO II CABANG PANGKAL BALAM, PT", alamat: "Jl. Yos Sudarso no. 1 Pangkal Pinang", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 26, idsbr: "95751420", kec: "GABEK", desa: "AIR SALEMBA", sls: "RT 004 RW 002", usaha: "BANK BTPN, KCP PANGKAL PINANG", alamat: "Jl. Jend. Sudirman No. 105, Kel. Gabek", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
-      { no: 36, idsbr: "95752066", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK SUMSELBABEL, KANTOR KAS PASAR PAGI", alamat: "JL AYANI DALAM PANGKALPINANG", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
+      { no: 36, idsbr: "95752066", kec: "GERUNGGANG", desa: "BUKIT SARI", sls: "RT 006 RW 002", usaha: "BANK SUMSELBABEL, KANTOR KAS PASAR PAGI", alamat: "JL AYANI DALAM PANGKAL PINANG", ppl: "Shafira Husna", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 5, idsbr: "3140434", kec: "RANGKUI", desa: "MASJID JAMIK", sls: "RT 005 RW 003", usaha: "BANK BCA, KCP MASJID JAMIK", alamat: "JL. MASJID JAMIK NO. 15", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 13, idsbr: "61060965", kec: "BUKIT INTAN", desa: "TEMBERAN", sls: "RT 001 RW 001", usaha: "SURYA HASIL LAUT BANGKA, PT", alamat: "Jl. LAKSAMANA MALAHAYATI KAWASAN INDUSTRI NO. 3", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
       { no: 15, idsbr: "95749886", kec: "GIRIMAYA", desa: "BUKIT BESAR", sls: "RT 004 RW 002", usaha: "BANK BRI, UNIT SOEKARNO HATTA", alamat: "JL SOEKARNO HATTA", ppl: "Soraya Afkarina", pml: "Sarah Putri Utami", status: "Belum Berhasil Didata" },
@@ -2676,7 +2675,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Rekap_PES_SE2026_Pangkalpinang_${new Date().toISOString().slice(0,10)}.csv`);
+      link.setAttribute("download", `Rekap_PES_SE2026_Pangkal Pinang_${new Date().toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
