@@ -579,8 +579,9 @@
     // ==========================================
     // Tautan Google Apps Script bawaan (otomatis aktif permanen di semua HP/browser)
     const DEFAULT_CLOUD_GAS_URL = "https://script.google.com/macros/s/AKfycbylElljhDi7QO9qMR4plWyRly5H1rVff1LUnz7mC-6RrvUrh4rOkAR-kCfuLGO27WF2/exec"; 
-    let cloudGasUrl = DEFAULT_CLOUD_GAS_URL;
+    let cloudGasUrl = (function(){ try { return localStorage.getItem("PES_CLOUD_GAS_URL") || DEFAULT_CLOUD_GAS_URL; } catch(e) { return DEFAULT_CLOUD_GAS_URL; } })();
 
+    console.log("[Cloud] URL aktif:", cloudGasUrl);
     function updateCloudStatusBadge(isOnline, textDesc) {
       const dot = document.getElementById("cloud-dot");
       const label = document.getElementById("cloud-label");
@@ -722,11 +723,9 @@
       try {
         res = await fetch(cloudGasUrl, opts);
       } catch (e) {
-        // fallback terakhir: kirim tanpa bisa membaca balasan
-        await fetch(cloudGasUrl, Object.assign({ mode: "no-cors" }, opts));
-        console.warn("[Cloud] Terkirim tanpa verifikasi (no-cors).");
-        return { status: "unverified" };
+        throw new Error("Browser tidak bisa menghubungi Apps Script (CORS/akses ditolak). Pastikan deployment: Execute as 'Me' dan Who has access 'Anyone', dan URL /exec benar. Detail: " + e.message);
       }
+      if (!res.ok) throw new Error("HTTP " + res.status + " dari Apps Script");
       const text = await res.text();
       let json;
       try { json = JSON.parse(text); }
