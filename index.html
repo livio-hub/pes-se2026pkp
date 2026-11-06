@@ -711,6 +711,30 @@
       }
     }
 
+    // KIRIM DATA KE GOOGLE APPS SCRIPT DAN VERIFIKASI BALASANNYA
+    async function postToCloud(payload) {
+      const opts = {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // simple request, tanpa preflight
+        body: JSON.stringify(payload)
+      };
+      let res;
+      try {
+        res = await fetch(cloudGasUrl, opts);
+      } catch (e) {
+        // fallback terakhir: kirim tanpa bisa membaca balasan
+        await fetch(cloudGasUrl, Object.assign({ mode: "no-cors" }, opts));
+        console.warn("[Cloud] Terkirim tanpa verifikasi (no-cors).");
+        return { status: "unverified" };
+      }
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); }
+      catch (e) { throw new Error("Balasan server bukan JSON (cek deploy Apps Script / akses 'Anyone'). Awal balasan: " + text.slice(0, 120)); }
+      if (json.status !== "success") throw new Error(json.message || "Server menolak data");
+      return json;
+    }
+
     // KIRIM UPDATE STATUS SATUAN KE GOOGLE SPREADSHEET
     async function sendUbUpdateToCloud(item, newStatus) {
       if (!cloudGasUrl) return;
@@ -723,12 +747,7 @@
           ppl: item.ppl,
           pml: item.pml
         };
-        await fetch(cloudGasUrl, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
+        await postToCloud(payload);
         console.log(`[Cloud] Status UB ${item.usaha} berhasil dikirim ke Google Sheets!`);
       } catch (e) {
         console.warn("[Cloud] Error sending update to Google Sheets:", e);
@@ -739,12 +758,7 @@
       if (!cloudGasUrl) return;
       try {
         const payload = { action: "bulk_sync_ub", items: ubSampelData };
-        await fetch(cloudGasUrl, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
+        await postToCloud(payload);
         console.log("[Cloud] 38 Data UB berhasil diinisialisasi ke Google Spreadsheet!");
       } catch (e) {
         console.warn("[Cloud] Silent init error:", e);
@@ -767,12 +781,7 @@
           ub_items: ubSampelData,
           ub_petugas: ubPetugasData
         };
-        await fetch(cloudGasUrl, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
+        await postToCloud(payload);
         alert("Seluruh data berhasil diunggah ke Google Spreadsheet!\nBuka Google Spreadsheet Anda untuk memeriksa sheet Data_SLS, Data_UB, dan Data_UB_Petugas.");
         updateCloudStatusBadge(true, "Cloud Live");
       } catch (err) {
@@ -2353,7 +2362,6 @@
         renderDashboard();
         renderUbList();
         renderQuickTable();
-      syncFromCloudDatabase();
         // Kirim perubahan langsung ke Google Spreadsheet Cloud Database
         sendUbUpdateToCloud(ubSampelData[idx], newStatus);
       }
@@ -2460,7 +2468,7 @@
 
       rows.forEach(r => {
         // Cari kolom yang memuat status dan SSLS
-        let status = (r["Status Assignment"] || r["Status"] || r["status"] || "").toString().trim();
+        let status = (r["Status Assignment"] || r["Status"] || r["status"] || "").toString().trim().toUpperCase();
         let sslsRaw = (r["SSLS"] || r["ID SLS"] || r["id_sls"] || r["ID_SLS"] || "").toString();
         let ssls = sslsRaw.replace(/[^0-9]/g, "");
         let qty = parseInt(r["Jumlah Assignment"] || r["Jumlah"] || r["Beban"] || r["jumlah"] || 1) || 0;
@@ -2487,6 +2495,8 @@
         pplSum[k] = { OPEN: 0, DRAFT: 0, SUBMITTED: 0, COMPLETED: 0, REJECTED: 0, TARGET: 0 };
       }
 
+      const unmappedSls = Object.keys(slsMapParsed).filter(k => !SLS_TO_PPL[k]);
+      if (unmappedSls.length) console.warn("[Import] SLS tidak ada di SLS_TO_PPL:", unmappedSls);
       Object.keys(slsMapParsed).forEach(ssls => {
         const ppl = SLS_TO_PPL[ssls];
         if (ppl && pplSum[ppl]) {
@@ -2516,6 +2526,7 @@
         Total Penugasan: <strong>${totalAssignments.toLocaleString()}</strong> responden di <strong>${Object.keys(slsMapParsed).length} SLS</strong>.<br>
         Selesai: <strong class="text-emerald-700">${totalCompleted + totalSubmitted}</strong> (${totalCompleted} Approved PML, ${totalSubmitted} Submit PCL).<br>
         Draft: <strong>${totalDraft}</strong> &bull; Ditolak PML: <strong>${totalRejected}</strong> &bull; Open: <strong>${totalOpen}</strong>.
+        ${unmappedSls.length ? `<br><span class="text-red-600 font-semibold">&#9888; ${unmappedSls.length} SLS tidak ada di pemetaan PPL dan TIDAK ikut terhitung (lihat Console).</span>` : ""}
       `;
       document.getElementById("excel-preview-info").classList.remove("hidden");
       document.getElementById("btn-apply-excel").disabled = false;
@@ -2524,6 +2535,7 @@
     async function applyImportedExcel() {
       if (!pendingExcelPplSummary) return;
 
+      let cloudMsg = "Cloud tidak aktif (URL belum diisi).";
       const btnApply = document.getElementById("btn-apply-excel");
       const originalText = btnApply ? btnApply.innerHTML : "";
       if (btnApply) {
@@ -2544,15 +2556,11 @@
               action: "sync_ub_petugas",
               petugas: ubPetugasData
             };
-            await fetch(cloudGasUrl, {
-              method: "POST",
-              mode: "no-cors",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(payload)
-            });
-            console.log("[Cloud] Data Petugas UB berhasil disimpan ke Google Sheets!");
+            await postToCloud(payload);
+            cloudMsg = "Data juga tersimpan di Google Sheets.";
           } catch (err) {
             console.warn("[Cloud] Gagal mengirim data UB ke Google Sheets:", err);
+            cloudMsg = "PERINGATAN: GAGAL tersimpan ke Google Sheets (" + err.message + "). Data hanya ada di browser ini.";
           }
         }
 
@@ -2561,7 +2569,7 @@
           btnApply.disabled = false;
           btnApply.innerHTML = originalText || `<i class="ph-bold ph-check mr-1.5"></i> Terapkan Data FASIH`;
         }
-        alert(`Berhasil memperbarui data Usaha Besar (UB)!\n${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan telah selesai didata.\n\nData otomatis disimpan ke Google Sheets secara real-time.`);
+        alert(`Berhasil memperbarui data Usaha Besar (UB)!\n${pendingExcelPplSummary.done} dari ${pendingExcelPplSummary.total} Perusahaan telah selesai didata.\n\n${cloudMsg}`);
         return;
       }
 
@@ -2610,15 +2618,11 @@
             action: "sync_sls",
             items: slsData
           };
-          await fetch(cloudGasUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          });
-          console.log("[Cloud] Data SLS 22 PPL berhasil disimpan ke Google Sheets!");
+          await postToCloud(payload);
+          cloudMsg = "Data juga tersimpan di Google Sheets.";
         } catch (err) {
           console.warn("[Cloud] Gagal mengirim data SLS ke Google Sheets:", err);
+          cloudMsg = "PERINGATAN: GAGAL tersimpan ke Google Sheets (" + err.message + "). Data hanya ada di browser ini.";
         }
       }
 
@@ -2627,7 +2631,7 @@
         btnApply.disabled = false;
         btnApply.innerHTML = originalText || `<i class="ph-bold ph-check mr-1.5"></i> Terapkan Data FASIH`;
       }
-      alert(`Berhasil memperbarui data portal dari Excel FASIH!\nTotal beban penugasan: ${pendingExcelPplSummary.total} responden.\n\nData otomatis disimpan ke Google Sheets secara real-time.`);
+      alert(`Berhasil memperbarui data portal dari Excel FASIH!\nTotal beban penugasan: ${pendingExcelPplSummary.total} responden.\n\n${cloudMsg}`);
     }
 
     function editPplTarget(kodePpl) {
@@ -2651,7 +2655,7 @@
       renderDashboard();
       renderSlsList();
       renderQuickTable();
-      syncFromCloudDatabase();
+      if (cloudGasUrl) { postToCloud({ action: "sync_sls", items: slsData }).catch(e => alert("Tersimpan lokal, tapi gagal ke Google Sheets: " + e.message)); }
       alert(`Data ${found.nama} berhasil diperbarui!`);
     }
 
