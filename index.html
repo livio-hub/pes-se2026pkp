@@ -151,8 +151,8 @@
             </p>
           </div>
         </div>
-        <div class="text-[11px] font-semibold text-indigo-700 bg-white px-3 py-1.5 rounded-lg border border-indigo-200">
-          Update: 5 Nov 2026
+        <div id="last-update-badge" class="text-[11px] font-semibold text-indigo-700 bg-white px-3 py-1.5 rounded-lg border border-indigo-200">
+          <span id="last-update-text">Update: 5 Nov 2026</span>
         </div>
       </div>
       
@@ -645,6 +645,11 @@
           const data = await res.json();
           if (data && data.status === "success") {
             let updatedCount = 0;
+
+            // Tanggal update terakhir = waktu terbaru di kolom "Terakhir Diupdate" Google Sheets
+            // (sama di semua perangkat karena diambil dari server)
+            const cloudLatest = getLatestCloudUpdate(data);
+            if (cloudLatest) setLastUpdate(cloudLatest.toISOString());
 
             // 1. Update status 38 Sampel UB dari Google Sheets
             if (data.ub_data && Array.isArray(data.ub_data) && data.ub_data.length > 0) {
@@ -1945,6 +1950,7 @@
       ubPetugasData = storedUbPetugas ? JSON.parse(storedUbPetugas) : JSON.parse(JSON.stringify(DEFAULT_UB_PETUGAS));
 
       saveAllData();
+      renderLastUpdate();
       updateAdminUI();
       renderDashboard();
       renderSlsList();
@@ -1957,6 +1963,59 @@
       localStorage.setItem("PES_SLS_DATA_V7", JSON.stringify(slsData));
       localStorage.setItem("PES_UB_SAMPEL_V7", JSON.stringify(ubSampelData));
       localStorage.setItem("PES_UB_PETUGAS_V7", JSON.stringify(ubPetugasData));
+    }
+
+    // ==========================================
+    // TANGGAL "UPDATE TERAKHIR" (OTOMATIS)
+    // ==========================================
+    const LAST_UPDATE_KEY = "PES_LAST_UPDATE_V7";
+    // Nilai awal (tadinya statis) yang dipakai sampai ada pembaruan data pertama
+    const DEFAULT_LAST_UPDATE = "2026-11-05T12:00:00+07:00";
+    let lastUpdateISO = (function(){ try { return localStorage.getItem(LAST_UPDATE_KEY) || DEFAULT_LAST_UPDATE; } catch(e) { return DEFAULT_LAST_UPDATE; } })();
+
+    function renderLastUpdate() {
+      const textEl = document.getElementById("last-update-text");
+      if (!textEl) return;
+      const d = new Date(lastUpdateISO);
+      if (isNaN(d.getTime())) return;
+      textEl.textContent = "Update: " + d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+      const badge = document.getElementById("last-update-badge");
+      if (badge) badge.title = "Data terakhir diperbarui " + d.toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" });
+    }
+
+    function setLastUpdate(iso) {
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return;
+      lastUpdateISO = d.toISOString();
+      try { localStorage.setItem(LAST_UPDATE_KEY, lastUpdateISO); } catch(e) {}
+      renderLastUpdate();
+    }
+
+    // Panggil setiap kali data benar-benar berubah (import Excel, ubah status UB, edit target)
+    function touchLastUpdate() {
+      setLastUpdate(new Date().toISOString());
+    }
+
+    // Ubah teks "yyyy-MM-dd HH:mm:ss WIB" (format Apps Script) menjadi objek Date
+    function parseSheetTimestamp(v) {
+      if (!v) return null;
+      const str = String(v).trim();
+      const m = str.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})\s*WIB$/i);
+      const d = m ? new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}+07:00`) : new Date(str);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    // Ambil waktu "Terakhir Diupdate" paling baru dari seluruh sheet (SLS, UB, Petugas UB)
+    function getLatestCloudUpdate(data) {
+      let latest = null;
+      [data.sls_data, data.ub_data, data.ub_petugas_data].forEach(list => {
+        if (!Array.isArray(list)) return;
+        list.forEach(row => {
+          const d = parseSheetTimestamp(row && row.updated_at);
+          if (d && (!latest || d > latest)) latest = d;
+        });
+      });
+      return latest;
     }
 
     // TAB NAVIGATION
@@ -2358,6 +2417,7 @@
         const newStatus = cur === "Sudah Berhasil Didata" ? "Belum Berhasil Didata" : "Sudah Berhasil Didata";
         ubSampelData[idx].status = newStatus;
         saveAllData();
+        touchLastUpdate();
         renderDashboard();
         renderUbList();
         renderQuickTable();
@@ -2544,6 +2604,7 @@
 
       if (pendingExcelPplSummary.isUb) {
         saveAllData();
+        touchLastUpdate();
         renderDashboard();
         renderUbList();
         renderQuickTable();
@@ -2606,6 +2667,7 @@
       });
 
       saveAllData();
+      touchLastUpdate();
       renderDashboard();
       renderSlsList();
       renderQuickTable();
@@ -2651,6 +2713,7 @@
       found.realisasi = parseInt(newReal) || found.realisasi;
 
       saveAllData();
+      touchLastUpdate();
       renderDashboard();
       renderSlsList();
       renderQuickTable();
